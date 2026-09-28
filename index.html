@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Telecomax Operations V5</title>
+<title>Telecomax Operations V5.1</title>
 <style>
 :root{--bg:#020817;--card:rgba(8,10,15,.80);--line:rgba(255,255,255,.12);--text:#f7f8fa;--muted:#9ca8b8;--pink:#d63391;--purple:#31005f;--blue:#69c8f2;--green:#74d6a0}
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--text);min-height:100vh;background:radial-gradient(circle at 8% 16%,rgba(0,153,204,.17),transparent 34%),radial-gradient(circle at 92% 10%,rgba(65,44,150,.22),transparent 36%),radial-gradient(circle at 74% 88%,rgba(214,51,145,.12),transparent 32%),linear-gradient(145deg,#00111e,#030817 48%,#120719)}
@@ -41,7 +41,7 @@
 <div class="top"><div class="brand">TELECOMAX <span>OPERATIONS</span></div><div class="actions"><span id="who" class="pill">Not signed in</span><button id="logout" class="ghost hidden">Log out</button></div></div>
 
 <section id="loginView" class="card login">
-<div class="pill" style="display:inline-block">Unified Portal • V5</div>
+<div class="pill" style="display:inline-block">Unified Portal • V5.1</div>
 <h1>Welcome back</h1><div class="muted">Use your Telecomax Name + 6-digit PIN. The portal checks your authorized KM and Custody access.</div>
 <label>Name</label><input id="name" autocomplete="username" placeholder="Enter your name">
 <label>6-digit PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="••••••">
@@ -99,31 +99,38 @@ async function centralLogin(name,pin){
 }
 let currentPortalToken='';
 const moduleUrls={
- kmEngineer:'https://telecomaxkm.vercel.app/',
- kmAdmin:'https://telecomaxkm.vercel.app/admin.html',
- kmFinance:'https://telecomaxkm.vercel.app/finance.html',
+ kmEngineerStart:'https://telecomaxkm.vercel.app/?view=start',
+ kmEngineerHistory:'https://telecomaxkm.vercel.app/?view=history',
+ kmBalances:'https://telecomaxkm.vercel.app/admin.html?view=balances',
+ kmPhotoAudit:'https://telecomaxkm.vercel.app/admin.html?view=audit',
+ kmSolfa:'https://telecomaxkm.vercel.app/admin.html?view=solfa',
+ kmRent:'https://telecomaxkm.vercel.app/admin.html?view=rent',
  kmAllowance:'https://telecomaxkm.vercel.app/allowances.html',
- custodyEngineer:'https://custody-orcin.vercel.app/',
- custodyAdmin:'https://custody-orcin.vercel.app/?portal=admin',
- custodyPM:'https://custody-orcin.vercel.app/pm.html',
- custodyFinance:'https://custody-orcin.vercel.app/finance.html'
+ kmFinanceAudit:'https://telecomaxkm.vercel.app/finance.html?view=audit',
+ custodyEngineerNew:'https://custody-orcin.vercel.app/?view=home',
+ custodyEngineerHistory:'https://custody-orcin.vercel.app/?view=history',
+ custodyAdminEngineers:'https://custody-orcin.vercel.app/?portal=admin&view=engineers',
+ custodyAdminUsers:'https://custody-orcin.vercel.app/?portal=admin&view=users',
+ custodyAdminTransfers:'https://custody-orcin.vercel.app/?portal=admin&view=transfers',
+ custodyPMReview:'https://custody-orcin.vercel.app/pm.html?view=review',
+ custodyPMTransfers:'https://custody-orcin.vercel.app/pm.html?view=transfers',
+ custodyFinanceReview:'https://custody-orcin.vercel.app/finance.html?view=review',
+ custodyFinanceTransfers:'https://custody-orcin.vercel.app/finance.html?view=transfers'
 };
 let currentModuleUrl='';
+function withSSO(url){
+ const sep=url.includes('#')?'&':'#';
+ return url+(currentPortalToken?sep+'sso='+encodeURIComponent(currentPortalToken):'');
+}
 function go(url,title){
- currentModuleUrl=url+(currentPortalToken?'#sso='+encodeURIComponent(currentPortalToken):'');
- $('dash').classList.add('hidden'); $('workspace').classList.remove('active'); $('appshell').classList.add('active');
- $('appTitle').textContent=title||'Telecomax Workspace';
- $('frameLoading').classList.remove('hidden');
- const fr=$('appFrame'); fr.onload=()=>{$('frameLoading').classList.add('hidden')}; fr.src=currentModuleUrl;
- scrollTo(0,0);
+ currentModuleUrl=withSSO(url);
+ // Audit/working screens intentionally use the full browser viewport.
+ location.href=currentModuleUrl;
 }
-function closeApp(){
- $('appFrame').src='about:blank'; $('appshell').classList.remove('active');
- if(window._lastWorkspace) openWorkspace(window._lastWorkspace); else $('dash').classList.remove('hidden');
-}
+function closeApp(){ history.back(); }
 function openExternal(){if(currentModuleUrl) window.open(currentModuleUrl,'_blank','noopener')}
 
-function link(label,url){return `<a href="#" onclick="event.preventDefault();go('${url}','${label.replace(/'/g,"&#39;")}')">${label} →</a>`}
+function link(label,url){return `<a href="#" onclick="event.preventDefault();go(${JSON.stringify(url)},${JSON.stringify(label)})">${label} →</a>`}
 function workspaceLink(label,key){return `<a href="#" onclick="event.preventDefault();openWorkspace('${key}')">${label} →</a>`}
 
 function render(u){
@@ -134,7 +141,7 @@ function render(u){
  if(u.km){
   if(u.kind==='engineer') km+=workspaceLink('Open KM Workspace','kmEngineer');
   else if(u.role==='Finance') km+=workspaceLink('Open Finance Workspace','kmFinance');
-  else {km+=workspaceLink('Open KM Management','kmManagement');km+=workspaceLink('Allowance Audit','kmManagement')}
+  else {km+=workspaceLink('Open KM Management','kmManagement');km+=link('Allowance Audit',moduleUrls.kmAllowance)}
  } else $('kmCard').classList.add('disabled');
  if(u.custody){
   if(u.kind==='engineer') cu+=workspaceLink('Open Custody Workspace','custodyEngineer');
@@ -160,34 +167,35 @@ $('pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('login').click()});
 
 const workspaceDefinitions={
  kmEngineer:{title:'KM Engineer',items:[
-  ['Start / Finish Trip','Create and complete KM trips with odometer evidence.','kmEngineer',''],
-  ['Trip History','Review your KM records and balances.','kmEngineer','blue']
+  ['Start / Finish Trip','Create and complete KM trips with odometer evidence.','kmEngineerStart',''],
+  ['Trip History','Review your KM records and balances.','kmEngineerHistory','blue']
  ]},
  kmManagement:{title:'KM Management',items:[
-  ['Balances','Review received, spent and remaining engineer balances.','kmAdmin',''],
-  ['Photo Audit','Review KM records against start/finish photos.','kmAdmin','blue'],
-  ['Solfa','Create and review engineer advances.','kmAdmin','green'],
-  ['Rent','Process completed Rent trips and deductions.','kmAdmin',''],
+  ['Balances','Review received, spent and remaining engineer balances.','kmBalances',''],
+  ['Photo Audit','Review KM records against start/finish photos.','kmPhotoAudit','blue'],
+  ['Solfa','Create and review engineer advances.','kmSolfa','green'],
+  ['Rent','Process completed Rent trips and deductions.','kmRent',''],
   ['Allowance Audit','Review and approve monthly allowances.','kmAllowance','blue']
  ]},
  kmFinance:{title:'KM Finance',items:[
-  ['KM Photo Audit','Review trip evidence, KM and amount spent.','kmFinance','green']
+  ['KM Photo Audit','Review trip evidence, KM and amount spent.','kmFinanceAudit','green']
  ]},
  custodyEngineer:{title:'Custody Engineer',items:[
-  ['New Expense','Submit a new expense with receipt evidence.','custodyEngineer',''],
-  ['Expense History','Review submitted expenses and their status.','custodyEngineer','blue']
+  ['New Expense','Submit a new expense with receipt evidence.','custodyEngineerNew',''],
+  ['Expense History','Review submitted expenses and their status.','custodyEngineerHistory','blue']
  ]},
  custodyPM:{title:'Custody Project Management',items:[
-  ['Receipt Review','Review pending expenses and supporting receipts.','custodyPM',''],
-  ['Transfers','Follow approved expenses through the transfer workflow.','custodyPM','blue']
+  ['Receipt Review','Review pending expenses and supporting receipts.','custodyPMReview',''],
+  ['Transfers','Follow approved expenses through the transfer workflow.','custodyPMTransfers','blue']
  ]},
  custodyFinance:{title:'Custody Finance',items:[
-  ['Receipt Review','Perform Finance verification of submitted expenses.','custodyFinance','green'],
-  ['Transfers','Review transfer-ready and transferred expenses.','custodyFinance','blue']
+  ['Receipt Review','Perform Finance verification of submitted expenses.','custodyFinanceReview','green'],
+  ['Transfers','Review transfer-ready and transferred expenses.','custodyFinanceTransfers','blue']
  ]},
  custodyAdmin:{title:'Custody Administration',items:[
-  ['Engineer Management','Manage engineers, PINs, activation and custody limits.','custodyAdmin',''],
-  ['Transfers','Manage approved expenses and transfer references.','custodyAdmin','green']
+  ['Engineer Management','Manage engineers, PINs, activation and custody limits.','custodyAdminEngineers',''],
+  ['Management Users','Manage PM, Finance and Admin access.','custodyAdminUsers','blue'],
+  ['Transfers','Manage approved expenses and transfer references.','custodyAdminTransfers','green']
  ]}
 };
 function openWorkspace(key){
