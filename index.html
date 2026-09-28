@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Telecomax Operations V2</title>
+<title>Telecomax Operations V3</title>
 <style>
 :root{--bg:#020817;--card:rgba(8,10,15,.80);--line:rgba(255,255,255,.12);--text:#f7f8fa;--muted:#9ca8b8;--pink:#d63391;--purple:#31005f;--blue:#69c8f2;--green:#74d6a0}
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--text);min-height:100vh;background:radial-gradient(circle at 8% 16%,rgba(0,153,204,.17),transparent 34%),radial-gradient(circle at 92% 10%,rgba(65,44,150,.22),transparent 36%),radial-gradient(circle at 74% 88%,rgba(214,51,145,.12),transparent 32%),linear-gradient(145deg,#00111e,#030817 48%,#120719)}
@@ -16,7 +16,7 @@
 <div class="top"><div class="brand">TELECOMAX <span>OPERATIONS</span></div><div class="actions"><span id="who" class="pill">Not signed in</span><button id="logout" class="ghost hidden">Log out</button></div></div>
 
 <section id="loginView" class="card login">
-<div class="pill" style="display:inline-block">Unified Portal • V2</div>
+<div class="pill" style="display:inline-block">Unified Portal • V3</div>
 <h1>Welcome back</h1><div class="muted">Use your Telecomax Name + 6-digit PIN. The portal checks your authorized KM and Custody access.</div>
 <label>Name</label><input id="name" autocomplete="username" placeholder="Enter your name">
 <label>6-digit PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="••••••">
@@ -29,7 +29,7 @@
 <div id="kmCard" class="card module km"><div class="tag">KM & BENZINE</div><h2>🚗 KM Operations</h2><p class="muted">Trips, KM review, allowances and finance audit.</p><div id="kmLinks" class="links"></div></div>
 <div id="custodyCard" class="card module custody"><div class="tag">CUSTODY</div><h2>💳 Custody Expenses</h2><p class="muted">Expense submission, PM review, Finance review and transfers.</p><div id="custodyLinks" class="links"></div></div>
 </div>
-<p class="muted" style="margin-top:18px">V2 uses one central authentication request. Existing KM and Custody production apps remain unchanged. Module session handoff (true SSO) is the next milestone.</p>
+<p class="muted" style="margin-top:18px">V3 Single Sign-On: log in once here, then authorized KM/Custody pages open using a short-lived signed handoff — no PIN is placed in the URL.</p>
 </section>
 </div>
 <script>
@@ -50,8 +50,10 @@ async function centralLogin(name,pin){
     custodyToken:r.custodyToken||''
   };
 }
-function link(label,url){return `<a href="${url}" target="_blank" rel="noopener">${label} →</a>`}
+let currentPortalToken='';
+function link(label,url){const u=url+(currentPortalToken?'#sso='+encodeURIComponent(currentPortalToken):'');return `<a href="${u}" target="_blank" rel="noopener">${label} →</a>`}
 function render(u){
+ currentPortalToken=u.portalToken||'';
  $('loginView').classList.add('hidden');$('dash').classList.remove('hidden');$('logout').classList.remove('hidden');
  $('who').textContent=u.name;$('hello').textContent='Hello, '+u.name;$('role').textContent=u.role;
  let km='',cu='';
