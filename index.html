@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Telecomax Operations V6.2</title>
+<title>Telecomax Operations V6.3</title>
 <style>
 :root{--bg:#020817;--card:rgba(8,10,15,.80);--line:rgba(255,255,255,.12);--text:#f7f8fa;--muted:#9ca8b8;--pink:#d63391;--purple:#31005f;--blue:#69c8f2;--green:#74d6a0}
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--text);min-height:100vh;background:radial-gradient(circle at 8% 16%,rgba(0,153,204,.17),transparent 34%),radial-gradient(circle at 92% 10%,rgba(65,44,150,.22),transparent 36%),radial-gradient(circle at 74% 88%,rgba(214,51,145,.12),transparent 32%),linear-gradient(145deg,#00111e,#030817 48%,#120719)}
@@ -92,13 +92,70 @@
   .v6-kpi{padding:12px;min-height:110px}
   .v6-kpi .v{font-size:24px}
 }
+
+/* V6.3 polished mobile dashboard */
+@media(max-width:700px){
+  header{min-height:58px}
+  .card.hero{padding:15px 16px;margin-bottom:12px}
+  .card.hero .muted{font-size:11px}
+  .card.hero h1{font-size:25px;margin:3px 0 6px}
+  .card.hero>div:last-child{font-size:12px;line-height:1.35}
+  .v6-section{margin-top:14px}
+  .v6-section h2{font-size:17px;margin-bottom:10px}
+  .v6-badge{font-size:9px;padding:3px 6px}
+  .v6-section h2 .ghost{font-size:12px;min-height:36px!important;padding:6px 10px!important}
+  .v6-grid{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-auto-rows:auto!important;
+    align-items:stretch!important;
+    gap:9px!important;
+    margin:8px 0 14px!important;
+  }
+  .v6-kpi{
+    box-sizing:border-box!important;
+    min-height:104px!important;
+    height:auto!important;
+    margin:0!important;
+    padding:12px 13px!important;
+    border:1px solid rgba(255,255,255,.10)!important;
+    border-radius:15px!important;
+    background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018))!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:center!important;
+    box-shadow:0 8px 22px rgba(0,0,0,.12);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .v6-kpi:active{transform:scale(.98);background:rgba(255,255,255,.075)!important}
+  .v6-kpi .k{font-size:10px!important;line-height:1.2!important;min-height:24px;color:#9ba5b8}
+  .v6-kpi .v{font-size:25px!important;line-height:1!important;margin:4px 0 5px!important}
+  .v6-kpi .s{font-size:10.5px!important;line-height:1.25!important;min-height:26px}
+  #dash>.grid{gap:10px!important;margin-top:0!important}
+  .card.module{
+    min-height:0!important;
+    height:auto!important;
+    padding:15px 16px!important;
+    border-radius:18px!important;
+  }
+  .card.module .tag{font-size:10px;margin-bottom:4px}
+  .card.module h2{font-size:21px!important;line-height:1.15;margin:5px 0!important}
+  .card.module p{font-size:12px!important;line-height:1.35!important;margin:8px 0 11px!important;min-height:0!important}
+  .card.module .links{margin-top:0!important}
+  .card.module .links a{min-height:42px!important;padding:9px 11px!important;font-size:13px}
+}
+@media(max-width:390px){
+  .v6-kpi{min-height:100px!important;padding:11px!important}
+  .v6-kpi .v{font-size:23px!important}
+  .card.hero h1{font-size:23px}
+}
 </style>
 </head>
 <body><div class="wrap">
 <div class="top"><div class="brand">TELECOMAX <span>OPERATIONS</span></div><div class="actions"><span id="who" class="pill">Not signed in</span><button id="logout" class="ghost hidden">Log out</button></div></div>
 
 <section id="loginView" class="card login">
-<div class="pill" style="display:inline-block">Unified Operations • V6.2</div>
+<div class="pill" style="display:inline-block">Unified Operations • V6.3</div>
 <h1>Welcome back</h1><div class="muted">Use your Telecomax Name + 6-digit PIN. The portal checks your authorized KM and Custody access.</div>
 <label>Name</label><input id="name" autocomplete="username" placeholder="Enter your name">
 <label>6-digit PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="••••••">
