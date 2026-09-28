@@ -29,7 +29,7 @@
 <div id="kmCard" class="card module km"><div class="tag">KM & BENZINE</div><h2>🚗 KM Operations</h2><p class="muted">Trips, KM review, allowances and finance audit.</p><div id="kmLinks" class="links"></div></div>
 <div id="custodyCard" class="card module custody"><div class="tag">CUSTODY</div><h2>💳 Custody Expenses</h2><p class="muted">Expense submission, PM review, Finance review and transfers.</p><div id="custodyLinks" class="links"></div></div>
 </div>
-<p class="muted" style="margin-top:18px">V3 Single Sign-On: log in once here, then authorized KM/Custody pages open using a short-lived signed handoff — no PIN is placed in the URL.</p>
+<p class="muted" style="margin-top:18px">V3.1 Single Sign-On: log in once here, then authorized KM/Custody pages open using a short-lived signed handoff — no PIN is placed in the URL.</p>
 </section>
 </div>
 <script>
@@ -51,7 +51,10 @@ async function centralLogin(name,pin){
   };
 }
 let currentPortalToken='';
-function link(label,url){const u=url+(currentPortalToken?'#sso='+encodeURIComponent(currentPortalToken):'');return `<a href="${u}" target="_blank" rel="noopener">${label} →</a>`}
+function link(label,url){
+ const u=url+(currentPortalToken?'#sso='+encodeURIComponent(currentPortalToken):'');
+ return `<a href="${u}">${label} →</a>`;
+}
 function render(u){
  currentPortalToken=u.portalToken||'';
  $('loginView').classList.add('hidden');$('dash').classList.remove('hidden');$('logout').classList.remove('hidden');
