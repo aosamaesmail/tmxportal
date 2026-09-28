@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Telecomax Operations V4</title>
+<title>Telecomax Operations V5</title>
 <style>
 :root{--bg:#020817;--card:rgba(8,10,15,.80);--line:rgba(255,255,255,.12);--text:#f7f8fa;--muted:#9ca8b8;--pink:#d63391;--purple:#31005f;--blue:#69c8f2;--green:#74d6a0}
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--text);min-height:100vh;background:radial-gradient(circle at 8% 16%,rgba(0,153,204,.17),transparent 34%),radial-gradient(circle at 92% 10%,rgba(65,44,150,.22),transparent 36%),radial-gradient(circle at 74% 88%,rgba(214,51,145,.12),transparent 32%),linear-gradient(145deg,#00111e,#030817 48%,#120719)}
@@ -22,6 +22,18 @@
 .quick.blue button{background:linear-gradient(100deg,#0f709d,#165f86,#244a75)}
 .quick.green button{background:linear-gradient(100deg,#19704a,#17603f,#194c39)}
 @media(max-width:900px){.quickgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.appshell{display:none}
+.appshell.active{display:block}
+.appbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.appbar-left{display:flex;align-items:center;gap:10px;min-width:0}
+.appbar-title{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appbar-actions{display:flex;gap:8px}
+.appframe-wrap{position:relative;height:calc(100vh - 145px);min-height:620px;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:#050914;box-shadow:0 18px 45px rgba(0,0,0,.28)}
+.appframe{width:100%;height:100%;border:0;background:#050914}
+.frame-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#020817;color:white;z-index:2;font-weight:800}
+.frame-loading.hidden{display:none}
+@media(max-width:720px){.appframe-wrap{height:calc(100vh - 125px);min-height:560px;border-radius:16px}.appbar-title{font-size:14px}.appbar .pill{display:none}}
 @media(max-width:720px){.grid,.quickgrid{grid-template-columns:1fr}.top{align-items:flex-start}.brand{font-size:19px}.hero{padding:20px}}
 </style>
 </head>
@@ -29,7 +41,7 @@
 <div class="top"><div class="brand">TELECOMAX <span>OPERATIONS</span></div><div class="actions"><span id="who" class="pill">Not signed in</span><button id="logout" class="ghost hidden">Log out</button></div></div>
 
 <section id="loginView" class="card login">
-<div class="pill" style="display:inline-block">Unified Portal • V4</div>
+<div class="pill" style="display:inline-block">Unified Portal • V5</div>
 <h1>Welcome back</h1><div class="muted">Use your Telecomax Name + 6-digit PIN. The portal checks your authorized KM and Custody access.</div>
 <label>Name</label><input id="name" autocomplete="username" placeholder="Enter your name">
 <label>6-digit PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="••••••">
@@ -51,6 +63,20 @@
   <button class="back" onclick="closeWorkspace()">← Dashboard</button>
  </div>
  <div id="workspaceGrid" class="quickgrid"></div>
+</section>
+
+<section id="appshell" class="appshell">
+ <div class="appbar">
+  <div class="appbar-left">
+   <button class="back" onclick="closeApp()">←</button>
+   <div><div class="muted" style="font-size:11px">TELECOMAX OPERATIONS</div><div id="appTitle" class="appbar-title">Module</div></div>
+  </div>
+  <div class="appbar-actions"><span class="pill">Single Sign-On</span><button class="ghost" onclick="openExternal()">↗</button></div>
+ </div>
+ <div class="appframe-wrap">
+   <div id="frameLoading" class="frame-loading">Opening secure workspace…</div>
+   <iframe id="appFrame" class="appframe" title="Telecomax module"></iframe>
+ </div>
 </section>
 </div>
 <script>
@@ -82,10 +108,22 @@ const moduleUrls={
  custodyPM:'https://custody-orcin.vercel.app/pm.html',
  custodyFinance:'https://custody-orcin.vercel.app/finance.html'
 };
-function go(url){
- location.href=url+(currentPortalToken?'#sso='+encodeURIComponent(currentPortalToken):'');
+let currentModuleUrl='';
+function go(url,title){
+ currentModuleUrl=url+(currentPortalToken?'#sso='+encodeURIComponent(currentPortalToken):'');
+ $('dash').classList.add('hidden'); $('workspace').classList.remove('active'); $('appshell').classList.add('active');
+ $('appTitle').textContent=title||'Telecomax Workspace';
+ $('frameLoading').classList.remove('hidden');
+ const fr=$('appFrame'); fr.onload=()=>{$('frameLoading').classList.add('hidden')}; fr.src=currentModuleUrl;
+ scrollTo(0,0);
 }
-function link(label,url){return `<a href="#" onclick="event.preventDefault();go('${url}')">${label} →</a>`}
+function closeApp(){
+ $('appFrame').src='about:blank'; $('appshell').classList.remove('active');
+ if(window._lastWorkspace) openWorkspace(window._lastWorkspace); else $('dash').classList.remove('hidden');
+}
+function openExternal(){if(currentModuleUrl) window.open(currentModuleUrl,'_blank','noopener')}
+
+function link(label,url){return `<a href="#" onclick="event.preventDefault();go('${url}','${label.replace(/'/g,"&#39;")}')">${label} →</a>`}
 function workspaceLink(label,key){return `<a href="#" onclick="event.preventDefault();openWorkspace('${key}')">${label} →</a>`}
 
 function render(u){
@@ -154,9 +192,10 @@ const workspaceDefinitions={
 };
 function openWorkspace(key){
  const w=workspaceDefinitions[key]; if(!w)return;
+ window._lastWorkspace=key;
  $('dash').classList.add('hidden'); $('workspace').classList.add('active');
  $('workspaceTitle').textContent=w.title;
- $('workspaceGrid').innerHTML=w.items.map(i=>`<div class="card quick ${i[3]||''}"><div class="tag">TELECOMAX</div><h3>${i[0]}</h3><p class="muted">${i[1]}</p><button onclick="go(moduleUrls['${i[2]}'])">Open →</button></div>`).join('');
+ $('workspaceGrid').innerHTML=w.items.map(i=>`<div class="card quick ${i[3]||''}"><div class="tag">TELECOMAX</div><h3>${i[0]}</h3><p class="muted">${i[1]}</p><button onclick="go(moduleUrls['${i[2]}'],'${i[0].replace(/'/g,"&#39;")}')">Open →</button></div>`).join('');
  scrollTo(0,0);
 }
 function closeWorkspace(){ $('workspace').classList.remove('active'); $('dash').classList.remove('hidden'); scrollTo(0,0); }
