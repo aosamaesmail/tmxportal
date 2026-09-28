@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Telecomax Operations</title>
+<style>
+:root{--bg:#020817;--card:rgba(8,10,15,.80);--line:rgba(255,255,255,.12);--text:#f7f8fa;--muted:#9ca8b8;--pink:#d63391;--purple:#31005f;--blue:#69c8f2;--green:#74d6a0}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--text);min-height:100vh;background:radial-gradient(circle at 8% 16%,rgba(0,153,204,.17),transparent 34%),radial-gradient(circle at 92% 10%,rgba(65,44,150,.22),transparent 36%),radial-gradient(circle at 74% 88%,rgba(214,51,145,.12),transparent 32%),linear-gradient(145deg,#00111e,#030817 48%,#120719)}
+.wrap{max-width:1180px;margin:auto;padding:28px 18px 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:24px}.brand{font-size:22px;font-weight:800}.brand span{color:var(--pink)}.pill{padding:8px 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:13px;background:rgba(255,255,255,.03)}
+.card{background:linear-gradient(145deg,rgba(9,11,16,.88),rgba(9,10,15,.70));border:1px solid var(--line);border-radius:24px;box-shadow:0 18px 45px rgba(0,0,0,.28);backdrop-filter:blur(18px)}
+.login{max-width:520px;margin:7vh auto 0;padding:28px}.login h1{margin:0 0 8px;font-size:30px}.muted{color:var(--muted)}label{display:block;margin:18px 0 8px;font-weight:700}input{width:100%;height:56px;border-radius:14px;border:1px solid rgba(255,255,255,.18);background:#2b2b2b;color:white;padding:0 16px;font-size:16px}button{border:0;border-radius:14px;min-height:52px;padding:0 18px;color:white;font-weight:800;cursor:pointer}.primary{width:100%;margin-top:20px;background:linear-gradient(100deg,#b0005b,#750047 45%,#31005f)}.ghost{background:rgba(255,255,255,.07);border:1px solid var(--line)}.hidden{display:none!important}.msg{margin-top:14px;min-height:22px;color:#ff9dbd}.hero{padding:24px;margin-bottom:18px}.hero h1{margin:0 0 6px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.module{padding:22px;min-height:230px;display:flex;flex-direction:column}.module h2{margin:8px 0}.module .tag{font-size:12px;font-weight:800;letter-spacing:.08em}.km .tag{color:var(--pink)}.custody .tag{color:var(--blue)}.links{display:grid;gap:10px;margin-top:auto}.links a{text-decoration:none;color:white;padding:13px 14px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid var(--line)}.links a:hover{border-color:var(--pink)}.disabled{opacity:.38;pointer-events:none}.role{color:var(--green);font-weight:800}.actions{display:flex;gap:10px;align-items:center}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.top{align-items:flex-start}.brand{font-size:19px}.hero{padding:20px}}
+</style>
+</head>
+<body><div class="wrap">
+<div class="top"><div class="brand">TELECOMAX <span>OPERATIONS</span></div><div class="actions"><span id="who" class="pill">Not signed in</span><button id="logout" class="ghost hidden">Log out</button></div></div>
+
+<section id="loginView" class="card login">
+<div class="pill" style="display:inline-block">Unified Portal • V1</div>
+<h1>Welcome back</h1><div class="muted">Use your Telecomax Name + 6-digit PIN. The portal checks your authorized KM and Custody access.</div>
+<label>Name</label><input id="name" autocomplete="username" placeholder="Enter your name">
+<label>6-digit PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="••••••">
+<button id="login" class="primary">Log in</button><div id="msg" class="msg"></div>
+</section>
+
+<section id="dash" class="hidden">
+<div class="card hero"><div class="muted">TELECOMAX OPERATIONS</div><h1 id="hello">Dashboard</h1><div>Role: <span id="role" class="role">—</span> · Access is built from the permissions verified by the existing KM and Custody backends.</div></div>
+<div class="grid">
+<div id="kmCard" class="card module km"><div class="tag">KM & BENZINE</div><h2>🚗 KM Operations</h2><p class="muted">Trips, KM review, allowances and finance audit.</p><div id="kmLinks" class="links"></div></div>
+<div id="custodyCard" class="card module custody"><div class="tag">CUSTODY</div><h2>💳 Custody Expenses</h2><p class="muted">Expense submission, PM review, Finance review and transfers.</p><div id="custodyLinks" class="links"></div></div>
+</div>
+<p class="muted" style="margin-top:18px">V1 safely leaves both production systems and Google Sheets unchanged. Module SSO is the next integration step; until then, opening an existing module may ask you to authenticate there again.</p>
+</section>
+</div>
+<script>
+const KM_API='https://script.google.com/macros/s/AKfycbyPpI27VQqpIrZHn8mizmONCLHEbp_aJj_wnan6nyYh-0R2bNW_C7qbYuAHQvRgwS5_fg/exec';
+const CUSTODY_API='https://script.google.com/macros/s/AKfycbxE2_an7yy_3pfaG_rShM_gBc0QTLeTN7pvn6bJ-BWPFei2Wst4N9XKiVg0dQZNHZhA/exec';
+const $=id=>document.getElementById(id);
+async function post(url,payload){const r=await fetch(url,{method:'POST',body:JSON.stringify(payload)});return JSON.parse(await r.text())}
+async function custody(action,data){return post(CUSTODY_API,{action,data})}
+async function tryMgmt(name,pin){
+ for(const role of ['Admin','PM','Finance']){
+  try{
+   const c=await custody(role==='Admin'?'adminLogin':role==='PM'?'pmLogin':'financeLogin',{name,pin});
+   if(c.ok){
+    let k=null;
+    try{k=await post(KM_API,{action:'managementLogin',name,pin,portalRole:role==='PM'?'Admin':role})}catch(e){}
+    return {kind:'management',name:c.name||name,role:c.role||role,custody:true,km:!!(k&&k.ok)};
+   }
+  }catch(e){}
+ }
+ return null;
+}
+async function tryEngineer(name,pin){
+ let c=null,k=null;
+ try{c=await custody('login',{name,pin})}catch(e){}
+ try{k=await post(KM_API,{action:'engineerLogin',engineer:name,pin})}catch(e){}
+ if((c&&c.ok)||(k&&k.ok)) return {kind:'engineer',name:(c&&c.name)||(k&&k.engineer)||name,role:'Engineer',custody:!!(c&&c.ok),km:!!(k&&k.ok)};
+ return null;
+}
+function link(label,url){return `<a href="${url}" target="_blank" rel="noopener">${label} →</a>`}
+function render(u){
+ $('loginView').classList.add('hidden');$('dash').classList.remove('hidden');$('logout').classList.remove('hidden');
+ $('who').textContent=u.name;$('hello').textContent='Hello, '+u.name;$('role').textContent=u.role;
+ let km='',cu='';
+ if(u.km){
+  if(u.kind==='engineer') km+=link('KM Engineer App','https://telecomaxkm.vercel.app/');
+  else if(u.role==='Finance') km+=link('KM Finance Audit','https://telecomaxkm.vercel.app/finance.html');
+  else {km+=link('KM Management','https://telecomaxkm.vercel.app/admin.html');km+=link('Allowance Audit','https://telecomaxkm.vercel.app/allowances.html')}
+ } else $('kmCard').classList.add('disabled');
+ if(u.custody){
+  if(u.kind==='engineer') cu+=link('Custody Engineer App','https://custody-orcin.vercel.app/');
+  else if(u.role==='Finance') cu+=link('Custody Finance','https://custody-orcin.vercel.app/finance.html');
+  else if(u.role==='PM') cu+=link('Custody PM','https://custody-orcin.vercel.app/pm.html');
+  else {cu+=link('Custody Admin','https://custody-orcin.vercel.app/');cu+=link('Custody PM','https://custody-orcin.vercel.app/pm.html');cu+=link('Custody Finance','https://custody-orcin.vercel.app/finance.html')}
+ } else $('custodyCard').classList.add('disabled');
+ $('kmLinks').innerHTML=km;$('custodyLinks').innerHTML=cu;
+ sessionStorage.setItem('tmx_portal_user',JSON.stringify(u));
+}
+$('login').onclick=async()=>{
+ const name=$('name').value.trim(),pin=$('pin').value.trim();$('msg').textContent='';
+ if(!name||!/^\d{6}$/.test(pin)){ $('msg').textContent='Enter your name and 6-digit PIN.';return}
+ $('login').disabled=true;$('login').textContent='Checking access…';
+ try{
+  let u=await tryMgmt(name,pin); if(!u) u=await tryEngineer(name,pin);
+  if(!u){$('msg').textContent='Wrong name/PIN or no active KM/Custody access.';return}
+  render(u);
+ }catch(e){$('msg').textContent='Connection problem. Please try again.'}
+ finally{$('login').disabled=false;$('login').textContent='Log in'}
+};
+$('pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('login').click()});
+$('logout').onclick=()=>{sessionStorage.removeItem('tmx_portal_user');location.reload()};
+try{const u=JSON.parse(sessionStorage.getItem('tmx_portal_user')||'null');if(u)render(u)}catch(e){}
+</script></body></html>
