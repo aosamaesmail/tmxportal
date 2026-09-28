@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Telecomax Operations V6.1</title>
+<title>Telecomax Operations V6.1.1</title>
 <style>
 :root{--bg:#020817;--card:rgba(8,10,15,.80);--line:rgba(255,255,255,.12);--text:#f7f8fa;--muted:#9ca8b8;--pink:#d63391;--purple:#31005f;--blue:#69c8f2;--green:#74d6a0}
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--text);min-height:100vh;background:radial-gradient(circle at 8% 16%,rgba(0,153,204,.17),transparent 34%),radial-gradient(circle at 92% 10%,rgba(65,44,150,.22),transparent 36%),radial-gradient(circle at 74% 88%,rgba(214,51,145,.12),transparent 32%),linear-gradient(145deg,#00111e,#030817 48%,#120719)}
@@ -57,7 +57,7 @@
 <div class="top"><div class="brand">TELECOMAX <span>OPERATIONS</span></div><div class="actions"><span id="who" class="pill">Not signed in</span><button id="logout" class="ghost hidden">Log out</button></div></div>
 
 <section id="loginView" class="card login">
-<div class="pill" style="display:inline-block">Unified Operations • V6.1</div>
+<div class="pill" style="display:inline-block">Unified Operations • V6.1.1</div>
 <h1>Welcome back</h1><div class="muted">Use your Telecomax Name + 6-digit PIN. The portal checks your authorized KM and Custody access.</div>
 <label>Name</label><input id="name" autocomplete="username" placeholder="Enter your name">
 <label>6-digit PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="••••••">
@@ -130,7 +130,7 @@ function renderLiveKpis(){
  const el=document.getElementById('liveKpis');if(!el)return;
  if(liveDashboard.loading){el.innerHTML='<div class="muted">Loading live KM + Custody data…</div>';return;}
  if(liveDashboard.error){el.innerHTML=`<div class="msg err">${liveDashboard.error}</div>`;return;}
- const k=liveDashboard.km||{},c=liveDashboard.custody||{},role=String(document.getElementById('role')?.textContent||'');
+ const k=liveDashboard.km||{},c=liveDashboard.custody||{},role=String(currentPortalUser?.role||'');
  let h='';
  if(role==='Admin'||role==='PM'){
    h+=liveCard('KM Photo Audit',k.pmAuditPending??'—','Pending PM audit',moduleUrls.kmPhotoAudit);
@@ -164,6 +164,7 @@ async function centralLogin(name,pin){
   };
 }
 let currentPortalToken='';
+let currentPortalUser=null;
 const moduleUrls={
  kmEngineerStart:'https://telecomaxkm.vercel.app/?view=start',
  kmEngineerHistory:'https://telecomaxkm.vercel.app/?view=history',
@@ -200,14 +201,16 @@ function link(label,url){return `<a href="#" onclick="event.preventDefault();go(
 function workspaceLink(label,key){return `<a href="#" onclick="event.preventDefault();openWorkspace('${key}')">${label} →</a>`}
 
 function render(u){
+ currentPortalUser=u;
  currentPortalToken=u.portalToken||'';
+ liveDashboard={km:null,custody:null,loading:false,error:''};
  $('loginView').classList.add('hidden');$('dash').classList.remove('hidden');$('logout').classList.remove('hidden');
  $('who').textContent=u.name;$('hello').textContent='Hello, '+u.name;$('role').textContent=u.role;
  let km='',cu='';
  if(u.km){
   if(u.kind==='engineer') km+=workspaceLink('Open KM Workspace','kmEngineer');
   else if(u.role==='Finance') km+=workspaceLink('Open Finance Workspace','kmFinance');
-  else {km+=workspaceLink('Open KM Management','kmManagement');km+=link('Allowance Audit',moduleUrls.kmAllowance)}
+  else {km+=workspaceLink('Open KM Management','kmManagement')}
  } else $('kmCard').classList.add('disabled');
  if(u.custody){
   if(u.kind==='engineer') cu+=workspaceLink('Open Custody Workspace','custodyEngineer');
@@ -217,6 +220,11 @@ function render(u){
  } else $('custodyCard').classList.add('disabled');
  $('kmLinks').innerHTML=km;$('custodyLinks').innerHTML=cu;
  sessionStorage.setItem('tmx_portal_user',JSON.stringify(u));
+
+ // V6.1.1: load live summaries only after the authenticated dashboard is fully rendered.
+ const liveEl=$('liveKpis');
+ if(liveEl) liveEl.innerHTML='<div class="muted">Loading live KM + Custody data…</div>';
+ setTimeout(()=>loadLiveDashboard(),0);
 }
 $('login').onclick=async()=>{
  const name=$('name').value.trim(),pin=$('pin').value.trim();$('msg').textContent='';
@@ -274,6 +282,7 @@ function openWorkspace(key){
 }
 function closeWorkspace(){ $('workspace').classList.remove('active'); $('dash').classList.remove('hidden'); scrollTo(0,0); }
 
-$('logout').onclick=()=>{sessionStorage.removeItem('tmx_portal_user');location.reload()};
+$('logout').onclick=()=>{currentPortalUser=null;currentPortalToken='';liveDashboard={km:null,custody:null,loading:false,error:''};
+ sessionStorage.removeItem('tmx_portal_user');location.reload()};
 try{const u=JSON.parse(sessionStorage.getItem('tmx_portal_user')||'null');if(u)render(u)}catch(e){}
 </script></body></html>
