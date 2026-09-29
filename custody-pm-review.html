@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Telecomax Operations — Custody PM Receipt Review V7.3.4</title>
+<title>Telecomax Operations — Custody PM Receipt Review V7.3.5</title>
 <style>
 *{box-sizing:border-box}
 :root{--navy:#111827;--blue:#1a73e8;--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--border:#d1d5db;--green:#047857;--red:#b91c1c;--amber:#b45309;--radius:12px}
@@ -576,7 +576,7 @@ table td,.table td{border-color:#e6e6eb!important}
     /* Receipt evidence should be large on desktop */
     .receipt-img,.receipt-image,img.receipt{max-height:650px!important;object-fit:contain!important}
     /* Native page marker */
-    body::before{content:'TELECOMAX  •  Custody PM Receipt Review  •  V7.3.4';display:block;position:sticky;top:0;z-index:999;padding:10px 16px;background:#081321;border-bottom:1px solid #29394e;color:#f7f9fd;font-size:13px;font-weight:900;letter-spacing:.02em}
+    body::before{content:'TELECOMAX  •  Custody PM Receipt Review  •  V7.3.5';display:block;position:sticky;top:0;z-index:999;padding:10px 16px;background:#081321;border-bottom:1px solid #29394e;color:#f7f9fd;font-size:13px;font-weight:900;letter-spacing:.02em}
     @media(max-width:700px){
       body::before{padding:8px 10px;font-size:11px}
       .card,.panel,.feed-card{border-radius:12px!important}
@@ -743,7 +743,7 @@ button:hover,.secondary:hover{background:#17283d!important}
 </style>
 
 <style id="telecomaxLightAuditWorkspaceV733">
-/* V7.3.4 — Light Audit Workspace test */
+/* V7.3.5 — Light Audit Workspace test */
 :root{
   --la-bg:#F4F6F8;
   --la-panel:#FFFFFF;
@@ -1005,6 +1005,60 @@ button:hover,.secondary:hover{background:#F1F5F9!important}
   background:#E9EEF3!important;
   color:#526173!important;
   border-color:#D3DBE4!important;
+}
+</style>
+
+<style id="telecomaxAuditV735LightCards">
+/* V7.3.5 — extend the light audit workspace to receipt cards */
+#feed>.feed-card,.feed-card,.expense-card,.review-card{
+  background:#FFFFFF!important;
+  color:#1E293B!important;
+  border:1px solid #D8DEE6!important;
+  box-shadow:0 2px 8px rgba(15,23,42,.07)!important;
+}
+#feed>.feed-card:hover,.feed-card:hover{
+  border-color:#C4CDD8!important;
+  box-shadow:0 4px 12px rgba(15,23,42,.10)!important;
+}
+#feed>.feed-card h1,#feed>.feed-card h2,#feed>.feed-card h3,
+.feed-card h1,.feed-card h2,.feed-card h3,
+.feed-card strong,.feed-card b,.expense-card strong,.expense-card b{
+  color:#1E293B!important;
+}
+#feed>.feed-card label,#feed>.feed-card small,#feed>.feed-card .muted,
+.feed-card label,.feed-card small,.feed-card .muted,
+.expense-card label,.expense-card small,.expense-card .muted{
+  color:#64748B!important;
+}
+#feed .feed-card .field,#feed .feed-card td,
+.feed-card hr,.expense-card hr,.divider{
+  border-color:#D8DEE6!important;
+}
+.feed-card button:not(.primary),.expense-card button:not(.primary){
+  background:#F8FAFC!important;
+  color:#1E293B!important;
+  border-color:#CBD5E1!important;
+}
+.feed-card input,.feed-card select,.feed-card textarea,
+.expense-card input,.expense-card select,.expense-card textarea{
+  background:#F8FAFC!important;
+  color:#1E293B!important;
+  border-color:#CBD5E1!important;
+}
+
+/* Keep receipt itself visually framed */
+.receipt-img,.receipt-image,img.receipt,#feed img{
+  background:#F8FAFC!important;
+  border-color:#CBD5E1!important;
+}
+
+/* Larger + bold KPI titles */
+.summary-grid>* small,.summary-grid>* label,
+.summary .card small,.stat small,.stat-card small,.kpi small,.kpi-card small{
+  font-size:15px!important;
+  line-height:1.2!important;
+  font-weight:800!important;
+  color:#334155!important;
 }
 </style>
 </head>
