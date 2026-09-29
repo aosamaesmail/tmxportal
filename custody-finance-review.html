@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Telecomax Operations — Custody Finance Receipt Review V7.3.2</title>
+<title>Telecomax Operations — Custody Finance Receipt Review V7.3.3</title>
 <style>
 *{box-sizing:border-box}
 :root{--navy:#111827;--blue:#1a73e8;--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--border:#d1d5db;--green:#047857;--red:#b91c1c;--amber:#b45309;--radius:12px}
@@ -524,7 +524,7 @@ table td,.table td{border-color:#e6e6eb!important}
     /* Receipt evidence should be large on desktop */
     .receipt-img,.receipt-image,img.receipt{max-height:650px!important;object-fit:contain!important}
     /* Native page marker */
-    body::before{content:'TELECOMAX  •  Custody Finance Receipt Review  •  V7.3.2';display:block;position:sticky;top:0;z-index:999;padding:10px 16px;background:#081321;border-bottom:1px solid #29394e;color:#f7f9fd;font-size:13px;font-weight:900;letter-spacing:.02em}
+    body::before{content:'TELECOMAX  •  Custody Finance Receipt Review  •  V7.3.3';display:block;position:sticky;top:0;z-index:999;padding:10px 16px;background:#081321;border-bottom:1px solid #29394e;color:#f7f9fd;font-size:13px;font-weight:900;letter-spacing:.02em}
     @media(max-width:700px){
       body::before{padding:8px 10px;font-size:11px}
       .card,.panel,.feed-card{border-radius:12px!important}
@@ -686,6 +686,216 @@ button:hover,.secondary:hover{background:#17283d!important}
   #feed>.feed-card,.feed-card,.expense-card{font-size:14px!important;line-height:1.35!important}
   .summary-grid>*,.stat,.stat-card,.kpi,.kpi-card{padding:12px!important}
   .summary-grid>* strong,.stat strong,.stat-card strong,.kpi strong,.kpi-card strong{font-size:20px!important}
+  .filters,.filter-card,.filter-panel{padding:10px!important}
+}
+</style>
+
+<style id="telecomaxLightAuditWorkspaceV733">
+/* V7.3.3 — Light Audit Workspace test */
+:root{
+  --la-bg:#F4F6F8;
+  --la-panel:#FFFFFF;
+  --la-card:#1E293B;
+  --la-card2:#263548;
+  --la-dark-text:#F8FAFC;
+  --la-dark-muted:#CBD5E1;
+  --la-text:#1E293B;
+  --la-muted:#64748B;
+  --la-border:#D8DEE6;
+  --la-magenta:#EC008C;
+  --la-green:#2F9E67;
+  --la-amber:#B7791F;
+  --la-red:#C84B55;
+  --la-orange:#C26D2D;
+}
+html,body{
+  background:var(--la-bg)!important;
+  color:var(--la-text)!important;
+}
+body{background:var(--la-bg)!important}
+
+/* Main application chrome */
+.topbar,header,.header{
+  background:#FFFFFF!important;
+  color:var(--la-text)!important;
+  border-color:var(--la-border)!important;
+  box-shadow:0 1px 3px rgba(15,23,42,.06)!important;
+}
+.topbar h1,header h1,.header h1,.topbar #who,header #who{
+  color:var(--la-text)!important;
+}
+.topbar .muted,header .muted{color:var(--la-muted)!important}
+
+/* Review tab */
+.tabs,.tabbar{background:transparent!important}
+.tab,.tabs button,[role="tab"],#tabReview{
+  background:#FFFFFF!important;
+  color:var(--la-muted)!important;
+  border:1px solid var(--la-border)!important;
+}
+.tab.active,.tabs button.active,[role="tab"].active,#tabReview.active{
+  background:#FFFFFF!important;
+  color:var(--la-text)!important;
+  border-color:var(--la-border)!important;
+  border-bottom:3px solid var(--la-magenta)!important;
+}
+
+/* KPI cards — light and calm */
+.summary-grid>*,.summary .card,.stat,.stat-card,.kpi,.kpi-card{
+  background:#FFFFFF!important;
+  border:1px solid var(--la-border)!important;
+  box-shadow:0 2px 7px rgba(15,23,42,.055)!important;
+  color:var(--la-text)!important;
+}
+.summary-grid>* small,.summary-grid>* label,
+.summary .card small,.stat small,.stat-card small,.kpi small,.kpi-card small{
+  color:var(--la-muted)!important;
+}
+.summary-grid>* strong,.summary-grid>* b,
+.summary .card strong,.stat strong,.stat-card strong,.kpi strong,.kpi-card strong{
+  color:var(--la-text)!important;
+}
+#sPending{color:var(--la-amber)!important}
+#sApproved{color:var(--la-green)!important}
+#sRejected{color:var(--la-red)!important}
+#sClarification{color:var(--la-orange)!important}
+
+/* Filter workspace — light */
+.filters,.filter-card,.filter-panel{
+  background:#FFFFFF!important;
+  border:1px solid var(--la-border)!important;
+  box-shadow:0 2px 7px rgba(15,23,42,.04)!important;
+}
+.filters label,.filter-card label,.filter-panel label{
+  color:var(--la-text)!important;
+}
+input,select,textarea,.search-select input{
+  background:#F8FAFC!important;
+  color:var(--la-text)!important;
+  border-color:#CBD5E1!important;
+  box-shadow:none!important;
+}
+input::placeholder,textarea::placeholder{color:#94A3B8!important}
+.search-menu,.dropdown-menu{
+  background:#FFFFFF!important;
+  color:var(--la-text)!important;
+  border-color:var(--la-border)!important;
+  box-shadow:0 8px 24px rgba(15,23,42,.12)!important;
+}
+.search-clear{
+  background:#E9EEF3!important;
+  color:#526173!important;
+  border-color:#D3DBE4!important;
+}
+
+/* Expense / receipt cards — deliberate dark islands */
+#feed>.feed-card,.feed-card,.expense-card,.review-card{
+  background:var(--la-card)!important;
+  color:var(--la-dark-text)!important;
+  border:1px solid #334155!important;
+  box-shadow:0 4px 12px rgba(15,23,42,.12)!important;
+}
+#feed>.feed-card:hover,.feed-card:hover{
+  border-color:#475569!important;
+  box-shadow:0 6px 16px rgba(15,23,42,.16)!important;
+}
+#feed>.feed-card h1,#feed>.feed-card h2,#feed>.feed-card h3,
+.feed-card h1,.feed-card h2,.feed-card h3,
+.feed-card strong,.feed-card b,.expense-card strong,.expense-card b{
+  color:var(--la-dark-text)!important;
+}
+#feed>.feed-card label,#feed>.feed-card small,#feed>.feed-card .muted,
+.feed-card label,.feed-card small,.feed-card .muted,
+.expense-card label,.expense-card small,.expense-card .muted{
+  color:var(--la-dark-muted)!important;
+}
+.feed-card td,.feed-card .field,.expense-card td,.expense-card .field,
+.feed-card hr,.expense-card hr,.divider{
+  border-color:#475569!important;
+}
+
+/* Semantic status is localized, not full-card color */
+.s-pending{background:rgba(245,183,72,.16)!important;color:#F4C56A!important;border-color:rgba(245,183,72,.38)!important}
+.s-approved{background:rgba(72,187,120,.16)!important;color:#78D7A1!important;border-color:rgba(72,187,120,.38)!important}
+.s-rejected{background:rgba(229,98,107,.16)!important;color:#F08A91!important;border-color:rgba(229,98,107,.38)!important}
+.s-clarification{background:rgba(221,135,68,.16)!important;color:#ECA46E!important;border-color:rgba(221,135,68,.38)!important}
+
+/* Receipt evidence */
+.receipt-img,.receipt-image,img.receipt,#feed img{
+  background:#0B1220!important;
+  border-color:#64748B!important;
+  box-shadow:none!important;
+}
+
+/* Controls outside dark cards */
+button,.secondary{
+  background:#FFFFFF!important;
+  color:var(--la-text)!important;
+  border-color:#CBD5E1!important;
+  box-shadow:none!important;
+}
+button:hover,.secondary:hover{background:#F1F5F9!important}
+.primary{
+  background:var(--la-magenta)!important;
+  color:#FFFFFF!important;
+  border-color:var(--la-magenta)!important;
+}
+
+/* Controls inside dark audit cards */
+.feed-card button:not(.primary),.expense-card button:not(.primary){
+  background:#334155!important;
+  color:#F8FAFC!important;
+  border-color:#475569!important;
+}
+.feed-card button:not(.primary):hover,.expense-card button:not(.primary):hover{
+  background:#3E5068!important;
+}
+.feed-card textarea,.expense-card textarea,
+.feed-card input,.expense-card input,
+.feed-card select,.expense-card select{
+  background:#263548!important;
+  color:#F8FAFC!important;
+  border-color:#475569!important;
+}
+.feed-card input::placeholder,.feed-card textarea::placeholder,
+.expense-card input::placeholder,.expense-card textarea::placeholder{
+  color:#94A3B8!important;
+}
+.danger,.reject{
+  background:rgba(200,75,85,.13)!important;
+  color:#D95F68!important;
+  border-color:rgba(200,75,85,.4)!important;
+}
+
+/* Empty/loading surfaces should stay light */
+.review-empty,.empty,.loading-card{
+  background:#FFFFFF!important;
+  color:var(--la-muted)!important;
+  border-color:var(--la-border)!important;
+}
+
+/* Login view remains aligned with light workspace */
+#loginView .card{
+  background:#FFFFFF!important;
+  color:var(--la-text)!important;
+  border-color:var(--la-border)!important;
+}
+#loginView label,#loginView .muted{color:var(--la-muted)!important}
+
+@media(min-width:901px){
+  #feed{gap:16px!important}
+  #feed>.feed-card{padding:15px!important}
+  .receipt-img,.receipt-image,img.receipt{max-height:650px!important}
+}
+@media(max-width:700px){
+  #feed>.feed-card,.feed-card,.expense-card{
+    font-size:14px!important;
+    line-height:1.38!important;
+  }
+  .summary-grid>*,.stat,.stat-card,.kpi,.kpi-card{padding:12px!important}
+  .summary-grid>* strong,.stat strong,.stat-card strong,.kpi strong,.kpi-card strong{
+    font-size:20px!important;
+  }
   .filters,.filter-card,.filter-panel{padding:10px!important}
 }
 </style>
