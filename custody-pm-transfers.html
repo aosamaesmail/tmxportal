@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Telecomax Operations — Custody PM Transfers V7.4</title>
+<title>Telecomax Operations — Custody PM Transfers V7.4.1</title>
 <style>
 *{box-sizing:border-box}
 :root{--navy:#111827;--blue:#1a73e8;--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--border:#d1d5db;--green:#047857;--red:#b91c1c;--amber:#b45309;--radius:12px}
@@ -1072,6 +1072,50 @@ body::before{display:none!important;content:none!important}
 @media(max-width:700px){
   .transfer-filter-row{gap:8px!important}
   #transferEngineerTable,#transferHistoryTable{font-size:12px!important}
+}
+</style>
+
+<style id="telecomaxTransfersV741ThemeCorrection">
+/* Transfers filter/header workspace now follows the approved V7.3.5 light audit theme */
+#transferTab > .card:first-child,
+#transferTab .card:first-child{
+  background:#F4F6F8!important;
+  color:#1E293B!important;
+  border:1px solid #D8DEE6!important;
+  box-shadow:0 2px 7px rgba(15,23,42,.05)!important;
+}
+#transferTab > .card:first-child h1,
+#transferTab > .card:first-child h2,
+#transferTab .card:first-child h1,
+#transferTab .card:first-child h2{
+  color:#1E293B!important;
+}
+#transferTab > .card:first-child .muted,
+#transferTab > .card:first-child label,
+#transferTab > .card:first-child small,
+#transferTab .card:first-child .muted,
+#transferTab .card:first-child label,
+#transferTab .card:first-child small{
+  color:#64748B!important;
+}
+#transferTab > .card:first-child input,
+#transferTab > .card:first-child select,
+#transferTab .card:first-child input,
+#transferTab .card:first-child select{
+  background:#FFFFFF!important;
+  color:#1E293B!important;
+  border-color:#CBD5E1!important;
+}
+#transferTab > .card:first-child .transfer-total,
+#transferTab .card:first-child .transfer-total{
+  color:#1E293B!important;
+  font-weight:900!important;
+}
+#transferTab > .card:first-child button,
+#transferTab .card:first-child button{
+  background:#FFFFFF!important;
+  color:#1E293B!important;
+  border-color:#CBD5E1!important;
 }
 </style>
 </head>
