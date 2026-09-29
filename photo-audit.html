@@ -40,6 +40,285 @@ body{background:radial-gradient(circle at 12% 0%,#11152b 0,#050b14 38%);color:va
 @keyframes v7spin{to{transform:rotate(360deg)}}.v7-sso b{display:block;font-size:19px}.v7-sso span{display:block;color:#8f9bad;margin-top:6px;font-size:12px}
 @media(max-width:900px){.wrap{padding:12px}.top{padding:0 14px}.brand{font-size:17px}.brand small{font-size:11px}.photos{padding:12px;gap:12px}.frame{height:300px}}
 </style>
+
+<style id="v71AuditRefinement">
+/* =========================================================
+   V7.1 PHOTO AUDIT — DENSITY + READABILITY REFINEMENT
+   Logic is intentionally untouched.
+   ========================================================= */
+
+/* Overall readability */
+body{
+  font-size:14px;
+  line-height:1.42;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.wrap{max-width:1680px;padding:14px 18px 92px}
+.brand{font-weight:900;letter-spacing:.2px}
+.brand small{font-weight:650;color:#b4bfd0}
+label,.cell b,.metric b{
+  color:#aeb9ca!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  letter-spacing:.035em;
+}
+.cell span,.metric span{
+  color:#f7f9fc!important;
+  font-weight:700;
+}
+
+/* Compact filters / controls */
+.filters{gap:8px!important;margin-bottom:10px!important}
+.input,select,.btn{
+  min-height:36px;
+  padding:8px 11px;
+  font-size:13px;
+  border-radius:10px;
+}
+.btn{font-weight:800}
+
+/* One trip = one clearly separated audit card */
+.audit{
+  border:1px solid #26364b!important;
+  border-radius:16px!important;
+  overflow:hidden;
+  margin-bottom:12px!important;
+  background:#091321!important;
+}
+.summary{
+  border-bottom:1px solid #26364b!important;
+  background:#0c1726!important;
+}
+.grid{gap:0!important}
+.cell{
+  padding:10px 12px!important;
+  min-height:58px!important;
+  border-color:#223044!important;
+}
+.cell span{font-size:14px!important}
+
+/* Compact metrics. Start/Finish KM are visually suppressed here because
+   the odometer values remain directly above their respective photos. */
+.metrics{
+  padding:9px 12px!important;
+  gap:6px!important;
+  background:#0a1422!important;
+  border-color:#223044!important;
+}
+.metric{
+  min-height:52px!important;
+  padding:7px 8px!important;
+}
+.metric span{font-size:14px!important}
+.metric:nth-child(1),
+.metric:nth-child(2){display:none!important}
+
+/* Stronger amount emphasis without making the block taller */
+.metric:last-child span{
+  color:#7ee0ad!important;
+  font-size:15px!important;
+  font-weight:900!important;
+}
+
+/* Status/action row */
+.actions{
+  padding:9px 12px!important;
+  gap:8px!important;
+  align-items:center!important;
+  min-height:50px;
+  background:#091321!important;
+}
+.actions .btn{
+  min-height:35px!important;
+  padding:7px 12px!important;
+}
+.actions strong,.actions b{font-weight:850!important;color:#f7f9fc!important}
+
+/* Make raw PM / Finance text read like badges when wrapped by existing spans */
+.actions span{
+  font-weight:750;
+  color:#d8e0eb;
+}
+
+/* Photo evidence: keep KM visually attached to each photo */
+.photos{
+  gap:14px!important;
+  padding:12px!important;
+  background:#07111d!important;
+}
+.photo h3,.photo-title{
+  margin:0 0 8px!important;
+  font-size:14px!important;
+  font-weight:900!important;
+  color:#f8faff!important;
+}
+.photo-km{
+  display:inline-flex!important;
+  align-items:center;
+  min-height:30px;
+  padding:4px 9px!important;
+  margin-left:7px;
+  font-size:14px!important;
+  font-weight:900!important;
+  color:#fff!important;
+  border-color:#33465f!important;
+  background:#101d2e!important;
+}
+.frame{
+  height:360px!important;
+  border-radius:12px!important;
+  overflow:hidden;
+  background:#03070d!important;
+}
+.frame img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+}
+.gps{
+  margin-top:5px!important;
+  font-size:10.5px!important;
+  line-height:1.25;
+  color:#7f91a9!important;
+}
+
+/* Slimmer sticky audit bar */
+.bulkbar{
+  min-height:58px!important;
+  padding:8px 12px!important;
+  border-radius:13px!important;
+  border:1px solid #29394f!important;
+  background:rgba(9,19,33,.96)!important;
+  backdrop-filter:blur(12px);
+  box-shadow:0 -8px 26px rgba(0,0,0,.28)!important;
+}
+.bulkbar .btn{
+  min-height:38px!important;
+  padding:8px 13px!important;
+}
+.bulkbar .muted{font-size:11px!important}
+
+/* Desktop: dense enough to review one trip comfortably */
+@media(min-width:901px){
+  .grid{
+    grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  }
+  .metrics{
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  }
+  .photos{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .frame{height:330px!important}
+}
+
+/* Mobile: readable 2-column metadata, compact metrics, photos still evidence-first */
+@media(max-width:900px){
+  body{font-size:14px}
+  .top{height:58px!important}
+  .wrap{padding:10px 10px 88px!important}
+  .brand{font-size:17px!important}
+  .brand small{font-size:10.5px!important}
+
+  .audit{border-radius:15px!important;margin-bottom:10px!important}
+  .grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .cell{
+    min-height:72px!important;
+    padding:10px 12px!important;
+  }
+  .cell b{
+    font-size:10px!important;
+    margin-bottom:5px!important;
+  }
+  .cell span{
+    font-size:15px!important;
+    line-height:1.25!important;
+  }
+
+  /* Five audit metrics: Trip / F&B / Total / Rate / Amount */
+  .metrics{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    padding:8px!important;
+    gap:4px!important;
+  }
+  .metric{
+    min-height:65px!important;
+    padding:8px 7px!important;
+  }
+  .metric b{font-size:10px!important}
+  .metric span{font-size:15px!important}
+  .metric:last-child{
+    grid-column:1 / -1;
+    min-height:58px!important;
+    border-top:1px solid #1e2d40;
+  }
+  .metric:last-child span{font-size:17px!important}
+
+  .actions{
+    padding:9px 10px!important;
+    gap:7px!important;
+    flex-wrap:wrap!important;
+  }
+  .actions .btn{
+    min-height:39px!important;
+    padding:8px 13px!important;
+    font-size:13px!important;
+  }
+
+  .photos{
+    grid-template-columns:1fr!important;
+    gap:12px!important;
+    padding:11px 10px 12px!important;
+  }
+  .photo h3,.photo-title{
+    font-size:16px!important;
+    margin-bottom:8px!important;
+  }
+  .photo-km{
+    font-size:16px!important;
+    min-height:34px;
+    padding:4px 10px!important;
+  }
+  .frame{
+    height:min(52vh,390px)!important;
+    min-height:260px;
+  }
+  .gps{
+    text-align:center;
+    font-size:10px!important;
+    margin-top:5px!important;
+  }
+
+  .bulkbar{
+    left:10px!important;
+    right:10px!important;
+    bottom:8px!important;
+    min-height:auto!important;
+    padding:7px 8px!important;
+    gap:6px!important;
+    border-radius:14px!important;
+  }
+  .bulkbar .btn{
+    min-height:39px!important;
+    padding:8px 10px!important;
+    font-size:12px!important;
+  }
+  .bulkbar .muted{font-size:10px!important}
+}
+
+/* Narrow phones: don't let buttons or text crush each other */
+@media(max-width:430px){
+  .cell{min-height:76px!important}
+  .actions .btn{flex:0 0 auto}
+  .bulkbar{flex-wrap:wrap!important;justify-content:flex-end!important}
+  .bulkbar .muted{margin-right:auto!important}
+  .frame{height:330px!important}
+}
+</style>
+
 </head><body>
 
 <div id="loginBuffer" class="login-buffer-overlay" aria-hidden="true">
