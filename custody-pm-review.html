@@ -1,42 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style id="tmxPmSilentBootV821">
-html.tmx-auth-resolving [id*="login" i],
-html.tmx-auth-resolving [class*="login" i]{display:none!important}
-</style>
-<script id="tmxPmSilentBootV821">
-(function(){
-  function hasStoredAuth(){
-    const stores=[sessionStorage,localStorage];
-    const hints=/token|session|auth|portal|management|pm/i;
-    for(const s of stores){
-      for(let i=0;i<s.length;i++){
-        const k=s.key(i)||'',v=s.getItem(k)||'';
-        if(hints.test(k) && v && v!=='null' && v!=='undefined') return true;
-      }
-    }
-    return false;
-  }
-  const sso=/(?:^|[&#])sso=/.test(location.hash);
-  if(sso || hasStoredAuth()) document.documentElement.classList.add('tmx-auth-resolving');
-
-  // Remove the gate only when the application itself has reached a stable state.
-  // Successful SSO/session restoration normally makes the dashboard/app visible first.
-  const releaseIfAppReady=()=>{
-    const selectors=['#dash','#dashboard','#app','#main','.dashboard','.app-shell','.main-content'];
-    const ready=selectors.some(sel=>{
-      const el=document.querySelector(sel);
-      if(!el) return false;
-      const cs=getComputedStyle(el);
-      return cs.display!=='none' && cs.visibility!=='hidden';
-    });
-    if(ready) document.documentElement.classList.remove('tmx-auth-resolving');
-  };
-  new MutationObserver(releaseIfAppReady).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['style','class']});
-  window.addEventListener('load',releaseIfAppReady);
-})();
-</script>
 <script id="tmxRouteGuardV82">
 (function(){
  const ALLOWED=["PM"], NEED_KM=false, NEED_CUSTODY=true;
