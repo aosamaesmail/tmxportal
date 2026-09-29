@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Telecomax Operations — Custody Finance Transfers V7.4.2</title>
+<title>Telecomax Operations — Custody Transfers V7.10</title>
 <style>
 *{box-sizing:border-box}
 :root{--navy:#111827;--blue:#1a73e8;--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--border:#d1d5db;--green:#047857;--red:#b91c1c;--amber:#b45309;--radius:12px}
@@ -1148,7 +1148,24 @@ body::before{display:none!important;content:none!important}
   color:#64748B!important;
 }
 </style>
-</head>
+<style id="transferApplyV710">
+#transferTab .transfer-filter-row{
+  display:grid!important;
+  grid-template-columns:minmax(220px,1.5fr) minmax(170px,1fr) 120px minmax(180px,1fr)!important;
+  gap:10px!important;align-items:end!important;
+}
+#transferTab .transfer-apply-wrap{display:flex!important;flex-direction:column!important;min-width:0!important}
+#transferTab .transfer-apply-btn{width:100%!important;height:42px!important;margin:0!important;font-weight:800!important}
+@media(max-width:800px){
+ #transferTab .transfer-filter-row{grid-template-columns:1fr 1fr!important}
+ #transferTab .transfer-apply-wrap{grid-column:auto!important}
+}
+@media(max-width:600px){
+ #transferTab .transfer-filter-row{grid-template-columns:1fr!important}
+ #transferTab .transfer-apply-wrap label{display:none!important}
+ #transferTab .transfer-apply-btn{height:48px!important;font-size:15px!important}
+}
+</style></head>
 <body>
 <div id="loginView" class="login">
   <div class="card">
@@ -1211,22 +1228,26 @@ body::before{display:none!important;content:none!important}
           <h1>Transfers</h1>
           <div class="muted">View transfer totals grouped by Engineer and drill down to the related expenses.</div>
         </div>
-        <button class="secondary" onclick="loadTransferView()">Refresh</button>
+
       </div>
 
       <div class="row transfer-filter-row" style="margin-top:14px;align-items:end">
         <div>
           <label>Engineer</label>
-          <input id="transferEngineerFilter" list="transferEngineerList" placeholder="All Engineers / Search Engineer" oninput="renderTransferEngineerSummary($('transferStatusFilter').value)">
+          <input id="transferEngineerFilter" list="transferEngineerList" placeholder="All Engineers / Search Engineer">
           <datalist id="transferEngineerList"></datalist>
         </div>
         <div>
           <label>Transfer Status</label>
-          <select id="transferStatusFilter" onchange="loadTransferView()">
+          <select id="transferStatusFilter">
             <option value="Pending">Pending</option>
             <option value="Needs Transfer" selected>Needs Transfer</option>
             <option value="Transferred">Transferred</option>
           </select>
+        </div>
+        <div class="transfer-apply-wrap">
+          <label>&nbsp;</label>
+          <button id="transferApplyBtn" class="primary transfer-apply-btn" type="button" onclick="loadTransferView()">Apply</button>
         </div>
         <div>
           <small class="muted">Total for selected status</small>
