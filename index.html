@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Telecomax Operations V6.4.2</title>
+<title>Telecomax Operations V6.6</title>
 <style>
 :root{--bg:#020817;--card:rgba(8,10,15,.80);--line:rgba(255,255,255,.12);--text:#f7f8fa;--muted:#9ca8b8;--pink:#d63391;--purple:#31005f;--blue:#69c8f2;--green:#74d6a0}
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--text);min-height:100vh;background:radial-gradient(circle at 8% 16%,rgba(0,153,204,.17),transparent 34%),radial-gradient(circle at 92% 10%,rgba(65,44,150,.22),transparent 36%),radial-gradient(circle at 74% 88%,rgba(214,51,145,.12),transparent 32%),linear-gradient(145deg,#00111e,#030817 48%,#120719)}
@@ -213,13 +213,51 @@ a.quick-action{text-decoration:none!important;color:var(--text)!important}
 @media(max-width:700px){
  .quick-action .qa-top b{font-size:14px!important;font-weight:800!important}
 }
+
+/* V6.5 unified app transition */
+.portal-transition{position:fixed;inset:0;z-index:99999;background:linear-gradient(145deg,#001521,#08071c 58%,#18051a);display:flex;align-items:center;justify-content:center;padding:24px}
+.portal-transition.hidden{display:none}
+.portal-transition-box{text-align:center;max-width:320px}
+.portal-spinner{width:38px;height:38px;margin:0 auto 18px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:#ec008c;animation:portalSpin .7s linear infinite}
+@keyframes portalSpin{to{transform:rotate(360deg)}}
+.portal-transition-brand{font-size:13px;font-weight:900;letter-spacing:.8px;color:#fff;margin-bottom:14px}
+.portal-transition-brand span{color:#ec008c}
+.portal-transition-title{font-size:22px;font-weight:800;color:#f8f9ff}
+.portal-transition-sub{font-size:11px;color:#8e99ad;margin-top:7px}
+
+/* V6.6 Attention Center */
+.attention-section{margin-top:16px}
+.attention-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:10px}
+.attention-head h2{font-size:17px;margin:0;display:flex;align-items:center;gap:8px}
+.attention-note{font-size:10.5px;color:var(--muted)}
+.attention-count{display:inline-flex;align-items:center;justify-content:center;min-width:23px;height:23px;padding:0 7px;border-radius:999px;background:rgba(236,0,140,.14);border:1px solid rgba(236,0,140,.32);font-size:11px;color:#ff70c2}
+.attention-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.attention-item{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--text);border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.025);border-radius:14px;padding:12px 13px;min-height:66px;position:relative;overflow:hidden}
+.attention-item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#ec008c}
+.attention-item.custody::before{background:#43c7ef}
+.attention-icon{width:34px;height:34px;flex:0 0 34px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(236,0,140,.10);font-weight:900;font-size:13px}
+.attention-item.custody .attention-icon{background:rgba(67,199,239,.10)}
+.attention-copy{min-width:0;flex:1}
+.attention-copy b{display:block;font-size:12.5px;color:#f7f9ff;margin-bottom:3px}
+.attention-copy span{display:block;font-size:10.5px;color:var(--muted);line-height:1.25}
+.attention-value{font-size:18px;font-weight:850;color:#fff;white-space:nowrap}
+.attention-empty{border:1px solid rgba(104,211,145,.18);background:rgba(104,211,145,.04);border-radius:14px;padding:13px;color:#9dd9b4;font-size:12px}
+@media(max-width:700px){
+ .attention-section{margin-top:13px}
+ .attention-head{align-items:center}
+ .attention-note{display:none}
+ .attention-list{grid-template-columns:1fr}
+ .attention-item{min-height:62px;padding:11px 12px}
+ .attention-copy b{font-size:12px}
+ .attention-value{font-size:17px}
+}
 </style>
 </head>
 <body><div class="wrap">
 <div class="top"><div class="brand">TELECOMAX <span>OPERATIONS</span></div><div class="actions"><span id="who" class="pill">Not signed in</span><button id="logout" class="ghost hidden">Log out</button></div></div>
 
 <section id="loginView" class="card login">
-<div class="pill" style="display:inline-block">Unified Operations • V6.4.2</div>
+<div class="pill" style="display:inline-block">Unified Operations • V6.6</div>
 <h1>Welcome back</h1><div class="muted">Use your Telecomax Name + 6-digit PIN. The portal checks your authorized KM and Custody access.</div>
 <label>Name</label><input id="name" autocomplete="username" placeholder="Enter your name">
 <label>6-digit PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="••••••">
@@ -229,6 +267,13 @@ a.quick-action{text-decoration:none!important;color:var(--text)!important}
 <section id="dash" class="hidden">
 <div class="card hero"><div class="muted">TELECOMAX OPERATIONS</div><h1 id="hello">Dashboard</h1><div>Role: <span id="role" class="role">—</span> · Access is built from the permissions verified by the existing KM and Custody backends.</div></div>
 <div class="v6-section"><h2>Live Operations <span class="v6-badge v6-live">LIVE</span> <button class="ghost" style="padding:6px 10px;margin-left:8px" onclick="loadLiveDashboard()">Refresh</button></h2><div id="liveKpis" class="v6-grid"><div class="muted">Loading live KM + Custody data…</div></div></div>
+<div id="attentionSection" class="attention-section">
+  <div class="attention-head">
+    <h2>Attention Required <span id="attentionCount" class="attention-count">0</span></h2>
+    <span class="attention-note">Items needing action now</span>
+  </div>
+  <div id="attentionList" class="attention-list"><div class="muted">Loading attention items…</div></div>
+</div>
 <div class="quick-actions-section"><h2>Actions</h2><div id="quickActions" class="quick-actions-grid"></div></div>
 <div class="grid">
 <div id="kmCard" class="card module km"><div class="tag">KM & BENZINE</div><h2>🚗 KM Operations</h2><p class="muted">Trips, KM review, allowances and finance audit.</p><div id="kmLinks" class="links"></div></div>
@@ -292,7 +337,7 @@ function liveCard(label,value,sub,url){
 function renderLiveKpis(){
  const el=document.getElementById('liveKpis');if(!el)return;
  if(liveDashboard.loading){el.innerHTML='<div class="muted">Loading live KM + Custody data…</div>';return;}
- if(liveDashboard.error){el.innerHTML=`<div class="msg err">${liveDashboard.error}</div>`;return;}
+ if(liveDashboard.error){el.innerHTML=`<div class="msg err">${liveDashboard.error}</div>`;const ae=$('attentionList');if(ae)ae.innerHTML='<div class="msg err">Attention data is temporarily unavailable.</div>';return;}
  const k=liveDashboard.km||{},c=liveDashboard.custody||{},role=String(currentPortalUser?.role||'');
  let h='';
  if(role==='Admin'||role==='PM'){
@@ -312,6 +357,7 @@ function renderLiveKpis(){
    h+=liveCard('New Expense','Open','Custody expense submission',moduleUrls.custodyEngineerNew);
  }
  el.innerHTML=h||'<div class="muted">No live KPIs available for this role.</div>';
+ renderAttention();
 }
 async function centralLogin(name,pin){
   const r=await custody('portalLogin',{name,pin});
@@ -329,23 +375,23 @@ async function centralLogin(name,pin){
 let currentPortalToken='';
 let currentPortalUser=null;
 const moduleUrls={
- kmEngineerStart:'https://telecomaxkm.vercel.app/?view=start',
- kmEngineerHistory:'https://telecomaxkm.vercel.app/?view=history',
- kmBalances:'https://telecomaxkm.vercel.app/admin.html?view=balances',
- kmPhotoAudit:'https://telecomaxkm.vercel.app/admin.html?view=audit',
- kmSolfa:'https://telecomaxkm.vercel.app/admin.html?view=solfa',
- kmRent:'https://telecomaxkm.vercel.app/admin.html?view=rent',
- kmAllowance:'https://telecomaxkm.vercel.app/allowances.html',
- kmFinanceAudit:'https://telecomaxkm.vercel.app/finance.html?view=audit',
- custodyEngineerNew:'https://custody-orcin.vercel.app/?view=home',
- custodyEngineerHistory:'https://custody-orcin.vercel.app/?view=history',
- custodyAdminEngineers:'https://custody-orcin.vercel.app/?portal=admin&view=engineers',
- custodyAdminUsers:'https://custody-orcin.vercel.app/?portal=admin&view=users',
- custodyAdminTransfers:'https://custody-orcin.vercel.app/?portal=admin&view=transfers',
- custodyPMReview:'https://custody-orcin.vercel.app/pm.html?view=review',
- custodyPMTransfers:'https://custody-orcin.vercel.app/pm.html?view=transfers',
- custodyFinanceReview:'https://custody-orcin.vercel.app/finance.html?view=review',
- custodyFinanceTransfers:'https://custody-orcin.vercel.app/finance.html?view=transfers'
+ kmEngineerStart:'https://telecomaxkm.vercel.app/?view=start&portalLabel=Start%20%2F%20Finish%20Trip',
+ kmEngineerHistory:'https://telecomaxkm.vercel.app/?view=history&portalLabel=KM%20History',
+ kmBalances:'https://telecomaxkm.vercel.app/admin.html?view=balances&portalLabel=KM%20Balances',
+ kmPhotoAudit:'https://telecomaxkm.vercel.app/admin.html?view=audit&portalLabel=Photo%20Audit',
+ kmSolfa:'https://telecomaxkm.vercel.app/admin.html?view=solfa&portalLabel=Solfa',
+ kmRent:'https://telecomaxkm.vercel.app/admin.html?view=rent&portalLabel=Rent',
+ kmAllowance:'https://telecomaxkm.vercel.app/allowances.html?portalLabel=Allowance%20Audit',
+ kmFinanceAudit:'https://telecomaxkm.vercel.app/finance.html?view=audit&portalLabel=KM%20Finance%20Audit',
+ custodyEngineerNew:'https://custody-orcin.vercel.app/?view=home&portalLabel=New%20Expense',
+ custodyEngineerHistory:'https://custody-orcin.vercel.app/?view=history&portalLabel=Expense%20History',
+ custodyAdminEngineers:'https://custody-orcin.vercel.app/?portal=admin&view=engineers&portalLabel=Engineer%20Management',
+ custodyAdminUsers:'https://custody-orcin.vercel.app/?portal=admin&view=users&portalLabel=Management%20Users',
+ custodyAdminTransfers:'https://custody-orcin.vercel.app/?portal=admin&view=transfers&portalLabel=Custody%20Transfers',
+ custodyPMReview:'https://custody-orcin.vercel.app/pm.html?view=review&portalLabel=Receipt%20Review',
+ custodyPMTransfers:'https://custody-orcin.vercel.app/pm.html?view=transfers&portalLabel=Transfers',
+ custodyFinanceReview:'https://custody-orcin.vercel.app/finance.html?view=review&portalLabel=Receipt%20Review',
+ custodyFinanceTransfers:'https://custody-orcin.vercel.app/finance.html?view=transfers&portalLabel=Transfers'
 };
 let currentModuleUrl='';
 function withSSO(url){
@@ -363,6 +409,49 @@ function openExternal(){if(currentModuleUrl) window.open(currentModuleUrl,'_blan
 function link(label,url){return `<a href="#" onclick="event.preventDefault();go(${JSON.stringify(url)},${JSON.stringify(label)})">${label} →</a>`}
 function workspaceLink(label,key){return `<a href="#" onclick="event.preventDefault();openWorkspace('${key}')">${label} →</a>`}
 
+
+
+function attentionItem(title,sub,value,url,kind='km'){
+ const href=withSSO(url);
+ return `<a class="attention-item ${kind==='custody'?'custody':''}" href="${href}">
+   <span class="attention-icon">!</span>
+   <span class="attention-copy"><b>${title}</b><span>${sub}</span></span>
+   <span class="attention-value">${value}</span>
+ </a>`;
+}
+function renderAttention(){
+ const el=$('attentionList'),countEl=$('attentionCount');
+ if(!el||!countEl)return;
+ if(liveDashboard.loading){el.innerHTML='<div class="muted">Loading attention items…</div>';countEl.textContent='…';return;}
+ const k=liveDashboard.km||{},c=liveDashboard.custody||{};
+ const role=String(currentPortalUser?.role||'');
+ const kind=String(currentPortalUser?.kind||'');
+ let items=[], total=0;
+ const add=(n,title,sub,url,type='km',display)=>{
+   n=Number(n||0); if(n<=0)return;
+   total+=n; items.push(attentionItem(title,sub,display||String(n),url,type));
+ };
+ if(kind==='engineer'){
+   // Engineer dashboard is intentionally action-focused; there are no approval queues for this role.
+   el.innerHTML='<div class="attention-empty">No approval items are waiting for you. Use the Actions cards below for trips and expenses.</div>';
+   countEl.textContent='0';
+   return;
+ }
+ if(role==='Admin'||role==='PM'){
+   add(k.pmAuditPending,'KM Photo Audit','Trips waiting for management audit',moduleUrls.kmPhotoAudit,'km');
+   add(k.allowancePendingCount,'Allowance Audit','Current-month allowances pending approval',moduleUrls.kmAllowance,'km');
+   add(c.pmPending,'Custody Receipt Review','Expenses waiting for PM review',moduleUrls.custodyPMReview,'custody');
+   add(c.needsTransferCount,'Custody Transfers',fmtEgp(c.needsTransferAmount||0)+' ready to transfer',moduleUrls.custodyPMTransfers,'custody');
+   add(c.clarification,'Needs Clarification','Custody expenses requiring clarification',moduleUrls.custodyPMReview,'custody');
+ }else if(role==='Finance'){
+   add(k.financeAuditPending,'KM Finance Audit','KM records approved by PM, waiting for Finance',moduleUrls.kmFinanceAudit,'km');
+   add(c.financePending,'Custody Finance Review','Expenses waiting for Finance verification',moduleUrls.custodyFinanceReview,'custody');
+   add(c.needsTransferCount,'Needs Transfer',fmtEgp(c.needsTransferAmount||0)+' ready to transfer',moduleUrls.custodyFinanceTransfers,'custody');
+   add(c.clarification,'Needs Clarification','Custody expenses requiring clarification',moduleUrls.custodyFinanceReview,'custody');
+ }
+ countEl.textContent=String(total);
+ el.innerHTML=items.length?items.join(''):'<div class="attention-empty">Nothing currently requires action.</div>';
+}
 
 function actionCard(title,desc,url){
  const href=withSSO(url);
@@ -444,6 +533,10 @@ function render(u){
  // V6.1.1: load live summaries only after the authenticated dashboard is fully rendered.
  const liveEl=$('liveKpis');
  if(liveEl) liveEl.innerHTML='<div class="muted">Loading live KM + Custody data…</div>';
+ const attentionEl=$('attentionList');
+ if(attentionEl) attentionEl.innerHTML='<div class="muted">Loading attention items…</div>';
+ const attentionCount=$('attentionCount');
+ if(attentionCount) attentionCount.textContent='…';
  setTimeout(()=>loadLiveDashboard(),0);
 }
 $('login').onclick=async()=>{
@@ -505,4 +598,26 @@ function closeWorkspace(){ $('workspace').classList.remove('active'); $('dash').
 $('logout').onclick=()=>{currentPortalUser=null;currentPortalToken='';liveDashboard={km:null,custody:null,loading:false,error:''};
  sessionStorage.removeItem('tmx_portal_user');location.reload()};
 try{const u=JSON.parse(sessionStorage.getItem('tmx_portal_user')||'null');if(u)render(u)}catch(e){}
-</script></body></html>
+
+document.addEventListener('click',function(e){
+ const a=e.target.closest('a.quick-action');
+ if(!a || !a.href)return;
+ const box=document.getElementById('portalTransition');
+ const title=document.getElementById('portalTransitionTitle');
+ if(title) title.textContent='Opening '+(a.querySelector('b')?.textContent||'workspace')+'…';
+ if(box) box.classList.remove('hidden');
+},{capture:true});
+window.addEventListener('pageshow',()=>{
+ const box=document.getElementById('portalTransition');
+ if(box) box.classList.add('hidden');
+});
+
+</script><div id="portalTransition" class="portal-transition hidden" aria-live="polite">
+  <div class="portal-transition-box">
+    <div class="portal-spinner"></div>
+    <div class="portal-transition-brand">TELECOMAX <span>OPERATIONS</span></div>
+    <div id="portalTransitionTitle" class="portal-transition-title">Opening…</div>
+    <div class="portal-transition-sub">Secure session handoff</div>
+  </div>
+</div>
+</body></html>
