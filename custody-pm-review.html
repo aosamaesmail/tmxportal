@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Telecomax Operations — Custody PM Receipt Review V7.3.1</title>
+<title>Telecomax Operations — Custody PM Receipt Review V7.3.2</title>
 <style>
 *{box-sizing:border-box}
 :root{--navy:#111827;--blue:#1a73e8;--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--border:#d1d5db;--green:#047857;--red:#b91c1c;--amber:#b45309;--radius:12px}
@@ -576,7 +576,7 @@ table td,.table td{border-color:#e6e6eb!important}
     /* Receipt evidence should be large on desktop */
     .receipt-img,.receipt-image,img.receipt{max-height:650px!important;object-fit:contain!important}
     /* Native page marker */
-    body::before{content:'TELECOMAX  •  Custody PM Receipt Review  •  V7.3.1';display:block;position:sticky;top:0;z-index:999;padding:10px 16px;background:#081321;border-bottom:1px solid #29394e;color:#f7f9fd;font-size:13px;font-weight:900;letter-spacing:.02em}
+    body::before{content:'TELECOMAX  •  Custody PM Receipt Review  •  V7.3.2';display:block;position:sticky;top:0;z-index:999;padding:10px 16px;background:#081321;border-bottom:1px solid #29394e;color:#f7f9fd;font-size:13px;font-weight:900;letter-spacing:.02em}
     @media(max-width:700px){
       body::before{padding:8px 10px;font-size:11px}
       .card,.panel,.feed-card{border-radius:12px!important}
@@ -586,7 +586,162 @@ table td,.table td{border-color:#e6e6eb!important}
       .receipt-img,.receipt-image,img.receipt{max-height:430px!important}
       button{min-height:36px!important;font-size:12px!important}
     }
-    </style></head>
+    </style>
+<style id="telecomaxAuditThemeV732">
+/* Telecomax Audit Theme — low-noise, long-session review palette */
+:root{
+  --audit-bg:#07111f;
+  --audit-bg2:#091523;
+  --audit-surface:#0d1928;
+  --audit-surface2:#122033;
+  --audit-border:#26384d;
+  --audit-border-soft:#1b2b3e;
+  --audit-text:#e8edf5;
+  --audit-muted:#91a0b5;
+  --audit-magenta:#ec008c;
+  --audit-green:#58c98b;
+  --audit-amber:#d8a94e;
+  --audit-red:#df6b72;
+  --audit-orange:#d99055;
+}
+html,body{background:var(--audit-bg)!important;color:var(--audit-text)!important}
+body{background:linear-gradient(180deg,var(--audit-bg) 0%,#081321 100%)!important}
+
+/* Remove temporary build banner to recover vertical audit space */
+body::before{display:none!important;content:none!important}
+
+/* App chrome */
+.topbar,header,.header{
+  background:#091421!important;
+  border-color:var(--audit-border-soft)!important;
+  box-shadow:none!important;
+}
+.topbar h1,header h1,.header h1{color:var(--audit-text)!important}
+.muted,small,label{color:var(--audit-muted)!important}
+
+/* Tabs: neutral by default, Telecomax accent only for active state */
+.tabs,.tabbar{background:transparent!important}
+.tab,.tabs button,[role="tab"]{
+  background:transparent!important;
+  color:var(--audit-muted)!important;
+  border-color:transparent!important;
+}
+.tab.active,.tabs button.active,[role="tab"].active,#tabReview.active{
+  background:var(--audit-surface2)!important;
+  color:var(--audit-text)!important;
+  border-color:var(--audit-border)!important;
+  border-bottom-color:var(--audit-magenta)!important;
+}
+
+/* KPI summary cards */
+.summary-grid>*,.summary .card,.stat,.stat-card,.kpi,.kpi-card{
+  background:var(--audit-surface)!important;
+  border:1px solid var(--audit-border)!important;
+  box-shadow:none!important;
+  color:var(--audit-text)!important;
+}
+.summary-grid>* small,.summary-grid>* label,
+.summary .card small,.stat small,.stat-card small,.kpi small,.kpi-card small{
+  color:var(--audit-muted)!important;
+}
+.summary-grid>* strong,.summary-grid>* b,
+.summary .card strong,.stat strong,.stat-card strong,.kpi strong,.kpi-card strong{
+  color:var(--audit-text)!important;
+}
+
+/* Known summary IDs: color only the important number, never the full card */
+#sPending{color:var(--audit-amber)!important}
+#sApproved{color:var(--audit-green)!important}
+#sRejected{color:var(--audit-red)!important}
+#sClarification{color:var(--audit-orange)!important}
+
+/* Filter panel and controls */
+.filters,.filter-card,.filter-panel{
+  background:var(--audit-surface)!important;
+  border-color:var(--audit-border)!important;
+  box-shadow:none!important;
+}
+input,select,textarea,.search-select input{
+  background:var(--audit-surface2)!important;
+  color:var(--audit-text)!important;
+  border-color:var(--audit-border)!important;
+  box-shadow:none!important;
+}
+input::placeholder,textarea::placeholder{color:#718198!important}
+.search-menu,.dropdown-menu{
+  background:var(--audit-surface2)!important;
+  border-color:var(--audit-border)!important;
+  color:var(--audit-text)!important;
+}
+
+/* Receipt/expense cards */
+#feed>.feed-card,.feed-card,.expense-card,.review-card,.card{
+  background:var(--audit-surface)!important;
+  border-color:var(--audit-border)!important;
+  box-shadow:0 2px 8px rgba(0,0,0,.16)!important;
+}
+#feed>.feed-card:hover,.feed-card:hover{
+  border-color:#334b65!important;
+}
+hr,.divider{border-color:var(--audit-border-soft)!important}
+.feed-card .muted,.expense-card .muted{color:var(--audit-muted)!important}
+
+/* Reduce bright separator noise */
+.feed-card td,.feed-card .field,.expense-card td,.expense-card .field{
+  border-color:var(--audit-border-soft)!important;
+}
+
+/* Status badges */
+.s-pending{background:rgba(216,169,78,.13)!important;color:#e6bd6a!important;border-color:rgba(216,169,78,.32)!important}
+.s-approved{background:rgba(88,201,139,.13)!important;color:#70d8a0!important;border-color:rgba(88,201,139,.32)!important}
+.s-rejected{background:rgba(223,107,114,.13)!important;color:#ee858b!important;border-color:rgba(223,107,114,.32)!important}
+.s-clarification{background:rgba(217,144,85,.13)!important;color:#e7a56f!important;border-color:rgba(217,144,85,.32)!important}
+
+/* Buttons */
+button,.secondary{
+  background:var(--audit-surface2)!important;
+  color:var(--audit-text)!important;
+  border-color:var(--audit-border)!important;
+  box-shadow:none!important;
+}
+button:hover,.secondary:hover{background:#17283d!important}
+.primary{
+  background:var(--audit-magenta)!important;
+  border-color:var(--audit-magenta)!important;
+  color:#fff!important;
+}
+.danger,.reject{background:rgba(223,107,114,.12)!important;color:#ee858b!important;border-color:rgba(223,107,114,.36)!important}
+
+/* Receipt evidence: visually dominant but neutral frame */
+.receipt-img,.receipt-image,img.receipt,#feed img{
+  background:#050a11!important;
+  border-color:#30445b!important;
+  box-shadow:none!important;
+}
+
+/* Search clear circles should not become white attention magnets */
+.search-clear{
+  background:#1a293b!important;
+  color:#b6c1d0!important;
+  border-color:#31445a!important;
+}
+
+/* Desktop: generous evidence, compact controls */
+@media(min-width:901px){
+  #feed{gap:14px!important}
+  #feed>.feed-card{padding:14px!important}
+  .receipt-img,.receipt-image,img.receipt{max-height:650px!important}
+}
+
+/* Mobile: preserve readability without noisy contrast */
+@media(max-width:700px){
+  #feed>.feed-card,.feed-card,.expense-card{font-size:14px!important;line-height:1.35!important}
+  .summary-grid>*,.stat,.stat-card,.kpi,.kpi-card{padding:12px!important}
+  .summary-grid>* strong,.stat strong,.stat-card strong,.kpi strong,.kpi-card strong{font-size:20px!important}
+  .filters,.filter-card,.filter-panel{padding:10px!important}
+}
+</style>
+</head>
 <body>
 <div id="loginView" class="login">
   <div class="card">
