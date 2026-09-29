@@ -1,33 +1,19 @@
 <!doctype html><html><head>
-<script id="tmxRouteGuardV82">
+<script id="tmxAllowanceRouteGuardV828">
 (function(){
- const ALLOWED=["Admin", "PM"], NEED_KM=true, NEED_CUSTODY=false;
- function parse(v){try{return v?JSON.parse(v):null}catch(e){return null}}
- function candidates(){
-   const out=[];
-   for(const s of [sessionStorage,localStorage]){
-     for(let i=0;i<s.length;i++){
-       const k=s.key(i)||'', v=parse(s.getItem(k));
-       if(v && typeof v==='object' && (v.role||v.userRole) && (v.token||v.portalToken||v.sessionToken||v.managementToken)) out.push(v);
-     }
-   }
-   return out;
- }
- function roleOf(x){const r=String(x.role||x.userRole||'').toLowerCase();return r==='p'?'PM':r==='f'?'Finance':r==='a'?'Admin':r==='e'?'Engineer':r.charAt(0).toUpperCase()+r.slice(1)}
- function boolAccess(x,names){for(const n of names)if(n in x)return !(x[n]===false||String(x[n]).toLowerCase()==='false'||String(x[n])==='0');return true}
- const hasSso=/(?:^|[&#])sso=/.test(location.hash);
- if(hasSso)return; // destination's existing SSO exchange validates the signed portal token.
- const sessions=candidates();
- const ok=sessions.some(x=>{
-   const role=roleOf(x); if(!ALLOWED.includes(role))return false;
-   if(NEED_KM && !boolAccess(x,['kmAccess','KMAccess','km_access']))return false;
-   if(NEED_CUSTODY && !boolAccess(x,['custodyAccess','CustodyAccess','custody_access']))return false;
-   return true;
- });
- if(!ok){
-   document.documentElement.style.visibility='hidden';
-   location.replace('./?reason=access');
- }
+  if(/(?:^|[&#])sso=/.test(location.hash))return;
+  if(sessionStorage.getItem('tmx_km_pm_token'))return;
+  function parse(v){try{return v?JSON.parse(v):null}catch(e){return null}}
+  let allowed=false;
+  for(const store of [sessionStorage,localStorage]){
+    for(let i=0;i<store.length;i++){
+      const x=parse(store.getItem(store.key(i))); if(!x||typeof x!=='object')continue;
+      const r=String(x.role||x.userRole||'').toLowerCase();
+      if(r==='pm'||r==='p'||r==='admin'||r==='a'){allowed=true;break}
+    }
+    if(allowed)break;
+  }
+  if(!allowed){document.documentElement.style.visibility='hidden';location.replace('./?reason=access')}
 })();
 </script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Telecomax Operations — Allowance Audit V7.2.2</title><style>
 :root{--bg:#f3f6f8;--card:#fff;--text:#24313a;--muted:#71808b;--line:#dfe6ea;--brand:#c52b83;--green:#21865a;--red:#b83b47;--amber:#a66a00}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial;background:var(--bg);color:var(--text)}header{background:#fff;border-bottom:1px solid var(--line);padding:16px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}.brand{font-weight:900;font-size:20px}.brand span{color:var(--brand)}button,input,select,textarea{font:inherit}.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:750;cursor:pointer}.primary{background:var(--brand);color:#fff}.ghost{background:#eef2f4;color:var(--text)}main{max-width:1250px;margin:auto;padding:24px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 8px 24px #25323a0b}.login{max-width:440px;margin:70px auto}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase}.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:10px;padding:11px;background:#fff;min-width:0}
@@ -60,7 +46,10 @@ main{max-width:1650px!important;padding:14px 18px 80px!important}.card{backgroun
 /* Native page SSO overlay styling from the proven allowance SSO implementation */
 .sso-status{position:fixed;inset:0;z-index:10000;background:#050b14;display:flex;align-items:center;justify-content:center;padding:20px}.sso-status-box{text-align:center;background:#0b1523;border:1px solid #26364b;border-radius:16px;padding:22px 28px;min-width:260px}.sso-status-box b{display:block;font-size:18px}.sso-status-box span{display:block;color:#9aa8bc;font-size:12px;margin-top:6px}
 @media(max-width:700px){header{height:55px;padding:9px 10px!important}.brand{font-size:16px!important}.brand small{display:block;margin:1px 0 0;font-size:9px}.header-actions .btn{padding:5px 7px!important;font-size:10px;min-height:30px}main{padding:8px 8px 72px!important}.card{padding:9px!important;margin-bottom:8px!important}.filters{grid-template-columns:1fr 1fr!important;gap:6px!important}.filters .field>input,.filters .field>select{height:36px!important;font-size:12px}.filters>.btn{min-height:34px!important;padding:6px!important;font-size:11px}.summary{grid-template-columns:1fr 1fr!important;gap:5px!important}.metric{padding:6px 8px!important}.metric b{font-size:15px!important}.tabs .btn{min-height:33px!important;padding:6px 3px!important;font-size:11px}.bulkbar{grid-template-columns:1fr 1fr!important;gap:5px!important}.bulkbar .btn{min-height:34px!important;padding:6px!important;font-size:10.5px}.audit-table tr{background:#091522!important;border-color:#26364b!important;padding:5px!important;margin-bottom:6px!important}.audit-table td{padding:3px 5px!important;font-size:12px!important}.audit-table td:before{color:#91a0b5!important;font-size:8.5px!important;flex-basis:30%!important}.actions .btn{min-height:30px!important;padding:5px 8px!important;font-size:10.5px!important}}
-</style></head><body><header><div class="brand"><span>TELECOMAX</span> <small>Operations / Allowance Audit · V7.2.2</small></div><div class="header-actions"><button class="btn ghost" type="button" onclick="location.href='./'">← Operations</button><button id="logout" class="btn ghost" style="display:none">Logout</button></div></header><main>
+</style><style id="allowanceSilentSsoV828">
+#v7Sso,.v7-sso,#portalSsoStatus,.portal-sso-status{display:none!important}
+</style>
+</head><body><header><div class="brand"><span>TELECOMAX</span> <small>Operations / Allowance Audit · V7.2.2</small></div><div class="header-actions"><button class="btn ghost" type="button" onclick="location.href='./'">← Operations</button><button id="logout" class="btn ghost" style="display:none">Logout</button></div></header><main>
 <section id="login" class="card login" style="display:none"><h2>PM Login</h2><p class="note">Use your management Name + 6-digit PIN.</p><div class="field"><label>Name</label><input id="name" autocomplete="username" placeholder="Enter your name"></div><br><div class="field"><label>PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="6-digit PIN"></div><br><button id="loginBtn" class="btn primary">Login</button></section>
 <section id="app" style="display:none"><div class="card"><div class="section-title"><div><h2 style="margin:0">Monthly Allowance Audit</h2></div></div><br><div class="filters">
 <div class="field"><label>Month</label><input id="month" type="month"></div>
