@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Telecomax Operations — Custody Finance Receipt Review V7.3</title>
+<title>Telecomax Operations — Custody Finance Receipt Review V7.3.1</title>
 <style>
 *{box-sizing:border-box}
 :root{--navy:#111827;--blue:#1a73e8;--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--border:#d1d5db;--green:#047857;--red:#b91c1c;--amber:#b45309;--radius:12px}
@@ -508,15 +508,7 @@ table td,.table td{border-color:#e6e6eb!important}
 .sso-status-box b{display:block;font-size:20px;margin-bottom:8px}.sso-status-box span{color:#aab4c4}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
-<script>
-if(location.hash.indexOf('sso=')>=0){
- document.documentElement.classList.add('portal-sso-pending');
-}
-</script>
-<style>
-html.portal-sso-pending body{visibility:hidden!important}
-html.portal-sso-pending body::before{content:'Signing you in…';visibility:visible!important;position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#020817;color:#fff;font:700 20px Arial,sans-serif}
-</style>
+
 <style id="v73NativeReceiptReview">
     :root{--tmx-magenta:#ec008c;--tmx-bg:#050b14;--tmx-card:#0b1523;--tmx-line:#29394e;--tmx-text:#f7f9fd;--tmx-muted:#9eacc0}
     body{background:radial-gradient(circle at 12% 0%,#11152b 0,#050b14 42%)!important;color:var(--tmx-text)!important;-webkit-font-smoothing:antialiased}
@@ -532,7 +524,7 @@ html.portal-sso-pending body::before{content:'Signing you in…';visibility:visi
     /* Receipt evidence should be large on desktop */
     .receipt-img,.receipt-image,img.receipt{max-height:650px!important;object-fit:contain!important}
     /* Native page marker */
-    body::before{content:'TELECOMAX  •  Custody Finance Receipt Review  •  V7.3';display:block;position:sticky;top:0;z-index:999;padding:10px 16px;background:#081321;border-bottom:1px solid #29394e;color:#f7f9fd;font-size:13px;font-weight:900;letter-spacing:.02em}
+    body::before{content:'TELECOMAX  •  Custody Finance Receipt Review  •  V7.3.1';display:block;position:sticky;top:0;z-index:999;padding:10px 16px;background:#081321;border-bottom:1px solid #29394e;color:#f7f9fd;font-size:13px;font-weight:900;letter-spacing:.02em}
     @media(max-width:700px){
       body::before{padding:8px 10px;font-size:11px}
       .card,.panel,.feed-card{border-radius:12px!important}
@@ -1117,7 +1109,7 @@ async function exportEngineerExcel(engineer){
 }
 
 $('financePin').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
-const saved=getSession();if(saved&&saved.token){financeToken=saved.token;reviewerName=saved.reviewer||'FINANCE';showApp();loadQueue()}
+const saved=getSession();if(saved&&saved.token){financeToken=saved.token;reviewerName=saved.reviewer||'FINANCE';showApp();showTab('reviewTab');loadQueue()}
 </script>
 <script>
 function portalSSOStatus_(title,detail){ document.documentElement.classList.remove('portal-sso-pending');
@@ -1132,8 +1124,9 @@ setTimeout(()=>{try{showTab('reviewTab')}catch(e){}},250);
  try{
   const r=await api('portalSSO',{portalToken,portalRole:'Finance'}); if(!r.ok||!r.token){portalSSOStatus_('Single Sign-On failed',r.error||'The Custody module rejected the portal session.');return;}
   financeToken=r.token; reviewerName=r.name||''; saveSession();
+  document.documentElement.classList.remove('portal-sso-pending');
   const x=document.getElementById('portalSsoStatus'); if(x)x.remove();
-  showApp(); await loadQueue(); applyPortalRequestedTab();
+  showApp(); await loadQueue(); showTab('reviewTab');
  }catch(e){portalSSOStatus_('Single Sign-On connection error',String(e&&e.message||e));console.error('Portal SSO failed',e)}
 })();
 </script>
