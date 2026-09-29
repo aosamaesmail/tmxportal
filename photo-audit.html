@@ -1,4 +1,21 @@
 <!doctype html><html><head>
+<style id="photoAuditSsoBootV823">
+/* Only active when this exact page is opened with a Portal SSO hash. */
+html.photo-audit-sso-boot #loginView,
+html.photo-audit-sso-boot #loginCard,
+html.photo-audit-sso-boot .login-card,
+html.photo-audit-sso-boot .login-wrap{display:none!important}
+</style>
+<script id="photoAuditSsoBootV823">
+(function(){
+  if(/(?:^|[&#])sso=/.test(location.hash)){
+    document.documentElement.classList.add('photo-audit-sso-boot');
+  }
+  window.__finishPhotoAuditSsoBoot=function(){
+    document.documentElement.classList.remove('photo-audit-sso-boot');
+  };
+})();
+</script>
 <script id="tmxRouteGuardV82">
 (function(){
  const ALLOWED=["Admin", "PM"], NEED_KM=true, NEED_CUSTODY=false;
