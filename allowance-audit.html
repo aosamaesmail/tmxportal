@@ -1,4 +1,35 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Telecomax Operations — Allowance Audit V7.2.2</title><style>
+<!doctype html><html><head>
+<script id="tmxRouteGuardV82">
+(function(){
+ const ALLOWED=["Admin", "PM"], NEED_KM=true, NEED_CUSTODY=false;
+ function parse(v){try{return v?JSON.parse(v):null}catch(e){return null}}
+ function candidates(){
+   const out=[];
+   for(const s of [sessionStorage,localStorage]){
+     for(let i=0;i<s.length;i++){
+       const k=s.key(i)||'', v=parse(s.getItem(k));
+       if(v && typeof v==='object' && (v.role||v.userRole) && (v.token||v.portalToken||v.sessionToken||v.managementToken)) out.push(v);
+     }
+   }
+   return out;
+ }
+ function roleOf(x){const r=String(x.role||x.userRole||'').toLowerCase();return r==='p'?'PM':r==='f'?'Finance':r==='a'?'Admin':r==='e'?'Engineer':r.charAt(0).toUpperCase()+r.slice(1)}
+ function boolAccess(x,names){for(const n of names)if(n in x)return !(x[n]===false||String(x[n]).toLowerCase()==='false'||String(x[n])==='0');return true}
+ const hasSso=/(?:^|[&#])sso=/.test(location.hash);
+ if(hasSso)return; // destination's existing SSO exchange validates the signed portal token.
+ const sessions=candidates();
+ const ok=sessions.some(x=>{
+   const role=roleOf(x); if(!ALLOWED.includes(role))return false;
+   if(NEED_KM && !boolAccess(x,['kmAccess','KMAccess','km_access']))return false;
+   if(NEED_CUSTODY && !boolAccess(x,['custodyAccess','CustodyAccess','custody_access']))return false;
+   return true;
+ });
+ if(!ok){
+   document.documentElement.style.visibility='hidden';
+   location.replace('./?reason=access');
+ }
+})();
+</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Telecomax Operations — Allowance Audit V7.2.2</title><style>
 :root{--bg:#f3f6f8;--card:#fff;--text:#24313a;--muted:#71808b;--line:#dfe6ea;--brand:#c52b83;--green:#21865a;--red:#b83b47;--amber:#a66a00}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial;background:var(--bg);color:var(--text)}header{background:#fff;border-bottom:1px solid var(--line);padding:16px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}.brand{font-weight:900;font-size:20px}.brand span{color:var(--brand)}button,input,select,textarea{font:inherit}.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:750;cursor:pointer}.primary{background:var(--brand);color:#fff}.ghost{background:#eef2f4;color:var(--text)}main{max-width:1250px;margin:auto;padding:24px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 8px 24px #25323a0b}.login{max-width:440px;margin:70px auto}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase}.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:10px;padding:11px;background:#fff;min-width:0}
 .combo{position:relative}.combo input{width:100%;padding-right:34px}.combo:after{content:'⌄';position:absolute;right:11px;bottom:11px;color:var(--muted);pointer-events:none}.combo-list{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);max-height:230px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 28px #25323a20;z-index:30;padding:5px}.combo.open .combo-list{display:block}.combo-option{padding:9px 10px;border-radius:7px;cursor:pointer;font-size:13px}.combo-option.multi{display:flex;align-items:center;gap:8px}.combo-option.multi input{width:auto}.chips{position:absolute;left:0;right:0;top:100%;display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;z-index:6;pointer-events:none}.chips .chip{pointer-events:auto}.chip{background:#f8eaf2;color:var(--brand);border-radius:99px;padding:3px 8px;font-size:11px;font-weight:700}.combo-option:hover,.combo-option.active{background:#f8eaf2;color:var(--brand)}.combo-empty{padding:10px;color:var(--muted);font-size:12px}.filters{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr 1fr auto auto;gap:10px;align-items:end}
 .filters>.field{align-self:end}.filters .field>input,.filters .field>select{height:46px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{background:#f8fafb;border:1px solid var(--line);border-radius:14px;padding:15px}.metric b{font-size:22px;display:block;margin-top:5px}.metric small{color:var(--muted)}.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px}.bulkbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px}.bulkbar .spacer{flex:1}.records{overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fff}.audit-table{width:100%;border-collapse:collapse;min-width:1000px}.audit-table th{background:#f4f7f8;text-align:left;font-size:11px;text-transform:uppercase;color:var(--muted);padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}.audit-table td{padding:7px 8px;border-bottom:1px solid #edf1f3;vertical-align:middle;font-size:12.5px}.audit-table tr:hover td{background:#fbfcfd}.audit-table tr:last-child td{border-bottom:0}.check{width:17px;height:17px;accent-color:var(--brand)}.name{font-weight:850}.meta{font-size:13px;color:var(--muted);margin-top:4px}.amount{font-size:19px;font-weight:900}.status{font-weight:800}.Pending{color:var(--amber)}.Approved{color:var(--green)}.Rejected{color:var(--red)}.actions{display:flex;gap:6px;flex-wrap:wrap}.approve{background:#e9f7f0;color:var(--green)}.reject{background:#fdecef;color:var(--red)}.pending{background:#fff4db;color:var(--amber)}.empty{text-align:center;color:var(--muted);padding:35px}.toast{position:fixed;right:20px;bottom:20px;background:#26323a;color:#fff;padding:12px 16px;border-radius:10px;display:none;z-index:20}.note{font-size:13px;color:var(--muted);line-height:1.5}.tabs{display:flex;gap:8px;margin-bottom:14px}.tab{background:#edf1f3}.tab.active{background:var(--brand);color:#fff}@media(max-width:1000px){main{padding:16px}.filters{grid-template-columns:repeat(2,minmax(0,1fr))}.filters .btn{min-height:44px}.summary{grid-template-columns:1fr 1fr}.card{padding:15px}.bulkbar{align-items:stretch}.bulkbar .spacer{display:none}.bulkbar #selectedCount{margin-left:auto;align-self:center}}@media(max-width:700px){

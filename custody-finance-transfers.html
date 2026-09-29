@@ -1,6 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script id="tmxRouteGuardV82">
+(function(){
+ const ALLOWED=["Admin", "Finance"], NEED_KM=false, NEED_CUSTODY=true;
+ function parse(v){try{return v?JSON.parse(v):null}catch(e){return null}}
+ function candidates(){
+   const out=[];
+   for(const s of [sessionStorage,localStorage]){
+     for(let i=0;i<s.length;i++){
+       const k=s.key(i)||'', v=parse(s.getItem(k));
+       if(v && typeof v==='object' && (v.role||v.userRole) && (v.token||v.portalToken||v.sessionToken||v.managementToken)) out.push(v);
+     }
+   }
+   return out;
+ }
+ function roleOf(x){const r=String(x.role||x.userRole||'').toLowerCase();return r==='p'?'PM':r==='f'?'Finance':r==='a'?'Admin':r==='e'?'Engineer':r.charAt(0).toUpperCase()+r.slice(1)}
+ function boolAccess(x,names){for(const n of names)if(n in x)return !(x[n]===false||String(x[n]).toLowerCase()==='false'||String(x[n])==='0');return true}
+ const hasSso=/(?:^|[&#])sso=/.test(location.hash);
+ if(hasSso)return; // destination's existing SSO exchange validates the signed portal token.
+ const sessions=candidates();
+ const ok=sessions.some(x=>{
+   const role=roleOf(x); if(!ALLOWED.includes(role))return false;
+   if(NEED_KM && !boolAccess(x,['kmAccess','KMAccess','km_access']))return false;
+   if(NEED_CUSTODY && !boolAccess(x,['custodyAccess','CustodyAccess','custody_access']))return false;
+   return true;
+ });
+ if(!ok){
+   document.documentElement.style.visibility='hidden';
+   location.replace('./?reason=access');
+ }
+})();
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Telecomax Operations — Custody Transfers V7.10</title>
