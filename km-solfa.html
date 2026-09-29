@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Telecomax Operations — KM Solfa V7.6</title><link rel="icon" href="icon-192.png"><style>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Telecomax Operations — KM Solfa V7.6.1</title><link rel="icon" href="icon-192.png"><style>
 :root{--bg:#f4f6f8;--panel:#fff;--panel2:#f8fafc;--line:#d9dee7;--text:#243042;--muted:#6f7b8c;--brand:#b52d7b;--soft:#f8eaf2;--good:#2f855a;--warn:#a66b18;--shadow:0 4px 16px rgba(31,45,61,.055)}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 Inter,system-ui,Segoe UI,Arial,sans-serif}.top{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 28px;position:sticky;top:0;z-index:20}.brand{font-size:22px;font-weight:850}.brand:before{content:"";display:inline-block;width:6px;height:24px;background:var(--brand);margin-right:12px;vertical-align:-5px;border-radius:4px}.brand small{font-size:14px;font-weight:500;color:var(--muted);margin-left:10px}.actions{margin-left:auto}.wrap{max-width:1540px;margin:auto;padding:26px}.login{max-width:440px;margin:90px auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px;box-shadow:var(--shadow)}.dash{display:none}.btn{border:1px solid var(--line);background:#fff;color:#344054;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:750}.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}.btn.logout{background:var(--soft);border-color:#e7bdd4;color:#9c286a}.input,select{width:100%;height:44px;background:#fff;border:1px solid #ccd3dd;border-radius:10px;padding:0 12px;color:var(--text)}label{display:block;color:#697586;font-size:12px;font-weight:800;text-transform:uppercase;margin:12px 0 6px}.muted{color:var(--muted)}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.tab{padding:11px 16px}.tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}.panel{display:none}.panel.active{display:block}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}.filters{display:grid;grid-template-columns:repeat(4,minmax(170px,1fr)) auto;gap:12px;align-items:end}.search{position:relative}.opts{display:none;position:absolute;left:0;right:0;top:48px;max-height:260px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px;z-index:30;box-shadow:0 12px 30px #0002}.opt{padding:10px 12px;cursor:pointer}.opt:hover{background:var(--soft)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}.stat .k{font-size:11px;text-transform:uppercase;color:var(--muted);font-weight:800}.stat .v{font-size:24px;font-weight:850;margin-top:4px}.accent .v{color:var(--brand)}.audit-list{display:flex;flex-direction:column;gap:18px}.audit{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}.summary{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid var(--line)}.cell{padding:12px;border-right:1px solid #edf0f3}.cell b{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:4px}.metrics{display:grid;grid-template-columns:repeat(6,1fr);background:var(--panel2)}.metric{text-align:center;padding:12px}.metric b{display:block;font-size:10px;color:var(--muted);text-transform:uppercase}.photos{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:24px}.photo{text-align:center}.frame{height:390px;background:#eef1f5;border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}.frame img{width:100%;height:100%;object-fit:contain;cursor:zoom-in}.empty{text-align:center;color:var(--muted);padding:35px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:1fr 1fr auto;gap:14px;align-items:end}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:10px;border-bottom:1px solid var(--line);text-align:left}.table th{font-size:11px;text-transform:uppercase;color:var(--muted)}.totalcard{padding:18px;border-radius:14px;background:var(--soft);text-align:center;margin:14px 0}.totalcard .v{font-size:28px;font-weight:900;color:var(--brand)}.lightbox{display:none;position:fixed;inset:0;background:#111d;z-index:100;align-items:center;justify-content:center;padding:30px}.lightbox.open{display:flex}.lightbox img{max-width:94vw;max-height:90vh}.toast{display:none;position:fixed;right:20px;bottom:20px;background:#273142;color:#fff;padding:12px 16px;border-radius:10px;z-index:120}@media(max-width:900px){.filters,.grid2,.grid3,.photos{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.summary,.metrics{grid-template-columns:repeat(2,1fr)}.frame{height:320px}}
 
 /* Login buffering overlay */
@@ -60,7 +60,117 @@ html.portal-sso-pending body::before{display:none!important;content:none!importa
  #solfa .grid3,#solfa .grid2{grid-template-columns:1fr!important}
  #solfa .card{padding:14px!important}
 }
-</style></head><body>
+</style>
+<style id="telecomaxKmSolfaV761PortalTheme">
+:root{
+  --portal-bg:#171719;
+  --portal-panel:#1D1D20;
+  --portal-field:#262629;
+  --portal-field-active:#505052;
+  --portal-border:#474A53;
+  --portal-text:#F0F2FA;
+  --portal-muted:#AEB9D0;
+  --portal-magenta:#EC008C;
+}
+html,body{
+  background:var(--portal-bg)!important;
+  color:var(--portal-text)!important;
+}
+body{background:var(--portal-bg)!important}
+header,.header,.topbar{
+  background:#1B1B1D!important;
+  color:var(--portal-text)!important;
+  border-color:#3C4048!important;
+  box-shadow:none!important;
+}
+header h1,.header h1,.topbar h1,
+header b,.header b,.topbar b{color:var(--portal-text)!important}
+header .muted,.header .muted,.topbar .muted{color:var(--portal-muted)!important}
+
+#solfa .card,.card{
+  background:var(--portal-panel)!important;
+  color:var(--portal-text)!important;
+  border:1px solid var(--portal-border)!important;
+  box-shadow:none!important;
+}
+#solfa h1,#solfa h2,#solfa h3,.card h1,.card h2,.card h3{
+  color:var(--portal-text)!important;
+}
+#solfa label,label{
+  color:var(--portal-muted)!important;
+  font-weight:800!important;
+}
+#solfa input,#solfa select,#solfa .input,
+input,select,.input{
+  background:var(--portal-field)!important;
+  color:var(--portal-text)!important;
+  border:1px solid var(--portal-border)!important;
+  box-shadow:none!important;
+}
+#solfa input::placeholder,input::placeholder{color:#A5A5AB!important}
+#solfa select:focus,#solfa input:focus{
+  border-color:#666A76!important;
+  outline:none!important;
+}
+.opts,.search .opts{
+  background:#252528!important;
+  color:var(--portal-text)!important;
+  border-color:var(--portal-border)!important;
+}
+.opt:hover{background:#343438!important}
+
+.btn,button{
+  background:#505055!important;
+  color:var(--portal-text)!important;
+  border-color:#5B5E68!important;
+}
+.btn.primary,button.primary{
+  background:var(--portal-magenta)!important;
+  color:#fff!important;
+  border-color:var(--portal-magenta)!important;
+}
+#solfa .muted,.muted{color:var(--portal-muted)!important}
+
+/* Back button follows the portal's neutral dark action style */
+body > button[onclick*="location.href='./'"]{
+  background:#505055!important;
+  color:var(--portal-text)!important;
+  border-color:#5B5E68!important;
+}
+
+/* Mobile readability pass based on the deployed screenshot */
+@media(max-width:700px){
+  header,.header,.topbar{padding-top:14px!important;padding-bottom:14px!important}
+  header h1,.header h1,.topbar h1{font-size:24px!important}
+  #solfa .card{padding:20px!important;border-radius:18px!important}
+  #solfa h2,#solfa h3{font-size:25px!important;line-height:1.2!important;margin-bottom:24px!important}
+  #solfa label{
+    font-size:16px!important;
+    line-height:1.25!important;
+    margin-bottom:8px!important;
+  }
+  #solfa input,#solfa select,#solfa .input{
+    min-height:58px!important;
+    padding:13px 16px!important;
+    font-size:18px!important;
+    border-radius:14px!important;
+  }
+  #solfa input::placeholder{font-size:17px!important}
+  #solfa .btn,#solfa button{
+    min-height:52px!important;
+    padding:12px 18px!important;
+    font-size:17px!important;
+    font-weight:850!important;
+    border-radius:13px!important;
+  }
+  body > button[onclick*="location.href='./'"]{
+    min-height:50px!important;
+    padding:11px 15px!important;
+    font-size:16px!important;
+  }
+}
+</style>
+</head><body>
 
 <div id="loginBuffer" class="login-buffer-overlay" aria-hidden="true">
   <div class="login-buffer-box" role="status" aria-live="polite">
