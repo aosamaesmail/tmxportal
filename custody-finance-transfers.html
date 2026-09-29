@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Telecomax Operations — Custody Finance Transfers V7.4.1</title>
+<title>Telecomax Operations — Custody Finance Transfers V7.4.2</title>
 <style>
 *{box-sizing:border-box}
 :root{--navy:#111827;--blue:#1a73e8;--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--border:#d1d5db;--green:#047857;--red:#b91c1c;--amber:#b45309;--radius:12px}
@@ -1064,6 +1064,88 @@ body::before{display:none!important;content:none!important}
   background:#FFFFFF!important;
   color:#1E293B!important;
   border-color:#CBD5E1!important;
+}
+</style>
+
+<style id="telecomaxTransfersV742TableCorrection">
+/* Engineer Summary: remove remaining dark/black chrome and restore readable text */
+#transferTab .card:has(#transferEngineerTable),
+#transferTab .card:has(#transferHistoryTable){
+  background:#F4F6F8!important;
+  color:#1E293B!important;
+  border:1px solid #D8DEE6!important;
+  box-shadow:0 2px 7px rgba(15,23,42,.05)!important;
+}
+#transferTab .card:has(#transferEngineerTable) h1,
+#transferTab .card:has(#transferEngineerTable) h2,
+#transferTab .card:has(#transferEngineerTable) h3,
+#transferTab .card:has(#transferHistoryTable) h1,
+#transferTab .card:has(#transferHistoryTable) h2,
+#transferTab .card:has(#transferHistoryTable) h3{
+  color:#1E293B!important;
+}
+
+/* Remove dark table header */
+#transferEngineerTable thead,
+#transferHistoryTable thead{
+  background:#E9EEF3!important;
+}
+#transferEngineerTable th,
+#transferHistoryTable th{
+  background:#E9EEF3!important;
+  color:#334155!important;
+  border-color:#D8DEE6!important;
+  font-weight:800!important;
+}
+
+/* Force all row text to the light-theme text palette */
+#transferEngineerTable tbody tr,
+#transferHistoryTable tbody tr{
+  background:#FFFFFF!important;
+  color:#1E293B!important;
+}
+#transferEngineerTable tbody tr:nth-child(even),
+#transferHistoryTable tbody tr:nth-child(even){
+  background:#F8FAFC!important;
+}
+#transferEngineerTable td,
+#transferHistoryTable td{
+  color:#1E293B!important;
+  border-color:#D8DEE6!important;
+}
+#transferEngineerTable td *,
+#transferHistoryTable td *{
+  color:inherit!important;
+}
+#transferEngineerTable .muted,
+#transferHistoryTable .muted{
+  color:#64748B!important;
+}
+
+/* Status remains readable without white text */
+#transferEngineerTable .s-transferred,
+#transferHistoryTable .s-transferred{
+  color:#2F6F55!important;
+}
+
+/* Buttons keep approved theme */
+#transferEngineerTable button:not(.primary),
+#transferHistoryTable button:not(.primary){
+  background:#F8FAFC!important;
+  color:#1E293B!important;
+  border-color:#CBD5E1!important;
+}
+#transferEngineerTable .primary,
+#transferHistoryTable .primary{
+  background:#EC008C!important;
+  color:#FFFFFF!important;
+  border-color:#EC008C!important;
+}
+
+/* Batch count / summary header text */
+#transferTab .card:has(#transferEngineerTable) .muted,
+#transferTab .card:has(#transferHistoryTable) .muted{
+  color:#64748B!important;
 }
 </style>
 </head>
