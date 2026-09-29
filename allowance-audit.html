@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Telecomax Operations — Allowance Audit V7.2</title><style>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Telecomax Operations — Allowance Audit V7.2.1</title><style>
 :root{--bg:#f3f6f8;--card:#fff;--text:#24313a;--muted:#71808b;--line:#dfe6ea;--brand:#c52b83;--green:#21865a;--red:#b83b47;--amber:#a66a00}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial;background:var(--bg);color:var(--text)}header{background:#fff;border-bottom:1px solid var(--line);padding:16px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}.brand{font-weight:900;font-size:20px}.brand span{color:var(--brand)}button,input,select,textarea{font:inherit}.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:750;cursor:pointer}.primary{background:var(--brand);color:#fff}.ghost{background:#eef2f4;color:var(--text)}main{max-width:1250px;margin:auto;padding:24px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 8px 24px #25323a0b}.login{max-width:440px;margin:70px auto}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase}.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:10px;padding:11px;background:#fff;min-width:0}
 .combo{position:relative}.combo input{width:100%;padding-right:34px}.combo:after{content:'⌄';position:absolute;right:11px;bottom:11px;color:var(--muted);pointer-events:none}.combo-list{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);max-height:230px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 28px #25323a20;z-index:30;padding:5px}.combo.open .combo-list{display:block}.combo-option{padding:9px 10px;border-radius:7px;cursor:pointer;font-size:13px}.combo-option.multi{display:flex;align-items:center;gap:8px}.combo-option.multi input{width:auto}.chips{position:absolute;left:0;right:0;top:100%;display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;z-index:6;pointer-events:none}.chips .chip{pointer-events:auto}.chip{background:#f8eaf2;color:var(--brand);border-radius:99px;padding:3px 8px;font-size:11px;font-weight:700}.combo-option:hover,.combo-option.active{background:#f8eaf2;color:var(--brand)}.combo-empty{padding:10px;color:var(--muted);font-size:12px}.filters{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr 1fr auto auto;gap:10px;align-items:end}
 .filters>.field{align-self:end}.filters .field>input,.filters .field>select{height:46px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{background:#f8fafb;border:1px solid var(--line);border-radius:14px;padding:15px}.metric b{font-size:22px;display:block;margin-top:5px}.metric small{color:var(--muted)}.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px}.bulkbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px}.bulkbar .spacer{flex:1}.records{overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fff}.audit-table{width:100%;border-collapse:collapse;min-width:1000px}.audit-table th{background:#f4f7f8;text-align:left;font-size:11px;text-transform:uppercase;color:var(--muted);padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}.audit-table td{padding:7px 8px;border-bottom:1px solid #edf1f3;vertical-align:middle;font-size:12.5px}.audit-table tr:hover td{background:#fbfcfd}.audit-table tr:last-child td{border-bottom:0}.check{width:17px;height:17px;accent-color:var(--brand)}.name{font-weight:850}.meta{font-size:13px;color:var(--muted);margin-top:4px}.amount{font-size:19px;font-weight:900}.status{font-weight:800}.Pending{color:var(--amber)}.Approved{color:var(--green)}.Rejected{color:var(--red)}.actions{display:flex;gap:6px;flex-wrap:wrap}.approve{background:#e9f7f0;color:var(--green)}.reject{background:#fdecef;color:var(--red)}.pending{background:#fff4db;color:var(--amber)}.empty{text-align:center;color:var(--muted);padding:35px}.toast{position:fixed;right:20px;bottom:20px;background:#26323a;color:#fff;padding:12px 16px;border-radius:10px;display:none;z-index:20}.note{font-size:13px;color:var(--muted);line-height:1.5}.tabs{display:flex;gap:8px;margin-bottom:14px}.tab{background:#edf1f3}.tab.active{background:var(--brand);color:#fff}@media(max-width:1000px){main{padding:16px}.filters{grid-template-columns:repeat(2,minmax(0,1fr))}.filters .btn{min-height:44px}.summary{grid-template-columns:1fr 1fr}.card{padding:15px}.bulkbar{align-items:stretch}.bulkbar .spacer{display:none}.bulkbar #selectedCount{margin-left:auto;align-self:center}}@media(max-width:700px){
@@ -29,7 +29,7 @@ main{max-width:1650px!important;padding:14px 18px 80px!important}.card{backgroun
 /* Native page SSO overlay styling from the proven allowance SSO implementation */
 .sso-status{position:fixed;inset:0;z-index:10000;background:#050b14;display:flex;align-items:center;justify-content:center;padding:20px}.sso-status-box{text-align:center;background:#0b1523;border:1px solid #26364b;border-radius:16px;padding:22px 28px;min-width:260px}.sso-status-box b{display:block;font-size:18px}.sso-status-box span{display:block;color:#9aa8bc;font-size:12px;margin-top:6px}
 @media(max-width:700px){header{height:55px;padding:9px 10px!important}.brand{font-size:16px!important}.brand small{display:block;margin:1px 0 0;font-size:9px}.header-actions .btn{padding:5px 7px!important;font-size:10px;min-height:30px}main{padding:8px 8px 72px!important}.card{padding:9px!important;margin-bottom:8px!important}.filters{grid-template-columns:1fr 1fr!important;gap:6px!important}.filters .field>input,.filters .field>select{height:36px!important;font-size:12px}.filters>.btn{min-height:34px!important;padding:6px!important;font-size:11px}.summary{grid-template-columns:1fr 1fr!important;gap:5px!important}.metric{padding:6px 8px!important}.metric b{font-size:15px!important}.tabs .btn{min-height:33px!important;padding:6px 3px!important;font-size:11px}.bulkbar{grid-template-columns:1fr 1fr!important;gap:5px!important}.bulkbar .btn{min-height:34px!important;padding:6px!important;font-size:10.5px}.audit-table tr{background:#091522!important;border-color:#26364b!important;padding:5px!important;margin-bottom:6px!important}.audit-table td{padding:3px 5px!important;font-size:12px!important}.audit-table td:before{color:#91a0b5!important;font-size:8.5px!important;flex-basis:30%!important}.actions .btn{min-height:30px!important;padding:5px 8px!important;font-size:10.5px!important}}
-</style></head><body><header><div class="brand"><span>TELECOMAX</span> <small>Operations / Allowance Audit · V7.2</small></div><div class="header-actions"><button class="btn ghost" type="button" onclick="location.href='./'">← Operations</button><button id="logout" class="btn ghost" style="display:none">Logout</button></div></header><main>
+</style></head><body><header><div class="brand"><span>TELECOMAX</span> <small>Operations / Allowance Audit · V7.2.1</small></div><div class="header-actions"><button class="btn ghost" type="button" onclick="location.href='./'">← Operations</button><button id="logout" class="btn ghost" style="display:none">Logout</button></div></header><main>
 <section id="login" class="card login" style="display:none"><h2>PM Login</h2><p class="note">Use your management Name + 6-digit PIN.</p><div class="field"><label>Name</label><input id="name" autocomplete="username" placeholder="Enter your name"></div><br><div class="field"><label>PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="6-digit PIN"></div><br><button id="loginBtn" class="btn primary">Login</button></section>
 <section id="app" style="display:none"><div class="card"><div class="section-title"><div><h2 style="margin:0">Monthly Allowance Audit</h2></div></div><br><div class="filters">
 <div class="field"><label>Month</label><input id="month" type="month"></div>
@@ -226,10 +226,80 @@ function portalSSOStatus_(title,detail){ document.documentElement.classList.remo
   // portalSso already validated the portal token and created this PM session.
   // Do not call allowanceData here: that API requires a month.
   const x=document.getElementById('portalSsoStatus'); if(x)x.remove();
+  document.documentElement.classList.remove('portal-sso-pending');
   $('name').value=managementName;
   auth(true);
  }catch(e){portalSSOStatus_('Single Sign-On connection error',String(e&&e.message||e));console.error('Portal SSO failed',e)}
 })();
 </script>
+
+
+<style id="v721AllowanceMobileFix">
+@media(max-width:700px){
+  /* The loaded table header must not become a mobile record card */
+  #records .audit-table{
+    min-width:0!important;
+    width:100%!important;
+    display:block!important;
+  }
+  #records .audit-table thead{
+    display:none!important;
+  }
+  #records .audit-table tbody{
+    display:block!important;
+    width:100%!important;
+  }
+  #records .audit-table tbody tr{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    width:100%!important;
+    padding:7px!important;
+    margin:0 0 7px!important;
+    border:1px solid #26364b!important;
+    border-radius:12px!important;
+    background:#091522!important;
+  }
+  #records .audit-table tbody td{
+    display:block!important;
+    min-width:0!important;
+    padding:5px 7px!important;
+    border:0!important;
+    font-size:12px!important;
+  }
+  #records .audit-table tbody td::before{
+    content:attr(data-label)!important;
+    display:block!important;
+    margin-bottom:2px!important;
+    color:#91a0b5!important;
+    font-size:8.5px!important;
+    font-weight:900!important;
+    letter-spacing:.035em!important;
+  }
+  #records .audit-table tbody td.select-cell{
+    grid-column:1 / -1!important;
+    display:flex!important;
+    justify-content:flex-end!important;
+    padding:2px 5px 0!important;
+  }
+  #records .audit-table tbody td.select-cell::before{
+    margin-right:auto!important;
+  }
+  #records .audit-table tbody td[data-label="Details"],
+  #records .audit-table tbody td[data-label="Action"]{
+    grid-column:1 / -1!important;
+  }
+  #records .audit-table tbody td[data-label="Allowance"] b{
+    color:#58d18d!important;
+    font-size:14px!important;
+  }
+  #records .audit-table tbody td[data-label="Action"] .actions{
+    justify-content:flex-end!important;
+  }
+  #records .empty{
+    padding:20px 10px!important;
+    text-align:center!important;
+  }
+}
+</style>
 
 </body></html>
