@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Telecomax Operations — Custody PM Receipt Review V7.3.3</title>
+<title>Telecomax Operations — Custody PM Receipt Review V7.3.4</title>
 <style>
 *{box-sizing:border-box}
 :root{--navy:#111827;--blue:#1a73e8;--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--border:#d1d5db;--green:#047857;--red:#b91c1c;--amber:#b45309;--radius:12px}
@@ -576,7 +576,7 @@ table td,.table td{border-color:#e6e6eb!important}
     /* Receipt evidence should be large on desktop */
     .receipt-img,.receipt-image,img.receipt{max-height:650px!important;object-fit:contain!important}
     /* Native page marker */
-    body::before{content:'TELECOMAX  •  Custody PM Receipt Review  •  V7.3.3';display:block;position:sticky;top:0;z-index:999;padding:10px 16px;background:#081321;border-bottom:1px solid #29394e;color:#f7f9fd;font-size:13px;font-weight:900;letter-spacing:.02em}
+    body::before{content:'TELECOMAX  •  Custody PM Receipt Review  •  V7.3.4';display:block;position:sticky;top:0;z-index:999;padding:10px 16px;background:#081321;border-bottom:1px solid #29394e;color:#f7f9fd;font-size:13px;font-weight:900;letter-spacing:.02em}
     @media(max-width:700px){
       body::before{padding:8px 10px;font-size:11px}
       .card,.panel,.feed-card{border-radius:12px!important}
@@ -743,7 +743,7 @@ button:hover,.secondary:hover{background:#17283d!important}
 </style>
 
 <style id="telecomaxLightAuditWorkspaceV733">
-/* V7.3.3 — Light Audit Workspace test */
+/* V7.3.4 — Light Audit Workspace test */
 :root{
   --la-bg:#F4F6F8;
   --la-panel:#FFFFFF;
@@ -949,6 +949,62 @@ button:hover,.secondary:hover{background:#F1F5F9!important}
     font-size:20px!important;
   }
   .filters,.filter-card,.filter-panel{padding:10px!important}
+}
+</style>
+
+<style id="telecomaxAuditV734Corrections">
+/* 1) Remove the doubled horizontal rules inside expense detail grids.
+   Keep one subtle separator only; suppress borders from nested/value elements. */
+#feed .feed-card .field,
+#feed .feed-card td{
+  border-bottom:1px solid #475569!important;
+  box-shadow:none!important;
+}
+#feed .feed-card .field > *,
+#feed .feed-card td > *{
+  border-bottom:0!important;
+  box-shadow:none!important;
+}
+#feed .feed-card hr{
+  border:0!important;
+  border-top:1px solid #475569!important;
+  height:0!important;
+  margin:6px 0!important;
+}
+/* Adjacent legacy separators were creating the double-line effect */
+#feed .feed-card .field + hr,
+#feed .feed-card td + hr{
+  display:none!important;
+}
+
+/* 2) Filter area now belongs to the light workspace instead of looking like
+   a third dark theme between the light page and dark receipt cards. */
+.filters,.filter-card,.filter-panel,
+#reviewTab > .card:has(.filters),
+#reviewTab > .card:has(#fEngineer),
+#reviewTab .card:has(#fEngineer){
+  background:#F4F6F8!important;
+  color:#1E293B!important;
+  border:1px solid #D8DEE6!important;
+  box-shadow:none!important;
+}
+.filters label,.filter-card label,.filter-panel label,
+#reviewTab .card:has(#fEngineer) label{
+  color:#1E293B!important;
+}
+.filters input,.filters select,
+.filter-card input,.filter-card select,
+.filter-panel input,.filter-panel select,
+#reviewTab .card:has(#fEngineer) input,
+#reviewTab .card:has(#fEngineer) select{
+  background:#FFFFFF!important;
+  color:#1E293B!important;
+  border-color:#CBD5E1!important;
+}
+#reviewTab .card:has(#fEngineer) .search-clear{
+  background:#E9EEF3!important;
+  color:#526173!important;
+  border-color:#D3DBE4!important;
 }
 </style>
 </head>
