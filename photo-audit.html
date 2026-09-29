@@ -1,26 +1,4 @@
 <!doctype html><html><head>
-<style id="photoAuditBootV824">
-html.photo-audit-auth-boot [id*="login" i],
-html.photo-audit-auth-boot [class*="login" i],
-html.photo-audit-auth-boot .portal-sso-status,
-html.photo-audit-auth-boot #portalSsoStatus{display:none!important}
-</style>
-<script id="photoAuditBootV824">
-(function(){
-  const hasSso=/(?:^|[&#])sso=/.test(location.hash);
-  const savedPm=!!sessionStorage.getItem('tmx_km_pm_token');
-  const savedAdmin=!!sessionStorage.getItem('tmx_km_admin_token');
-  // First portal entry: suppress duplicate module SSO/login presentation.
-  // Refresh: exact KM PM/Admin session key means stay on this module; do not bounce to PM home.
-  if(hasSso || savedPm || savedAdmin){
-    document.documentElement.classList.add('photo-audit-auth-boot');
-  }
-  window.__photoAuditAuthReadyV824=function(){
-    document.documentElement.classList.remove('photo-audit-auth-boot');
-  };
-})();
-</script>
-
 <script id="tmxRouteGuardV82">
 (function(){
  const ALLOWED=["Admin", "PM"], NEED_KM=true, NEED_CUSTODY=false;
@@ -459,7 +437,14 @@ async function loadApproved(){showBuffer('Loading summary...');try{let d=await p
 $('sApply').onclick=loadApproved;$('sExport').onclick=()=>exportApprovedXlsx(approvedRows);
 $('solfaDate').value=today();$('solfaUpload').onclick=async()=>{let engineer=$('solfaEng').value.trim(),date=$('solfaDate').value,amount=$('solfaAmount').value;if(!engineer||!date||!amount)return toast('Complete Solfa fields');try{await post('adminSolfa',{engineer,date,amount});$('solfaAmount').value='';toast('Solfa uploaded');loadBalances()}catch(e){toast('Could not upload Solfa')}};
 async function loadRent(){try{let d=await post('adminRentTrips');rentTrips=d.trips||[];$('rentTrip').innerHTML='<option value="">— Select Rent Trip —</option>'+rentTrips.map(t=>`<option value="${esc(t.tripId)}">${esc(t.date)} · ${esc(t.engineer)} · ${esc(t.area)} · ${esc(t.task)}</option>`).join('')}catch(e){toast('Could not load Rent trips')}}$('rentTrip').onchange=()=>{let t=rentTrips.find(x=>String(x.tripId)===String($('rentTrip').value));$('rentEng').value=t?.engineer||'';$('benzine').value=t?.benzineAmount||0;$('rentAmount').value='';$('deduction').value='';$('deductionDriver').value='';sumRent()};function sumRent(){$('rentTotal').textContent=money((+$('benzine').value||0)+(+ $('rentAmount').value||0))}$('sum').onclick=sumRent;$('rentAmount').oninput=sumRent;$('rentUpload').onclick=async()=>{let tripId=$('rentTrip').value,rent=$('rentAmount').value,rentDeduction=$('deduction').value,rentDeductionDriver=$('deductionDriver').value.trim();if(!tripId||!rent||!rentDeduction)return toast('Complete Rent fields');try{await post('adminRent',{tripId,rent,rentDeduction,rentDeductionDriver});toast('Rent uploaded');$('rentTrip').value='';$('rentEng').value='';$('benzine').value='0';$('rentAmount').value='';$('deduction').value='';$('deductionDriver').value='';sumRent();loadRent();loadBalances()}catch(e){toast('Could not upload Rent')}};
-if(managementToken){$('name').value=managementName;post('adminSummary',{}).then(()=>auth(true)).catch(()=>{managementToken='';managementName='';sessionStorage.removeItem('tmx_km_admin_token');sessionStorage.removeItem('tmx_km_admin_name');auth(false)})}else auth(false);
+if(managementToken){
+ $('name').value=managementName;
+ post('adminSummary',{}).then(()=>auth(true)).catch(()=>{
+   // Do not erase a saved PM session during page boot. The native SSO/refresh routine below owns restoration.
+   const hasPm=!!sessionStorage.getItem('tmx_km_pm_token');
+   if(!hasPm){managementToken='';managementName='';sessionStorage.removeItem('tmx_km_admin_token');sessionStorage.removeItem('tmx_km_admin_name');auth(false)}
+ });
+}else auth(false);
 
 function exportApprovedXlsx(rows){
  if(!rows||!rows.length)return toast('No fully approved rows to export');
@@ -473,37 +458,48 @@ function exportApprovedXlsx(rows){
  let cs=cen.reduce((a,b)=>a+b.length,0),end=new Uint8Array([...u32(0x06054b50),0,0,0,0,...u16(f.length),...u16(f.length),...u32(cs),...u32(off),0,0]),blob=new Blob([...parts,...cen,end],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),fr=new FileReader();fr.onload=()=>{let a=document.createElement('a');a.href=fr.result;a.download='KM-Approved-Summary.xlsx';a.click()};fr.readAsDataURL(blob)
 }
 </script><div id="auditDialogBg" class="audit-dialog-bg"><div class="audit-dialog"><h3 id="auditDialogTitle">Audit Action</h3><p id="auditDialogText"></p><div id="auditDialogFields"></div><div class="audit-dialog-actions"><button id="auditDialogCancel" class="btn">Cancel</button><button id="auditDialogConfirm" class="btn primary">Confirm</button></div></div></div>
-<div id="v7Sso" class="v7-sso"><div><div class="spin"></div><b>Opening KM Photo Audit…</b><span>Using your Telecomax Operations session</span></div></div>
+<div id="v7Sso" class="v7-sso hidden" aria-hidden="true"></div>
 <script>
 (async function v7NativeAuditSSO(){
- const overlay=document.getElementById('v7Sso');
  try{
    const m=location.hash.match(/(?:^|[&#])sso=([^&]+)/);
+   let portalUser=null;
+   try{portalUser=JSON.parse(sessionStorage.getItem('tmx_portal_user')||'null')}catch(_e){}
+   const portalRole=String(portalUser?.role||'Admin');
 
-   // Normal refresh/back navigation: reuse the already accepted KM management session.
+   // Refresh/back: reuse the role-specific KM management session already accepted.
    if(!m && managementToken){
-     overlay.classList.add('hidden');
      auth(true);
      return;
    }
 
-   if(!m) throw new Error('Open Photo Audit from Telecomax Operations.');
+   if(!m){
+     // No SSO hash and no KM module token: return to Operations only in this genuine unauthenticated case.
+     location.replace('./');
+     return;
+   }
 
    const portalToken=decodeURIComponent(m[1]);
    history.replaceState(null,'',location.pathname);
-   const r=await fetch(URL,{method:'POST',body:JSON.stringify({action:'portalSSO',portalToken,portalRole:'Admin'})});
+   const r=await fetch(URL,{method:'POST',body:JSON.stringify({action:'portalSSO',portalToken,portalRole})});
    const d=await r.json();
    if(!d.ok||!d.token) throw new Error(d.error||'KM rejected the Operations session.');
 
    managementToken=d.token;
-   managementName=d.name||'';
-   sessionStorage.setItem('tmx_km_admin_token',managementToken);
-   sessionStorage.setItem('tmx_km_admin_name',managementName);
-
-   overlay.classList.add('hidden');
+   managementName=d.name||portalUser?.name||'';
+   if(portalRole==='PM'){
+     sessionStorage.setItem('tmx_km_pm_token',managementToken);
+     sessionStorage.setItem('tmx_km_pm_name',managementName);
+     sessionStorage.removeItem('tmx_km_admin_token');
+     sessionStorage.removeItem('tmx_km_admin_name');
+   }else{
+     sessionStorage.setItem('tmx_km_admin_token',managementToken);
+     sessionStorage.setItem('tmx_km_admin_name',managementName);
+   }
    auth(true);
  }catch(e){
-   overlay.innerHTML='<div><b>Could not open Photo Audit</b><span>'+esc(e.message||'Single Sign-On failed')+'</span><br><br><button class="btn" onclick="location.href=\'./\'">Back to Operations</button></div>';
+   console.error('Photo Audit SSO failed',e);
+   location.replace('./');
  }
 })()
 </script>
@@ -814,10 +810,4 @@ document.addEventListener('DOMContentLoaded',applyAuditPhotoVisibility);
 window.addEventListener('pageshow',applyAuditPhotoVisibility);
 </script>
 
-<script id="photoAuditBootReleaseV824">
-window.addEventListener('load',()=>{
-  // Give the page's own saved-session validation / SSO exchange time to establish the audit view.
-  setTimeout(()=>window.__photoAuditAuthReadyV824&&window.__photoAuditAuthReadyV824(),1200);
-});
-</script>
 </body></html>
