@@ -41,281 +41,232 @@ body{background:radial-gradient(circle at 12% 0%,#11152b 0,#050b14 38%);color:va
 @media(max-width:900px){.wrap{padding:12px}.top{padding:0 14px}.brand{font-size:17px}.brand small{font-size:11px}.photos{padding:12px;gap:12px}.frame{height:300px}}
 </style>
 
-<style id="v71AuditRefinement">
-/* =========================================================
-   V7.1 PHOTO AUDIT — DENSITY + READABILITY REFINEMENT
-   Logic is intentionally untouched.
-   ========================================================= */
+<style id="v712PhotoAuditUI">
+/* V7.1.2 — selectors match the real audit DOM */
+html body{font-size:15px!important;line-height:1.42!important}
+body .wrap{max-width:1700px!important;padding:14px 18px 88px!important}
+body .brand{font-weight:900!important;color:#fff!important}
+body .brand small{font-weight:700!important;color:#b9c4d4!important}
 
-/* Overall readability */
-body{
-  font-size:14px;
-  line-height:1.42;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-}
-.wrap{max-width:1680px;padding:14px 18px 92px}
-.brand{font-weight:900;letter-spacing:.2px}
-.brand small{font-weight:650;color:#b4bfd0}
-label,.cell b,.metric b{
-  color:#aeb9ca!important;
-  font-size:11px!important;
-  font-weight:800!important;
-  letter-spacing:.035em;
-}
-.cell span,.metric span{
-  color:#f7f9fc!important;
-  font-weight:700;
-}
-
-/* Compact filters / controls */
-.filters{gap:8px!important;margin-bottom:10px!important}
-.input,select,.btn{
-  min-height:36px;
-  padding:8px 11px;
-  font-size:13px;
-  border-radius:10px;
-}
-.btn{font-weight:800}
-
-/* One trip = one clearly separated audit card */
-.audit{
-  border:1px solid #26364b!important;
+body #auditList .audit{
+  margin:0 0 14px!important;
+  border:1px solid #2b3b52!important;
   border-radius:16px!important;
-  overflow:hidden;
-  margin-bottom:12px!important;
-  background:#091321!important;
+  overflow:hidden!important;
+  background:#081321!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.18)!important;
 }
-.summary{
+body #auditList .summary{
+  display:grid!important;
+  grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  background:#0d1827!important;
+  border-bottom:1px solid #29394e!important;
+}
+body #auditList .cell{
+  padding:9px 11px!important;
+  min-height:55px!important;
+  border-right:1px solid #26364b!important;
+  color:#f7f9fc!important;
+  font-size:14px!important;
+  font-weight:750!important;
+}
+body #auditList .cell b{
+  display:block!important;
+  margin-bottom:4px!important;
+  color:#aebbd0!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:.045em!important;
+}
+
+body #auditList .metrics{
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  background:#091522!important;
   border-bottom:1px solid #26364b!important;
-  background:#0c1726!important;
 }
-.grid{gap:0!important}
-.cell{
-  padding:10px 12px!important;
+body #auditList .metric{
   min-height:58px!important;
-  border-color:#223044!important;
+  padding:8px 10px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  color:#f8faff!important;
+  font-size:15px!important;
+  font-weight:850!important;
 }
-.cell span{font-size:14px!important}
+body #auditList .metric b{
+  color:#9facbf!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  margin-bottom:4px!important;
+}
+body #auditList .metric:last-child{
+  color:#77dfa8!important;
+  font-size:16px!important;
+}
 
-/* Compact metrics. Start/Finish KM are visually suppressed here because
-   the odometer values remain directly above their respective photos. */
-.metrics{
-  padding:9px 12px!important;
-  gap:6px!important;
-  background:#0a1422!important;
-  border-color:#223044!important;
+body #auditList .audit-actions{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:7px!important;
+  padding:8px 12px!important;
+  min-height:50px!important;
+  background:#091321!important;
+  border-top:0!important;
+  border-bottom:1px solid #26364b!important;
 }
-.metric{
-  min-height:52px!important;
-  padding:7px 8px!important;
+body #auditList .audit-actions .btn{
+  min-height:35px!important;
+  padding:7px 12px!important;
+  font-size:13px!important;
+  font-weight:850!important;
 }
-.metric span{font-size:14px!important}
-.metric:nth-child(1),
-.metric:nth-child(2){display:none!important}
+body #auditList .status-badge{
+  display:inline-flex!important;
+  align-items:center!important;
+  min-height:28px!important;
+  padding:4px 9px!important;
+  border-radius:999px!important;
+  border:1px solid #3a485c!important;
+  background:#111d2c!important;
+  color:#e8edf5!important;
+  font-size:11.5px!important;
+  font-weight:850!important;
+}
+body #auditList .status-pending{border-color:#735b2e!important;background:#201b10!important;color:#f1c86b!important}
+body #auditList .status-approved{border-color:#286a4a!important;background:#0d2119!important;color:#78dca8!important}
+body #auditList .status-rejected{border-color:#713b49!important;background:#241118!important;color:#f09aaa!important}
 
-/* Stronger amount emphasis without making the block taller */
-.metric:last-child span{
-  color:#7ee0ad!important;
+body #auditList .photos{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:14px!important;
+  padding:12px 14px 14px!important;
+  background:#07111d!important;
+}
+body #auditList .photo{text-align:center!important}
+body #auditList .photo-title{
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:8px!important;
+  margin:0 0 7px!important;
+  color:#f9fbff!important;
   font-size:15px!important;
   font-weight:900!important;
 }
-
-/* Status/action row */
-.actions{
-  padding:9px 12px!important;
-  gap:8px!important;
-  align-items:center!important;
-  min-height:50px;
-  background:#091321!important;
-}
-.actions .btn{
-  min-height:35px!important;
-  padding:7px 12px!important;
-}
-.actions strong,.actions b{font-weight:850!important;color:#f7f9fc!important}
-
-/* Make raw PM / Finance text read like badges when wrapped by existing spans */
-.actions span{
-  font-weight:750;
-  color:#d8e0eb;
-}
-
-/* Photo evidence: keep KM visually attached to each photo */
-.photos{
-  gap:14px!important;
-  padding:12px!important;
-  background:#07111d!important;
-}
-.photo h3,.photo-title{
-  margin:0 0 8px!important;
-  font-size:14px!important;
-  font-weight:900!important;
-  color:#f8faff!important;
-}
-.photo-km{
+body #auditList .photo-km{
   display:inline-flex!important;
-  align-items:center;
-  min-height:30px;
+  align-items:center!important;
   padding:4px 9px!important;
-  margin-left:7px;
-  font-size:14px!important;
-  font-weight:900!important;
-  color:#fff!important;
-  border-color:#33465f!important;
+  min-height:29px!important;
+  border:1px solid #354963!important;
+  border-radius:9px!important;
   background:#101d2e!important;
+  color:#fff!important;
+  font-size:15px!important;
+  font-weight:900!important;
 }
-.frame{
-  height:360px!important;
+body #auditList .frame{
+  height:310px!important;
+  border:1px solid #2b3c52!important;
   border-radius:12px!important;
-  overflow:hidden;
-  background:#03070d!important;
+  background:#03080e!important;
 }
-.frame img{
+body #auditList .frame img{
   width:100%!important;
   height:100%!important;
   object-fit:contain!important;
 }
-.gps{
+body #auditList .gps{
   margin-top:5px!important;
+  color:#7f91aa!important;
   font-size:10.5px!important;
-  line-height:1.25;
-  color:#7f91a9!important;
+  line-height:1.2!important;
 }
 
-/* Slimmer sticky audit bar */
-.bulkbar{
-  min-height:58px!important;
-  padding:8px 12px!important;
-  border-radius:13px!important;
-  border:1px solid #29394f!important;
-  background:rgba(9,19,33,.96)!important;
-  backdrop-filter:blur(12px);
-  box-shadow:0 -8px 26px rgba(0,0,0,.28)!important;
+body #audit .bulkbar{
+  min-height:54px!important;
+  padding:7px 10px!important;
+  gap:6px!important;
+  background:rgba(9,19,33,.97)!important;
+  border:1px solid #2b3b51!important;
+  box-shadow:0 -8px 24px rgba(0,0,0,.3)!important;
+  backdrop-filter:blur(12px)!important;
 }
-.bulkbar .btn{
-  min-height:38px!important;
-  padding:8px 13px!important;
+body #audit .bulkbar .btn{
+  min-height:37px!important;
+  padding:7px 12px!important;
+  font-size:12.5px!important;
+  font-weight:850!important;
 }
-.bulkbar .muted{font-size:11px!important}
+body #audit .bulkbar .muted{font-size:10.5px!important;color:#9ba9bc!important}
 
-/* Desktop: dense enough to review one trip comfortably */
-@media(min-width:901px){
-  .grid{
-    grid-template-columns:repeat(6,minmax(0,1fr))!important;
-  }
-  .metrics{
-    grid-template-columns:repeat(5,minmax(0,1fr))!important;
-  }
-  .photos{
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  }
-  .frame{height:330px!important}
-}
-
-/* Mobile: readable 2-column metadata, compact metrics, photos still evidence-first */
+/* Mobile */
 @media(max-width:900px){
-  body{font-size:14px}
-  .top{height:58px!important}
-  .wrap{padding:10px 10px 88px!important}
-  .brand{font-size:17px!important}
-  .brand small{font-size:10.5px!important}
-
-  .audit{border-radius:15px!important;margin-bottom:10px!important}
-  .grid{
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  }
-  .cell{
-    min-height:72px!important;
-    padding:10px 12px!important;
-  }
-  .cell b{
-    font-size:10px!important;
-    margin-bottom:5px!important;
-  }
-  .cell span{
-    font-size:15px!important;
-    line-height:1.25!important;
-  }
-
-  /* Five audit metrics: Trip / F&B / Total / Rate / Amount */
-  .metrics{
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    padding:8px!important;
-    gap:4px!important;
-  }
-  .metric{
-    min-height:65px!important;
-    padding:8px 7px!important;
-  }
-  .metric b{font-size:10px!important}
-  .metric span{font-size:15px!important}
-  .metric:last-child{
-    grid-column:1 / -1;
-    min-height:58px!important;
-    border-top:1px solid #1e2d40;
-  }
-  .metric:last-child span{font-size:17px!important}
-
-  .actions{
-    padding:9px 10px!important;
-    gap:7px!important;
-    flex-wrap:wrap!important;
-  }
-  .actions .btn{
-    min-height:39px!important;
-    padding:8px 13px!important;
-    font-size:13px!important;
-  }
-
-  .photos{
-    grid-template-columns:1fr!important;
-    gap:12px!important;
-    padding:11px 10px 12px!important;
-  }
-  .photo h3,.photo-title{
-    font-size:16px!important;
-    margin-bottom:8px!important;
-  }
-  .photo-km{
-    font-size:16px!important;
-    min-height:34px;
-    padding:4px 10px!important;
-  }
-  .frame{
-    height:min(52vh,390px)!important;
-    min-height:260px;
-  }
-  .gps{
-    text-align:center;
-    font-size:10px!important;
-    margin-top:5px!important;
-  }
-
-  .bulkbar{
-    left:10px!important;
-    right:10px!important;
-    bottom:8px!important;
-    min-height:auto!important;
-    padding:7px 8px!important;
-    gap:6px!important;
-    border-radius:14px!important;
-  }
-  .bulkbar .btn{
-    min-height:39px!important;
-    padding:8px 10px!important;
-    font-size:12px!important;
-  }
-  .bulkbar .muted{font-size:10px!important}
+ html body{font-size:15px!important}
+ body .wrap{padding:10px 10px 82px!important}
+ body #auditList .summary{
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+ body #auditList .cell{
+   min-height:67px!important;
+   padding:9px 11px!important;
+   font-size:15px!important;
+ }
+ body #auditList .cell b{font-size:10px!important}
+ body #auditList .metrics{
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+ body #auditList .metric{
+   min-height:61px!important;
+   padding:7px!important;
+   font-size:15px!important;
+ }
+ body #auditList .metric:last-child{
+   grid-column:1/-1!important;
+   min-height:52px!important;
+   font-size:17px!important;
+ }
+ body #auditList .audit-actions{
+   padding:8px 9px!important;
+   gap:7px!important;
+ }
+ body #auditList .audit-actions .btn{
+   min-height:38px!important;
+   padding:8px 12px!important;
+ }
+ body #auditList .photos{
+   grid-template-columns:1fr!important;
+   gap:13px!important;
+   padding:10px!important;
+ }
+ body #auditList .photo-title{
+   font-size:16px!important;
+   margin-bottom:7px!important;
+ }
+ body #auditList .photo-km{font-size:16px!important}
+ body #auditList .frame{
+   height:300px!important;
+   min-height:0!important;
+ }
+ body #audit .bulkbar{
+   left:8px!important;
+   right:8px!important;
+   bottom:7px!important;
+   padding:6px 7px!important;
+ }
+ body #audit .bulkbar .btn{
+   min-height:37px!important;
+   padding:7px 9px!important;
+   font-size:12px!important;
+ }
 }
-
-/* Narrow phones: don't let buttons or text crush each other */
 @media(max-width:430px){
-  .cell{min-height:76px!important}
-  .actions .btn{flex:0 0 auto}
-  .bulkbar{flex-wrap:wrap!important;justify-content:flex-end!important}
-  .bulkbar .muted{margin-right:auto!important}
-  .frame{height:330px!important}
+ body #auditList .frame{height:275px!important}
+ body #audit .bulkbar{flex-wrap:wrap!important}
 }
 </style>
 
@@ -397,7 +348,7 @@ async function loadConfig(){try{let [x,c]=await Promise.all([post('adminFilterOp
 async function loadBalances(){try{let d=await post('adminSummary',{filterEngineer:$('balEng').value.trim(),filterMonth:$('balMonth').value});$('received').textContent=money(d.totals?.totalSolfa);$('spent').textContent=money(d.totals?.totalSpent);$('balance').textContent=money(d.totals?.balance);let a=d.engineers||[];$('balanceRows').innerHTML=a.length?`<table class="table"><thead><tr><th>Engineer</th><th>Received</th><th>Spent</th><th>Balance</th><th>Trips</th></tr></thead><tbody>${a.map(x=>`<tr><td>${esc(x.name)}</td><td>${money(x.totalSolfa)}</td><td>${money(x.totalSpent)}</td><td>${money(x.balance)}</td><td>${x.tripCount||0}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No balance records.</div>'}catch(e){toast('Could not load balances')}}$('balApply').onclick=loadBalances;$('balClear').onclick=()=>{$('balEng').value='';$('balMonth').value='';loadBalances()};
 async function loadAudit(){showBuffer('Applying filters...');try{$('auditList').innerHTML='<div class="empty">Loading…</div>';let d=await post('adminTrips',{filterEngineer:$('eng').value.trim(),filterDriver:$('drv').value.trim(),filterProject:$('proj').value.trim(),filterMonth:$('month').value});
     let paidBy=String($('paidBy').value||'').trim().toLowerCase(), auditStatus=String($('auditStatus').value||'Pending').trim().toLowerCase();
-    let a=(d.trips||[]).filter(t=>(!paidBy||String(t.paidBy||'').trim().toLowerCase()===paidBy)&&String(t.pmStatus||'Pending').trim().toLowerCase()===auditStatus);$('auditList').innerHTML=a.length?a.map(card).join(''):'<div class="empty">No matching trips.</div>';document.querySelectorAll('.frame img').forEach(i=>i.onclick=()=>{$('lbImg').src=i.dataset.full||i.src;$('lightbox').classList.add('open')})}catch(e){console.error('Photo Audit load failed:',e);$('auditList').innerHTML='<div class="empty">Could not load audit records: '+esc(e.message||'server-error')+'</div>';toast('Could not load audit records')}finally{hideBuffer()}}function card(t){let ph=(title,km,thumb,full,lat,lon,kind)=>`<div class="photo"><h3 class="photo-title">${title} <span class="photo-km" data-photo-km="${kind}">${esc(km||'—')}</span></h3><div class="frame">${thumb||full?`<img src="${esc(thumb||full)}" data-full="${esc(full||thumb)}">`:'<span class="muted">No photo</span>'}</div><div class="muted">GPS: ${esc(lat||'—')}, ${esc(lon||'—')}</div></div>`;return `<div class="audit" data-audit-trip="${esc(t.tripId)}"><div class="summary">${[['Date',t.date],['Engineer',t.engineer],['Driver',t.driver],['Project',t.projectName],['Area',t.area],['Task',t.task]].map(x=>`<div class="cell"><b>${x[0]}</b>${esc(x[1]||'—')}</div>`).join('')}</div><div class="metrics">${[['Start KM',t.startKm],['Finish KM',t.finishKm],['Trip KM',t.tripKm],['F&B',t.forthBack],['Total KM',t.totalKm],['Rate',t.rateDisplay||'22.25 EGP / 10 KM'],['Amount',money(t.amountSpent)]].map(x=>`<div class="metric"><b>${x[0]}</b>${esc(x[1])}</div>`).join('')}</div><div class="audit-actions"><input class="audit-check" type="checkbox" data-trip="${esc(t.tripId)}" ${t.pmStatus==='Approved'||t.pmStatus==='Rejected'?'disabled':''}><b>PM: ${esc(t.pmStatus||'Pending')}</b><span>Finance: ${esc(t.financeStatus||'Pending')}</span><button class="btn edit-km" data-trip="${esc(t.tripId)}" data-start="${t.startKm}" data-finish="${t.finishKm}">Edit KM</button><button class="btn deduct" data-trip="${esc(t.tripId)}">Deduct</button><button class="btn danger reject" data-trip="${esc(t.tripId)}">Reject</button></div><div class="photos">${ph('Start Photo',t.startKm,t.startPhotoThumb,t.startPhoto,t.startLatitude,t.startLongitude,'start')}${ph('Finish Photo',t.finishKm,t.finishPhotoThumb,t.finishPhoto,t.finishLatitude,t.finishLongitude,'finish')}</div></div>`}$('auditApply').onclick=loadAudit;$('auditClear').onclick=()=>{['eng','drv','proj','month','paidBy'].forEach(x=>$(x).value='');$('auditStatus').value='Pending';loadAudit()};$('lbClose').onclick=()=>$('lightbox').classList.remove('open');
+    let a=(d.trips||[]).filter(t=>(!paidBy||String(t.paidBy||'').trim().toLowerCase()===paidBy)&&String(t.pmStatus||'Pending').trim().toLowerCase()===auditStatus);$('auditList').innerHTML=a.length?a.map(card).join(''):'<div class="empty">No matching trips.</div>';document.querySelectorAll('.frame img').forEach(i=>i.onclick=()=>{$('lbImg').src=i.dataset.full||i.src;$('lightbox').classList.add('open')})}catch(e){console.error('Photo Audit load failed:',e);$('auditList').innerHTML='<div class="empty">Could not load audit records: '+esc(e.message||'server-error')+'</div>';toast('Could not load audit records')}finally{hideBuffer()}}function card(t){let ph=(title,km,thumb,full,lat,lon,kind)=>`<div class="photo"><h3 class="photo-title">${title} <span class="photo-km" data-photo-km="${kind}">${esc(km||'—')}</span></h3><div class="frame">${thumb||full?`<img src="${esc(thumb||full)}" data-full="${esc(full||thumb)}">`:'<span class="muted">No photo</span>'}</div><div class="gps">GPS: ${esc(lat||'—')}, ${esc(lon||'—')}</div></div>`;return `<div class="audit" data-audit-trip="${esc(t.tripId)}"><div class="summary">${[['Date',t.date],['Engineer',t.engineer],['Driver',t.driver],['Project',t.projectName],['Area',t.area],['Task',t.task]].map(x=>`<div class="cell"><b>${x[0]}</b>${esc(x[1]||'—')}</div>`).join('')}</div><div class="metrics">${[['Trip KM',t.tripKm],['F&B',t.forthBack],['Total KM',t.totalKm],['Rate',t.rateDisplay||'22.25 EGP / 10 KM'],['Amount',money(t.amountSpent)]].map(x=>`<div class="metric"><b>${x[0]}</b>${esc(x[1])}</div>`).join('')}</div><div class="audit-actions"><input class="audit-check" type="checkbox" data-trip="${esc(t.tripId)}" ${t.pmStatus==='Approved'||t.pmStatus==='Rejected'?'disabled':''}><span class="status-badge status-${String(t.pmStatus||'Pending').toLowerCase().replace(/\s+/g,'-')}">PM: ${esc(t.pmStatus||'Pending')}</span><span class="status-badge status-${String(t.financeStatus||'Pending').toLowerCase().replace(/\s+/g,'-')}">Finance: ${esc(t.financeStatus||'Pending')}</span><button class="btn edit-km" data-trip="${esc(t.tripId)}" data-start="${t.startKm}" data-finish="${t.finishKm}">Edit KM</button><button class="btn deduct" data-trip="${esc(t.tripId)}">Deduct</button><button class="btn danger reject" data-trip="${esc(t.tripId)}">Reject</button></div><div class="photos">${ph('Start Photo',t.startKm,t.startPhotoThumb,t.startPhoto,t.startLatitude,t.startLongitude,'start')}${ph('Finish Photo',t.finishKm,t.finishPhotoThumb,t.finishPhoto,t.finishLatitude,t.finishLongitude,'finish')}</div></div>`}$('auditApply').onclick=loadAudit;$('auditClear').onclick=()=>{['eng','drv','proj','month','paidBy'].forEach(x=>$(x).value='');$('auditStatus').value='Pending';loadAudit()};$('lbClose').onclick=()=>$('lightbox').classList.remove('open');
 
 let auditDialogResolve=null;
 function auditDialog(title,text,fieldsHtml){
@@ -473,18 +424,32 @@ function exportApprovedXlsx(rows){
  const overlay=document.getElementById('v7Sso');
  try{
    const m=location.hash.match(/(?:^|[&#])sso=([^&]+)/);
+
+   // Normal refresh/back navigation: reuse the already accepted KM management session.
+   if(!m && managementToken){
+     overlay.classList.add('hidden');
+     auth(true);
+     return;
+   }
+
    if(!m) throw new Error('Open Photo Audit from Telecomax Operations.');
+
    const portalToken=decodeURIComponent(m[1]);
    history.replaceState(null,'',location.pathname);
    const r=await fetch(URL,{method:'POST',body:JSON.stringify({action:'portalSSO',portalToken,portalRole:'Admin'})});
    const d=await r.json();
    if(!d.ok||!d.token) throw new Error(d.error||'KM rejected the Operations session.');
-   managementToken=d.token; managementName=d.name||'';
+
+   managementToken=d.token;
+   managementName=d.name||'';
+   sessionStorage.setItem('tmx_km_admin_token',managementToken);
+   sessionStorage.setItem('tmx_km_admin_name',managementName);
+
    overlay.classList.add('hidden');
    auth(true);
  }catch(e){
    overlay.innerHTML='<div><b>Could not open Photo Audit</b><span>'+esc(e.message||'Single Sign-On failed')+'</span><br><br><button class="btn" onclick="location.href=\'./\'">Back to Operations</button></div>';
  }
-})();
+})()
 </script>
 </body></html>
