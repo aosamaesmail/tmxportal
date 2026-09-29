@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Telecomax Operations — KM Finance Audit V8.1.1</title>
+<title>Telecomax Operations — KM Finance Audit V8.1.2</title>
 <link rel="icon" href="icon-192.png">
 <style>
 :root{--bg:#f4f6f8;--panel:#ffffff;--panel2:#f8fafc;--line:#d9dee7;--text:#243042;--muted:#6f7b8c;--brand:#b52d7b;--brand2:#c83a8b;--brand-soft:#f8eaf2;--good:#2f855a;--good-soft:#e8f5ed;--warn:#a66b18;--warn-soft:#fff5df;--shadow:0 4px 16px rgba(31,45,61,.055)}
@@ -60,42 +60,12 @@ table{background:#fff!important;color:var(--ink)!important}th{background:var(--s
 .audit-photos img,.photo-pair img,.photo-grid img{max-height:none!important;object-fit:contain!important}
 html.portal-sso-pending body{visibility:visible!important}html.portal-sso-pending body::before{display:none!important;content:none!important}
 @media(max-width:700px){body{font-size:15px!important}.card,.panel{border-radius:16px!important}h1{font-size:24px!important}h2{font-size:21px!important}label{font-size:14px!important;font-weight:800!important}input,select{font-size:16px!important;min-height:50px!important}button,.btn{font-size:15px!important;font-weight:800!important;min-height:46px!important}}
-</style><script id="financeAuditSessionBridgeV811">
-(function(){
-  const $id=id=>document.getElementById(id);
-  function parse(v){try{return v?JSON.parse(v):null}catch(e){return null}}
-  function findFinanceSession(){
-    const keys=['tmx_portal_session','telecomax_portal_session','portalSession','tmxSession','financeSession','km_finance_session'];
-    for(const store of [sessionStorage,localStorage]){
-      for(const k of keys){
-        const x=parse(store.getItem(k));
-        if(x && (x.role==='Finance'||x.role==='finance'||x.role==='f') && (x.token||x.managementToken||x.sessionToken)) return x;
-      }
-    }
-    // Existing KM finance page keys are kept intact; detect any stored finance token-shaped value.
-    for(const store of [sessionStorage,localStorage]){
-      for(let i=0;i<store.length;i++){
-        const k=store.key(i), raw=store.getItem(k), x=parse(raw);
-        if(/finance/i.test(k||'') && x && (x.token||x.managementToken||x.sessionToken)) return x;
-      }
-    }
-    return null;
-  }
-  window.__tmxFinanceNativeSession=findFinanceSession();
-  // Never flash the legacy login while automatic restore/SSO is resolving.
-  document.documentElement.classList.add('finance-native-restoring');
-  window.addEventListener('load',()=>{
-    setTimeout(()=>document.documentElement.classList.remove('finance-native-restoring'),900);
-  });
-})();
-</script>
-<style id="financeAuditSessionBridgeStyleV811">
-html.finance-native-restoring #loginCard,
-html.finance-native-restoring #login,
-html.finance-native-restoring .login-card,
-html.finance-native-restoring .login-wrap{display:none!important}
-</style>
-</head>
+</style><style id="financeBootGateV812">
+/* Login is never rendered while saved-session validation or Portal SSO is resolving. */
+#loginView{display:none!important}
+html.finance-unauthenticated #loginView{display:block!important}
+html.finance-unauthenticated #dash{display:none!important}
+</style></head>
 <body>
 
 <div id="loginBuffer" class="login-buffer-overlay" aria-hidden="true">
@@ -185,7 +155,7 @@ async function loadLists(){try{const d=await post('financeFilterOptions');filter
 }catch(e){toast('Could not load filter lists')}}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function num(v){const n=Number(v);return Number.isFinite(n)?n:0}
-function setAuthed(on){$('loginView').style.display=on?'none':'block';$('dash').style.display=on?'block':'none';$('logoutBtn').style.display=on?'inline-block':'none';$('sessionLabel').textContent=on?'Finance':' ';if(on){loadLists();loadTrips()}}
+function setAuthed(on){document.documentElement.classList.toggle('finance-unauthenticated',!on);$('loginView').style.display=on?'none':'block';$('dash').style.display=on?'block':'none';$('logoutBtn').style.display=on?'inline-block':'none';$('sessionLabel').textContent=on?'Finance':' ';if(on){loadLists();loadTrips()}}
 $('loginBtn').onclick=async()=>{const name=$('name').value.trim(),pin=$('pin').value.trim();if(!name||!pin)return toast('Enter your name and 6-digit PIN');showLoginBuffer('Logging in to Finance...');$('loginBtn').disabled=true;try{const d=await post('managementLogin',{name,pin,portalRole:'Finance'});managementToken=d.token;managementName=d.name||name;sessionStorage.setItem('tmx_km_finance_token',managementToken);sessionStorage.setItem('tmx_km_finance_name',managementName);setAuthed(true);toast('Logged in as '+managementName)}catch(e){managementToken='';toast(e.message||'Could not verify — check connection')}finally{$('loginBtn').disabled=false;hideLoginBuffer()}};
 $('name').addEventListener('keydown',e=>{if(e.key==='Enter')$('pin').focus()});
 $('pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('loginBtn').click()});
@@ -342,7 +312,15 @@ let approvedRows=[];
 async function loadApproved(){showBuffer('Loading summary...');try{let d=await post('financeSummary',{filterEngineer:$('sEngineer').value.trim(),filterDriver:$('sDriver').value.trim(),filterProject:$('sProject').value.trim(),filterMonth:$('sMonth').value});let payer=String($('sPaidBy').value||'').trim().toLowerCase();approvedRows=(d.trips||[]).filter(t=>!payer||String(t.paidBy||'').trim().toLowerCase()===payer);$('summaryRows').innerHTML=approvedRows.length?'<table class="summary-table"><thead><tr><th>Date</th><th>Engineer</th><th>Driver</th><th>Vehicle</th><th>Project</th><th>Rate</th><th>Deduction</th><th>Final Amount</th></tr></thead><tbody>'+approvedRows.map(t=>`<tr><td>${esc(t.date)}</td><td>${esc(t.engineer)}</td><td>${esc(t.driver)}</td><td>${esc(t.vehicle||'—')}</td><td>${esc(t.projectName)}</td><td>${esc(t.rateDisplay)}</td><td>${num(t.deduction).toFixed(2)}</td><td>${num(t.finalAmount).toFixed(2)}</td></tr>`).join('')+'</tbody></table>':'<div class="empty">No fully approved records.</div>' }finally{hideBuffer()}}
 function setFinanceTab(tab){const photo=tab==='photo';$('photoView').style.display=photo?'block':'none';$('summaryView').style.display=photo?'none':'block';$('photoTab').classList.toggle('primary',photo);$('summaryTab').classList.toggle('primary',!photo)}
 $('photoTab').onclick=()=>setFinanceTab('photo');$('summaryTab').onclick=()=>{setFinanceTab('summary');loadApproved()};$('sApply').onclick=loadApproved;$('sExport').onclick=()=>exportApprovedXlsx(approvedRows);
-(async()=>{if(managementToken){$('name').value=managementName;try{await post('financeFilterOptions');setAuthed(true)}catch(e){managementToken='';managementName='';sessionStorage.removeItem('tmx_km_finance_token');sessionStorage.removeItem('tmx_km_finance_name');setAuthed(false)}}else setAuthed(false)})();
+(async()=>{
+ const portalSsoPending=/(?:^|[&#])sso=/.test(location.hash);
+ if(portalSsoPending) return; // portalAutoLogin below owns the boot; never reveal legacy login first.
+ if(managementToken){
+   $('name').value=managementName;
+   try{await post('financeFilterOptions');setAuthed(true)}
+   catch(e){managementToken='';managementName='';sessionStorage.removeItem('tmx_km_finance_token');sessionStorage.removeItem('tmx_km_finance_name');setAuthed(false)}
+ }else setAuthed(false);
+})();
 
 function exportApprovedXlsx(rows){
  if(!rows||!rows.length)return toast('No fully approved rows to export');
@@ -367,7 +345,7 @@ function portalSSOStatus_(title,detail){ document.documentElement.classList.remo
  try{
   const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'portalSSO',portalToken,portalRole:'Finance'})});
   const text=await r.text(); let d; try{d=JSON.parse(text)}catch(_){throw Error('KM Finance SSO backend returned a non-JSON response');}
-  if(!d.ok||!d.token){portalSSOStatus_('Single Sign-On failed',d.error||'The module rejected the portal session.');return;}
+  if(!d.ok||!d.token){setAuthed(false);portalSSOStatus_('Single Sign-On failed',d.error||'The module rejected the portal session.');return;}
   managementToken=d.token; managementName=d.name||'';
   sessionStorage.setItem('tmx_km_finance_token',managementToken);
   sessionStorage.setItem('tmx_km_finance_name',managementName);
@@ -375,14 +353,9 @@ function portalSSOStatus_(title,detail){ document.documentElement.classList.remo
   document.documentElement.classList.remove('portal-sso-pending');
   $('name').value=managementName;
   setAuthed(true);
- }catch(e){portalSSOStatus_('Single Sign-On connection error',String(e&&e.message||e));console.error('Portal SSO failed',e)}
+ }catch(e){setAuthed(false);portalSSOStatus_('Single Sign-On connection error',String(e&&e.message||e));console.error('Portal SSO failed',e)}
 })();
 </script>
-<script id="financeAuditNativeV81">
-window.addEventListener('DOMContentLoaded',()=>{
- document.documentElement.classList.remove('portal-sso-pending');
- const s=document.getElementById('portalSsoStatus'); if(s)s.remove();
-});
-</script>
+
 <button type="button" onclick="location.href='./'" style="position:fixed;right:12px;bottom:12px;z-index:9998;border:1px solid #CBD5E1;border-radius:10px;background:#fff;color:#1E293B;padding:8px 11px;font-weight:800">← Operations</button>
 </body></html>
