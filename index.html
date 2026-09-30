@@ -273,7 +273,7 @@ html.tmx-opening-photo-audit [class*="launch" i]{display:none!important}
 </script>
 <style id="photoAuditNoPortalMessageV827">
 /* Exact final cleanup: the portal launch layer marks itself with its rendered text.
-   Hide only while Photo Audit is the active launch target. */
+   Hide only while KM Odometer Audit is the active launch target. */
 html.tmx-photo-audit-launch .launch-overlay,
 html.tmx-photo-audit-launch .opening-overlay,
 html.tmx-photo-audit-launch #launchOverlay,
@@ -355,7 +355,7 @@ html.tmx-solfa-launch #routeLoading{display:none!important}
    for(const el of document.querySelectorAll('body *')){
      if(el.children.length>8)continue;
      const t=(el.textContent||'').replace(/\s+/g,' ').trim();
-     if(/^Telecomax Operations\s*Opening .*Solfa/i.test(t)||/^Opening .*Solfa/i.test(t))
+     if(/^Telecomax Operations\s*Opening .*Add Solfa/i.test(t)||/^Opening .*Add Solfa/i.test(t))
        el.style.setProperty('display','none','important');
    }
  }
@@ -386,7 +386,7 @@ html.tmx-rent-launch #routeLoading{display:none!important}
    for(const el of document.querySelectorAll('body *')){
      if(el.children.length>8)continue;
      const t=(el.textContent||'').replace(/\s+/g,' ').trim();
-     if(/^Telecomax Operations\s*Opening .*Rent/i.test(t)||/^Opening .*Rent/i.test(t))
+     if(/^Telecomax Operations\s*Opening .*Pay Cars Rent/i.test(t)||/^Opening .*Pay Cars Rent/i.test(t))
        el.style.setProperty('display','none','important');
    }
  }
@@ -417,7 +417,7 @@ html.tmx-pm-review-launch #routeLoading{display:none!important}
    for(const el of document.querySelectorAll('body *')){
      if(el.children.length>8)continue;
      const t=(el.textContent||'').replace(/\s+/g,' ').trim();
-     if(/^Telecomax Operations\s*Opening .*Receipt Review/i.test(t)||/^Opening .*Receipt Review/i.test(t))
+     if(/^Telecomax Operations\s*Opening .*Custody Review/i.test(t)||/^Opening .*Custody Review/i.test(t))
        el.style.setProperty('display','none','important');
    }
  }
@@ -478,7 +478,7 @@ html.tmx-pm-transfers-launch #routeLoading{display:none!important}
 </section>
 
 <section id="dash" class="hidden">
-<div class="card hero"><div class="muted">TELECOMAX OPERATIONS</div><h1 id="hello">Dashboard</h1><div>Role: <span id="role" class="role">—</span> · Access is built from the permissions verified by the existing KM and Custody backends.</div></div>
+<div class="card hero"><div class="muted">TELECOMAX OPERATIONS</div><h1 id="hello">Dashboard</h1><div>Role: <span id="role" class="role">—</span> · </div></div>
 <div class="v6-section"><h2>Live Operations <span class="v6-badge v6-live">LIVE</span> <button class="ghost" style="padding:6px 10px;margin-left:8px" onclick="loadLiveDashboard()">Refresh</button></h2><div id="liveKpis" class="v6-grid"><div class="muted">Loading live KM + Custody data…</div></div></div>
 <div id="attentionSection" class="attention-section">
   <div class="attention-head">
@@ -554,8 +554,8 @@ function renderLiveKpis(){
  const k=liveDashboard.km||{},c=liveDashboard.custody||{},role=String(currentPortalUser?.role||'');
  let h='';
  if(role==='Admin'||role==='PM'){
-   h+=liveCard('KM Photo Audit',k.pmAuditPending??'—','Pending PM audit',moduleUrls.kmPhotoAudit);
-   h+=liveCard('Allowance Audit',k.allowancePendingCount??'—',fmtEgp(k.allowancePendingAmount||0)+' pending this month',moduleUrls.kmAllowance);
+   h+=liveCard('KM KM Odometer Audit',k.pmAuditPending??'—','Pending PM audit',moduleUrls.kmPhotoAudit);
+   h+=liveCard('Allowance Acceptance',k.allowancePendingCount??'—',fmtEgp(k.allowancePendingAmount||0)+' pending this month',moduleUrls.kmAllowance);
    h+=liveCard('Custody PM Review',c.pmPending??'—','Pending receipt reviews',moduleUrls.custodyPMReview);
    h+=liveCard('Needs Transfer',c.needsTransferCount??'—',fmtEgp(c.needsTransferAmount||0),moduleUrls.custodyPMTransfers);
  }else if(role==='Finance'){
@@ -592,8 +592,8 @@ const moduleUrls={
  kmEngineerHistory:'https://telecomaxkm.vercel.app/?view=history&portalLabel=KM%20History',
  kmBalances:'km-balances.html',
  kmPhotoAudit:'photo-audit.html',
- kmSolfa:'km-solfa.html',
- kmRent:'km-rent.html',
+ kmAdd Solfa:'km-solfa.html',
+ kmPay Cars Rent:'km-rent.html',
  kmAllowance:'allowance-audit.html',
  kmFinanceAudit:'km-finance-audit.html',
  custodyEngineerNew:'https://custody-orcin.vercel.app/?view=home&portalLabel=New%20Expense',
@@ -656,10 +656,10 @@ function renderAttention(){
    return;
  }
  if(role==='Admin'||role==='PM'){
-   add(k.pmAuditPending,'KM Photo Audit','Trips waiting for management audit',moduleUrls.kmPhotoAudit,'km');
-   add(k.allowancePendingCount,'Allowance Audit','Current-month allowances pending approval',moduleUrls.kmAllowance,'km');
-   add(c.pmPending,'Custody Receipt Review','Expenses waiting for PM review',moduleUrls.custodyPMReview,'custody');
-   add(c.needsTransferCount,'Custody Transfers',fmtEgp(c.needsTransferAmount||0)+' ready to transfer',moduleUrls.custodyPMTransfers,'custody');
+   add(k.pmAuditPending,'KM KM Odometer Audit','Trips waiting for management audit',moduleUrls.kmPhotoAudit,'km');
+   add(k.allowancePendingCount,'Allowance Acceptance','Current-month allowances pending approval',moduleUrls.kmAllowance,'km');
+   add(c.pmPending,'Custody Custody Review','Expenses waiting for PM review',moduleUrls.custodyPMReview,'custody');
+   add(c.needsTransferCount,'Custody Transfer',fmtEgp(c.needsTransferAmount||0)+' ready to transfer',moduleUrls.custodyPMTransfers,'custody');
    add(c.clarification,'Needs Clarification','Custody expenses requiring clarification',moduleUrls.custodyPMReview,'custody');
  }else if(role==='Finance'){
    add(k.financeAuditPending,'KM Finance Audit','KM records approved by PM, waiting for Finance',moduleUrls.kmFinanceAudit,'km');
@@ -701,8 +701,8 @@ function renderQuickActions(u){
    if(u.km){
      h+=actionCard('Engineers Balance','Engineer KM balances.',moduleUrls.kmBalances);
      h+=actionCard('KM Odometer Audit','Review trip evidence.',moduleUrls.kmPhotoAudit);
-     h+=actionCard('Add Solfa','Engineer advances.',moduleUrls.kmSolfa);
-     h+=actionCard('Pay Cars Rent','Rent trips and deductions.',moduleUrls.kmRent);
+     h+=actionCard('Add Add Solfa','Engineer advances.',moduleUrls.kmAdd Solfa);
+     h+=actionCard('Pay Cars Pay Cars Rent','Pay Cars Rent trips and deductions.',moduleUrls.kmPay Cars Rent);
      h+=actionCard('Allowance Acceptance','Monthly allowance approvals.',moduleUrls.kmAllowance);
    }
    if(u.custody){
@@ -713,8 +713,8 @@ function renderQuickActions(u){
    if(u.km){
      h+=actionCard('Engineers Balance','Engineer KM balances.',moduleUrls.kmBalances);
      h+=actionCard('KM Odometer Audit','Review trip evidence.',moduleUrls.kmPhotoAudit);
-     h+=actionCard('Add Solfa','Engineer advances.',moduleUrls.kmSolfa);
-     h+=actionCard('Pay Cars Rent','Rent trips and deductions.',moduleUrls.kmRent);
+     h+=actionCard('Add Add Solfa','Engineer advances.',moduleUrls.kmAdd Solfa);
+     h+=actionCard('Pay Cars Pay Cars Rent','Pay Cars Rent trips and deductions.',moduleUrls.kmPay Cars Rent);
      h+=actionCard('Allowance Acceptance','Monthly allowance approvals.',moduleUrls.kmAllowance);
    }
    if(u.custody){
@@ -788,24 +788,24 @@ const workspaceDefinitions={
  ]},
  kmManagement:{title:'KM Management',items:[
   ['Balances','Review received, spent and remaining engineer balances.','kmBalances',''],
-  ['Photo Audit','Review KM records against start/finish photos.','kmPhotoAudit','blue'],
-  ['Solfa','Create and review engineer advances.','kmSolfa','green'],
-  ['Rent','Process completed Rent trips and deductions.','kmRent',''],
-  ['Allowance Audit','Review and approve monthly allowances.','kmAllowance','blue']
+  ['KM Odometer Audit','Review KM records against start/finish photos.','kmPhotoAudit','blue'],
+  ['Add Solfa','Create and review engineer advances.','kmAdd Solfa','green'],
+  ['Pay Cars Rent','Process completed Pay Cars Rent trips and deductions.','kmPay Cars Rent',''],
+  ['Allowance Acceptance','Review and approve monthly allowances.','kmAllowance','blue']
  ]},
  kmFinance:{title:'KM Finance',items:[
-  ['KM Photo Audit','Review trip evidence, KM and amount spent.','kmFinanceAudit','green']
+  ['KM KM Odometer Audit','Review trip evidence, KM and amount spent.','kmFinanceAudit','green']
  ]},
  custodyEngineer:{title:'Custody Engineer',items:[
   ['New Expense','Submit a new expense with receipt evidence.','custodyEngineerNew',''],
   ['Expense History','Review submitted expenses and their status.','custodyEngineerHistory','blue']
  ]},
  custodyPM:{title:'Custody Project Management',items:[
-  ['Receipt Review','Review pending expenses and supporting receipts.','custodyPMReview',''],
+  ['Custody Review','Review pending expenses and supporting receipts.','custodyPMReview',''],
   ['Transfers','Follow approved expenses through the transfer workflow.','custodyPMTransfers','blue']
  ]},
  custodyFinance:{title:'Custody Finance',items:[
-  ['Receipt Review','Perform Finance verification of submitted expenses.','custodyFinanceReview','green'],
+  ['Custody Review','Perform Finance verification of submitted expenses.','custodyFinanceReview','green'],
   ['Transfers','Review transfer-ready and transferred expenses.','custodyFinanceTransfers','blue']
  ]},
  custodyAdmin:{title:'Custody Administration',items:[
@@ -881,7 +881,7 @@ window.addEventListener('DOMContentLoaded',()=>{
    for(const el of nodes){
      if(el.children.length>6) continue;
      const t=(el.textContent||'').replace(/\s+/g,' ').trim();
-     if(/^Telecomax Operations\s*Opening Photo Audit/i.test(t) || /^Opening Photo Audit/i.test(t)){
+     if(/^Telecomax Operations\s*Opening KM Odometer Audit/i.test(t) || /^Opening KM Odometer Audit/i.test(t)){
        el.style.setProperty('display','none','important');
      }
    }
