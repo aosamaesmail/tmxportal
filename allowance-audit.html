@@ -15,6 +15,9 @@
   }
   if(!allowed){document.documentElement.style.visibility='hidden';location.replace('./?reason=access')}
 })();
+
+const v8311AllowanceMonth=$('month');
+if(v8311AllowanceMonth)v8311AllowanceMonth.addEventListener('change',()=>{sanitizeRelated('month');refreshAllCombos();});
 </script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Telecomax Operations — Allowance Audit V7.2.2</title><style>
 :root{--bg:#f3f6f8;--card:#fff;--text:#24313a;--muted:#71808b;--line:#dfe6ea;--brand:#c52b83;--green:#21865a;--red:#b83b47;--amber:#a66a00}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial;background:var(--bg);color:var(--text)}header{background:#fff;border-bottom:1px solid var(--line);padding:16px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}.brand{font-weight:900;font-size:20px}.brand span{color:var(--brand)}button,input,select,textarea{font:inherit}.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:750;cursor:pointer}.primary{background:var(--brand);color:#fff}.ghost{background:#eef2f4;color:var(--text)}main{max-width:1250px;margin:auto;padding:24px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 8px 24px #25323a0b}.login{max-width:440px;margin:70px auto}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase}.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:10px;padding:11px;background:#fff;min-width:0}
 .combo{position:relative}.combo input{width:100%;padding-right:34px}.combo:after{content:'⌄';position:absolute;right:11px;bottom:11px;color:var(--muted);pointer-events:none}.combo-list{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);max-height:230px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 28px #25323a20;z-index:30;padding:5px}.combo.open .combo-list{display:block}.combo-option{padding:9px 10px;border-radius:7px;cursor:pointer;font-size:13px}.combo-option.multi{display:flex;align-items:center;gap:8px}.combo-option.multi input{width:auto}.chips{position:absolute;left:0;right:0;top:100%;display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;z-index:6;pointer-events:none}.chips .chip{pointer-events:auto}.chip{background:#f8eaf2;color:var(--brand);border-radius:99px;padding:3px 8px;font-size:11px;font-weight:700}.combo-option:hover,.combo-option.active{background:#f8eaf2;color:var(--brand)}.combo-empty{padding:10px;color:var(--muted);font-size:12px}.filters{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr 1fr auto auto;gap:10px;align-items:end}
@@ -114,10 +117,11 @@ function monthNow(){let d=new Date(),o=d.getTimezoneOffset();return new Date(d-o
 $('loginBtn').onclick=async()=>{const name=$('name').value.trim(),pin=$('pin').value.trim();if(!name||!pin)return toast('Enter your name and 6-digit PIN');showBuffer('Logging in...');try{const d=await post('managementLogin',{name,pin,portalRole:'PM'});managementToken=d.token;managementName=d.name||name;sessionStorage.setItem('tmx_km_pm_token',managementToken);sessionStorage.setItem('tmx_km_pm_name',managementName);auth(true);toast('Logged in as '+managementName)}catch(e){managementToken='';toast(e.message||'Could not log in')}finally{hideBuffer()}};$('name').onkeydown=e=>{if(e.key==='Enter')$('pin').focus()};$('pin').onkeydown=e=>{if(e.key==='Enter')$('loginBtn').click()};$('logout').onclick=()=>{managementToken='';managementName='';sessionStorage.removeItem('tmx_km_pm_token');sessionStorage.removeItem('tmx_km_pm_name');$('name').value='';$('pin').value='';auth(false)};
 function uniq(a){return [...new Set((a||[]).filter(Boolean))].sort((x,y)=>x.localeCompare(y))}
 function eq(a,b){return String(a||'').trim().toLowerCase()===String(b||'').trim().toLowerCase()}
-function filterState(){return {engineer:$('engineer').value.trim(),driver:$('driver').value.trim(),project:$('project').value.trim()}}
+function filterState(){return {engineer:$('engineer').value.trim(),driver:$('driver').value.trim(),project:$('project').value.trim(),months:String($('month').value||'').split(',').map(x=>x.trim()).filter(Boolean)}}
 function relationalOptions(kind){
  const q=filterState();
  const rows=(filterSource.combinations||[]).filter(c=>{
+   if(q.months.length && !q.months.includes(String(c.month||'')))return false;
    for(const k of ['engineer','driver','project']){
      if(k===kind||!q[k])continue;
      if(!eq(c[k],q[k]))return false;
@@ -128,7 +132,7 @@ function relationalOptions(kind){
    // MASTER SOURCE: Engineer Name list from Config Column A.
    const cfg=uniq(filterSource.engineers||[]);
    // With no Driver/Project selection, always show the complete Config Column A list.
-   const hasRelation=!!q.driver||!!q.project;
+   const hasRelation=q.months.length>0||!!q.driver||!!q.project;
    if(!hasRelation)return cfg;
    // Once another filter is selected, keep Config A as the source and only narrow
    // it to engineers that exist in matching KM combinations.
@@ -138,11 +142,11 @@ function relationalOptions(kind){
  if(kind==='driver'){
    const vals=uniq(rows.map(c=>c.driver).filter(x=>String(x).toLowerCase()!=='rent'));
    const cfg=uniq((filterSource.drivers||[]).filter(x=>String(x).toLowerCase()!=='rent'));
-   return vals.length?cfg.filter(d=>vals.some(v=>eq(v,d))):cfg;
+   return (q.months.length||q.engineer||q.project)?cfg.filter(d=>vals.some(v=>eq(v,d))):cfg;
  }
  const vals=uniq(rows.map(c=>c.project));
  const cfg=uniq(filterSource.projects||[]);
- const hasRelation=!!q.engineer||!!q.driver;
+ const hasRelation=q.months.length>0||!!q.engineer||!!q.driver;
  return hasRelation?cfg.filter(p=>vals.some(v=>eq(v,p))):cfg;
 }
 function renderCombo(kind){

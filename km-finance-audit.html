@@ -39,6 +39,12 @@
 if(location.hash.indexOf('sso=')>=0){
  document.documentElement.classList.add('portal-sso-pending');
 }
+
+function v8311FinanceMonthRelation(prefix=''){
+ const ids=prefix?{engineer:'sEngineer',driver:'sDriver',project:'sProject',paidBy:'sPaidBy'}:{engineer:'engineer',driver:'driver',project:'project',paidBy:'paidBy'};
+ for(const k of Object.keys(ids)){const el=$(ids[k]);if(el&&el.value.trim()){const allowed=relationalOptions(k,prefix).map(v=>String(v).toLowerCase());if(!allowed.includes(el.value.trim().toLowerCase()))el.value='';}}
+}
+['month','sMonth'].forEach(id=>{const el=$(id);if(el)el.addEventListener('change',()=>v8311FinanceMonthRelation(id==='sMonth'?'s':''));});
 </script>
 <style>
 html.portal-sso-pending body{visibility:hidden!important}
@@ -147,11 +153,15 @@ async function post(action,extra={}){const r=await fetch(SCRIPT_URL,{method:'POS
 function uniqueSorted(values){return [...new Set(values.filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)))}
 function relationContext(prefix=''){
   const ids=prefix?{engineer:'sEngineer',driver:'sDriver',project:'sProject',paidBy:'sPaidBy'}:{engineer:'engineer',driver:'driver',project:'project',paidBy:'paidBy'};
-  const out={};Object.keys(ids).forEach(k=>out[k]=String($(ids[k])?.value||'').trim().toLowerCase());return out;
+  const out={};Object.keys(ids).forEach(k=>out[k]=String($(ids[k])?.value||'').trim().toLowerCase());
+  const monthEl=$(prefix?'sMonth':'month');
+  out.months=String(monthEl?.value||'').split(',').map(x=>x.trim()).filter(Boolean);
+  return out;
 }
 function relationalOptions(kind,prefix=''){
   const q=relationContext(prefix);
   const rows=filterCombos.filter(r=>{
+    if(q.months.length && !q.months.includes(String(r.month||'')))return false;
     for(const k of ['engineer','driver','project','paidBy']){
       if(k===kind||!q[k])continue;
       if(String(r[k]||'').trim().toLowerCase()!==q[k])return false;
@@ -161,7 +171,7 @@ function relationalOptions(kind,prefix=''){
   if(kind==='paidBy'){
     // Paid By master list ALWAYS comes from KM Config Column A.
     // Only narrow it when another relational filter is actually selected.
-    const hasOtherFilter=['engineer','driver','project'].some(k=>q[k]);
+    const hasOtherFilter=q.months.length>0||['engineer','driver','project'].some(k=>q[k]);
     if(!hasOtherFilter) return uniqueSorted(configEngineers);
     const allowed=new Set(rows.map(r=>String(r.paidBy||'').trim().toLowerCase()).filter(Boolean));
     return uniqueSorted(configEngineers.filter(e=>allowed.has(String(e).trim().toLowerCase())));
