@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Telecomax Operations V8.2.13</title>
+<title>Telecomax Operations V8.2.14</title>
 <style>
 :root{--bg:#020817;--card:rgba(8,10,15,.80);--line:rgba(255,255,255,.12);--text:#f7f8fa;--muted:#9ca8b8;--pink:#d63391;--purple:#31005f;--blue:#69c8f2;--green:#74d6a0}
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--text);min-height:100vh;background:radial-gradient(circle at 8% 16%,rgba(0,153,204,.17),transparent 34%),radial-gradient(circle at 92% 10%,rgba(65,44,150,.22),transparent 36%),radial-gradient(circle at 74% 88%,rgba(214,51,145,.12),transparent 32%),linear-gradient(145deg,#00111e,#030817 48%,#120719)}
@@ -371,12 +371,43 @@ html.tmx-solfa-launch #routeLoading{display:none!important}
 })();
 </script>
 
+
+<style id="rentNoPortalMessageV8214">
+html.tmx-rent-launch .launch-overlay,
+html.tmx-rent-launch .opening-overlay,
+html.tmx-rent-launch #launchOverlay,
+html.tmx-rent-launch #openingOverlay,
+html.tmx-rent-launch .route-loading,
+html.tmx-rent-launch #routeLoading{display:none!important}
+</style>
+<script id="rentPortalMessageKillV8214">
+(function(){
+ function kill(){
+   for(const el of document.querySelectorAll('body *')){
+     if(el.children.length>8)continue;
+     const t=(el.textContent||'').replace(/\s+/g,' ').trim();
+     if(/^Telecomax Operations\s*Opening .*Rent/i.test(t)||/^Opening .*Rent/i.test(t))
+       el.style.setProperty('display','none','important');
+   }
+ }
+ document.addEventListener('click',e=>{
+   const a=e.target.closest('a,[data-route],[data-url],[onclick]'); if(!a)return;
+   const t=((a.textContent||'')+' '+(a.getAttribute('href')||'')+' '+(a.getAttribute('data-route')||'')+' '+(a.getAttribute('onclick')||'')).toLowerCase();
+   if(t.includes('km-rent')||/\brent\b/.test(t)){
+     document.documentElement.classList.add('tmx-rent-launch');
+     kill();
+     new MutationObserver(kill).observe(document.body,{subtree:true,childList:true,characterData:true});
+   }
+ },true);
+})();
+</script>
+
 </head>
 <body><div class="wrap">
 <div class="top"><div class="brand">TELECOMAX <span>OPERATIONS</span></div><div class="actions"><span id="who" class="pill">Not signed in</span><button id="logout" class="ghost hidden">Log out</button></div></div>
 
 <section id="loginView" class="card login">
-<div class="pill" style="display:inline-block">Unified Operations • V8.2.13</div>
+<div class="pill" style="display:inline-block">Unified Operations • V8.2.14</div>
 <h1>Welcome back</h1><div class="muted">Use your Telecomax Name + 6-digit PIN. The portal checks your authorized KM and Custody access.</div>
 <label>Name</label><input id="name" autocomplete="username" placeholder="Enter your name">
 <label>6-digit PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="••••••">
