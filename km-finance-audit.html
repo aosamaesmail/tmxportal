@@ -78,7 +78,9 @@ html.tmx-auth-resolving body::before{content:none!important;display:none!importa
 })();
 </script>
 
-</head>
+<style id="v832FinancePaging">
+.v832-pager{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin:18px 0 28px}.v832-pager .countx{color:#64748b;font-weight:700}.v832-pager button{min-width:140px}
+</style></head>
 <body>
 
 <div id="loginBuffer" class="login-buffer-overlay" aria-hidden="true">
@@ -173,15 +175,33 @@ $('loginBtn').onclick=async()=>{const name=$('name').value.trim(),pin=$('pin').v
 $('name').addEventListener('keydown',e=>{if(e.key==='Enter')$('pin').focus()});
 $('pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('loginBtn').click()});
 $('logoutBtn').onclick=()=>{managementToken='';managementName='';sessionStorage.removeItem('tmx_km_finance_token');sessionStorage.removeItem('tmx_km_finance_name');$('name').value='';$('pin').value='';setAuthed(false)};
-async function loadTrips(){if(!managementToken)return;showBuffer('Applying filters...');$('tableWrap').innerHTML='<div class="empty">Loading audit records…</div>';try{const d=await post('financeTrips',{filterEngineer:$('engineer').value.trim(),filterDriver:$('driver').value.trim(),filterProject:$('project').value.trim(),filterMonth:$('month').value});
-    const paidBy=String($('paidBy').value||'').trim().toLowerCase(), auditStatus=String($('auditStatus').value||'Pending').trim().toLowerCase();
-    trips=(d.trips||[]).filter(t=>(!paidBy||String(t.paidBy||'').trim().toLowerCase()===paidBy)&&String(t.financeStatus||'Pending').trim().toLowerCase()===auditStatus);
-    render(trips.length)}catch(e){if(e.message==='finance-session-required'){managementToken='';managementName='';sessionStorage.removeItem('tmx_km_finance_token');sessionStorage.removeItem('tmx_km_finance_name');setAuthed(false)}else {console.error('Photo Audit load failed:',e);$('tableWrap').innerHTML='<div class="empty">Could not load audit records: '+esc(e.message||'server-error')+'</div>'}}finally{hideBuffer()}}
+let v832FinanceTotal=0,v832FinanceHasMore=false,v832FinanceTotals={};
+async function loadTrips(mode='reset'){
+ if(!managementToken)return;
+ const append=mode==='more',loadAll=mode==='all',offset=append?trips.length:0;
+ showBuffer(loadAll?'Loading all matching trips...':append?'Loading 31 more trips...':'Applying filters...');
+ if(!append)$('tableWrap').innerHTML='<div class="empty">Loading audit records…</div>';
+ try{
+   const d=await post('financeTrips',{filterEngineer:$('engineer').value.trim(),filterDriver:$('driver').value.trim(),filterProject:$('project').value.trim(),filterMonth:$('month').value,filterPaidBy:$('paidBy').value,filterAuditStatus:$('auditStatus').value,auditRole:'Finance',offset,limit:31,loadAll});
+   trips=append?trips.concat(d.trips||[]):(d.trips||[]);
+   v832FinanceTotal=Number(d.totalMatched||0);v832FinanceHasMore=!!d.hasMore;v832FinanceTotals=d.totals||{};
+   render(v832FinanceTotal);v832RenderFinancePager();
+ }catch(e){if(e.message==='finance-session-required'){managementToken='';managementName='';sessionStorage.removeItem('tmx_km_finance_token');sessionStorage.removeItem('tmx_km_finance_name');setAuthed(false)}else{console.error('Photo Audit load failed:',e);$('tableWrap').innerHTML='<div class="empty">Could not load audit records: '+esc(e.message||'server-error')+'</div>'}}
+ finally{hideBuffer()}
+}
+function v832RenderFinancePager(){
+ let x=document.getElementById('v832FinancePager');if(x)x.remove();
+ const wrap=document.createElement('div');wrap.id='v832FinancePager';wrap.className='v832-pager';
+ wrap.innerHTML='<span class="countx">Showing '+trips.length+' of '+v832FinanceTotal+' trips</span>'+(v832FinanceHasMore?'<button class="btn" onclick="loadTrips(&quot;more&quot;)">Load More 31</button><button class="btn" onclick="v832LoadAllFinance()">Load All</button>':'');
+ $('tableWrap').insertAdjacentElement('afterend',wrap);
+}
+function v832LoadAllFinance(){if(v832FinanceTotal>500&&!confirm('Load all '+v832FinanceTotal+' matching trips?'))return;loadTrips('all')}
 function render(totalMatched){
-  $('tripCount').textContent=trips.length;
-  $('tripKm').textContent=trips.reduce((a,t)=>a+num(t.tripKm),0).toFixed(0);
-  $('totalKm').textContent=trips.reduce((a,t)=>a+num(t.totalKm),0).toFixed(0);
-  $('amount').textContent=trips.reduce((a,t)=>a+num(t.amountSpent),0).toFixed(2)+' EGP';
+  const z=v832FinanceTotals||{};
+  $('tripCount').textContent=Number(z.trips||totalMatched||0);
+  $('tripKm').textContent=Number(z.tripKm||0).toFixed(0);
+  $('totalKm').textContent=Number(z.totalKm||0).toFixed(0);
+  $('amount').textContent=Number(z.amountSpent||0).toFixed(2)+' EGP';
   $('matched').textContent=totalMatched>trips.length?`(${trips.length} of ${totalMatched})`:`(${trips.length})`;
   if(!trips.length){$('tableWrap').innerHTML='<div class="empty">No trips match these filters.</div>';return}
   const cards=trips.map(t=>`<article class="audit-card" data-audit-trip="${esc(t.tripId)}">
