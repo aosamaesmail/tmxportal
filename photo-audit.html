@@ -314,7 +314,11 @@ html.tmx-auth-resolving body::before{content:none!important;display:none!importa
 })();
 </script>
 
-</head><body>
+<style id="v830PagerStyle">
+.v830-pager{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin:18px 0 28px}
+.v830-pager .v830-count{color:#64748b;font-weight:700;margin-right:6px}
+.v830-pager button{min-width:140px}
+</style></head><body>
 
 <div id="loginBuffer" class="login-buffer-overlay" aria-hidden="true">
   <div class="login-buffer-box" role="status" aria-live="polite">
@@ -392,9 +396,37 @@ async function loadConfig(){try{let [x,c]=await Promise.all([post('adminFilterOp
  wire('balEng','balEngOpts',()=>engineers);wire('solfaEng','solfaEngOpts',()=>engineers);wire('deductionDriver','deductionDriverOpts',()=>drivers)
 }catch(e){toast('Could not load lists')}}
 async function loadBalances(){try{let d=await post('adminSummary',{filterEngineer:$('balEng').value.trim(),filterMonth:$('balMonth').value});$('received').textContent=money(d.totals?.totalSolfa);$('spent').textContent=money(d.totals?.totalSpent);$('balance').textContent=money(d.totals?.balance);let a=d.engineers||[];$('balanceRows').innerHTML=a.length?`<table class="table"><thead><tr><th>Engineer</th><th>Received</th><th>Spent</th><th>Balance</th><th>Trips</th></tr></thead><tbody>${a.map(x=>`<tr><td>${esc(x.name)}</td><td>${money(x.totalSolfa)}</td><td>${money(x.totalSpent)}</td><td>${money(x.balance)}</td><td>${x.tripCount||0}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No balance records.</div>'}catch(e){toast('Could not load balances')}}$('balApply').onclick=loadBalances;$('balClear').onclick=()=>{$('balEng').value='';$('balMonth').value='';loadBalances()};
-async function loadAudit(){showBuffer('Applying filters...');try{$('auditList').innerHTML='<div class="empty">Loading…</div>';let d=await post('adminTrips',{filterEngineer:$('eng').value.trim(),filterDriver:$('drv').value.trim(),filterProject:$('proj').value.trim(),filterMonth:$('month').value});
-    let paidBy=String($('paidBy').value||'').trim().toLowerCase(), auditStatus=String($('auditStatus').value||'Pending').trim().toLowerCase();
-    let a=(d.trips||[]).filter(t=>(!paidBy||String(t.paidBy||'').trim().toLowerCase()===paidBy)&&String(t.pmStatus||'Pending').trim().toLowerCase()===auditStatus);$('auditList').innerHTML=a.length?a.map(card).join(''):'<div class="empty">No matching trips.</div>';document.querySelectorAll('.frame img').forEach(i=>i.onclick=()=>{$('lbImg').src=i.dataset.full||i.src;$('lightbox').classList.add('open')})}catch(e){console.error('Photo Audit load failed:',e);$('auditList').innerHTML='<div class="empty">Could not load audit records: '+esc(e.message||'server-error')+'</div>';toast('Could not load audit records')}finally{hideBuffer()}}function card(t){let ph=(title,km,thumb,full,lat,lon,kind)=>`<div class="photo"><h3 class="photo-title">${title} <span class="photo-km" data-photo-km="${kind}">${esc(km||'—')}</span></h3><div class="frame">${thumb||full?`<img src="${esc(thumb||full)}" data-full="${esc(full||thumb)}">`:'<span class="muted">No photo</span>'}</div><div class="gps">GPS: ${esc(lat||'—')}, ${esc(lon||'—')}</div></div>`;return `<div class="audit" data-audit-trip="${esc(t.tripId)}"><div class="summary compact-trip-info">${[['Date',t.date],['Engineer',t.engineer],['Driver',t.driver],['Project',t.projectName],['Area',t.area],['Task',t.task]].map(x=>`<div class="cell"><b>${x[0]}</b><span>${esc(x[1]||'—')}</span></div>`).join('')}</div><div class="metrics compact-trip-metrics">${[['Trip KM',t.tripKm],['F&B',t.forthBack],['Total KM',t.totalKm],['Rate',t.rateDisplay||'22.25 EGP / 10 KM'],['Amount',money(t.amountSpent)]].map(x=>`<div class="metric"><b>${x[0]}</b>${esc(x[1])}</div>`).join('')}</div><div class="audit-actions"><input class="audit-check" type="checkbox" data-trip="${esc(t.tripId)}" ${t.pmStatus==='Approved'||t.pmStatus==='Rejected'?'disabled':''}><span class="status-badge status-${String(t.pmStatus||'Pending').toLowerCase().replace(/\s+/g,'-')}">PM: ${esc(t.pmStatus||'Pending')}</span><span class="status-badge status-${String(t.financeStatus||'Pending').toLowerCase().replace(/\s+/g,'-')}">Finance: ${esc(t.financeStatus||'Pending')}</span><button class="btn edit-km" data-trip="${esc(t.tripId)}" data-start="${t.startKm}" data-finish="${t.finishKm}">Edit KM</button><button class="btn deduct" data-trip="${esc(t.tripId)}">Deduct</button><button class="btn danger reject" data-trip="${esc(t.tripId)}">Reject</button></div><div class="photos">${ph('Start Photo',t.startKm,t.startPhotoThumb,t.startPhoto,t.startLatitude,t.startLongitude,'start')}${ph('Finish Photo',t.finishKm,t.finishPhotoThumb,t.finishPhoto,t.finishLatitude,t.finishLongitude,'finish')}</div></div>`}$('auditApply').onclick=loadAudit;$('auditClear').onclick=()=>{['eng','drv','proj','month','paidBy'].forEach(x=>$(x).value='');$('auditStatus').value='Pending';loadAudit()};$('lbClose').onclick=()=>$('lightbox').classList.remove('open');
+let v830AuditRows=[],v830AuditTotal=0,v830AuditHasMore=false;
+async function loadAudit(mode='reset'){
+  const loadAll=mode==='all', append=mode==='more';
+  showBuffer(loadAll?'Loading all matching trips...':append?'Loading 31 more trips...':'Applying filters...');
+  try{
+    if(!append)$('auditList').innerHTML='<div class="empty">Loading…</div>';
+    const offset=append?v830AuditRows.length:0;
+    let d=await post('adminTrips',{
+      filterEngineer:$('eng').value.trim(),filterDriver:$('drv').value.trim(),filterProject:$('proj').value.trim(),
+      filterMonth:$('month').value,filterPaidBy:$('paidBy').value,filterAuditStatus:$('auditStatus').value,
+      offset,limit:31,loadAll
+    });
+    if(!d.ok)throw new Error(d.error||'server-error');
+    v830AuditRows=append?v830AuditRows.concat(d.trips||[]):(d.trips||[]);
+    v830AuditTotal=Number(d.totalMatched||0);v830AuditHasMore=!!d.hasMore;
+    $('auditList').innerHTML=v830AuditRows.length?v830AuditRows.map(card).join(''):'<div class="empty">No matching trips.</div>';
+    document.querySelectorAll('.frame img').forEach(i=>i.onclick=()=>{$('lbImg').src=i.dataset.full||i.src;$('lightbox').classList.add('open')});
+    v830RenderAuditPager();
+    if(typeof applyAuditPhotoVisibility==='function')applyAuditPhotoVisibility();
+  }catch(e){console.error('Photo Audit load failed:',e);$('auditList').innerHTML='<div class="empty">Could not load audit records: '+esc(e.message||'server-error')+'</div>';toast('Could not load audit records')}
+  finally{hideBuffer()}
+}
+function v830RenderAuditPager(){
+ let x=document.getElementById('v830AuditPager');if(x)x.remove();
+ const wrap=document.createElement('div');wrap.id='v830AuditPager';wrap.className='v830-pager';
+ wrap.innerHTML='<span class="v830-count">Showing '+v830AuditRows.length+' of '+v830AuditTotal+' trips</span>'+
+ (v830AuditHasMore?'<button class="btn" onclick="loadAudit(\\'more\\')">Load More 31</button><button class="btn" onclick="v830LoadAllAudit()">Load All</button>':'');
+ $('auditList').insertAdjacentElement('afterend',wrap);
+}
+function v830LoadAllAudit(){if(v830AuditTotal>500&&!confirm('Load all '+v830AuditTotal+' matching trips?'))return;loadAudit('all')}
+function card(t){let ph=(title,km,thumb,full,lat,lon,kind)=>`<div class="photo"><h3 class="photo-title">${title} <span class="photo-km" data-photo-km="${kind}">${esc(km||'—')}</span></h3><div class="frame">${thumb||full?`<img src="${esc(thumb||full)}" data-full="${esc(full||thumb)}">`:'<span class="muted">No photo</span>'}</div><div class="gps">GPS: ${esc(lat||'—')}, ${esc(lon||'—')}</div></div>`;return `<div class="audit" data-audit-trip="${esc(t.tripId)}"><div class="summary compact-trip-info">${[['Date',t.date],['Engineer',t.engineer],['Driver',t.driver],['Project',t.projectName],['Area',t.area],['Task',t.task]].map(x=>`<div class="cell"><b>${x[0]}</b><span>${esc(x[1]||'—')}</span></div>`).join('')}</div><div class="metrics compact-trip-metrics">${[['Trip KM',t.tripKm],['F&B',t.forthBack],['Total KM',t.totalKm],['Rate',t.rateDisplay||'22.25 EGP / 10 KM'],['Amount',money(t.amountSpent)]].map(x=>`<div class="metric"><b>${x[0]}</b>${esc(x[1])}</div>`).join('')}</div><div class="audit-actions"><input class="audit-check" type="checkbox" data-trip="${esc(t.tripId)}" ${t.pmStatus==='Approved'||t.pmStatus==='Rejected'?'disabled':''}><span class="status-badge status-${String(t.pmStatus||'Pending').toLowerCase().replace(/\s+/g,'-')}">PM: ${esc(t.pmStatus||'Pending')}</span><span class="status-badge status-${String(t.financeStatus||'Pending').toLowerCase().replace(/\s+/g,'-')}">Finance: ${esc(t.financeStatus||'Pending')}</span><button class="btn edit-km" data-trip="${esc(t.tripId)}" data-start="${t.startKm}" data-finish="${t.finishKm}">Edit KM</button><button class="btn deduct" data-trip="${esc(t.tripId)}">Deduct</button><button class="btn danger reject" data-trip="${esc(t.tripId)}">Reject</button></div><div class="photos">${ph('Start Photo',t.startKm,t.startPhotoThumb,t.startPhoto,t.startLatitude,t.startLongitude,'start')}${ph('Finish Photo',t.finishKm,t.finishPhotoThumb,t.finishPhoto,t.finishLatitude,t.finishLongitude,'finish')}</div></div>`}$('auditApply').onclick=loadAudit;$('auditClear').onclick=()=>{['eng','drv','proj','month','paidBy'].forEach(x=>$(x).value='');$('auditStatus').value='Pending';loadAudit()};$('lbClose').onclick=()=>$('lightbox').classList.remove('open');
 
 let auditDialogResolve=null;
 function auditDialog(title,text,fieldsHtml){

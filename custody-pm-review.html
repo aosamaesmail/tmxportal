@@ -1096,7 +1096,11 @@ html.tmx-auth-resolving body::before{content:none!important;display:none!importa
 })();
 </script>
 
-</head>
+<style id="v830PagerStyle">
+.v830-pager{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin:18px 0 28px}
+.v830-pager .v830-count{color:#64748b;font-weight:700;margin-right:6px}
+.v830-pager button{min-width:140px}
+</style></head>
 <body>
 <div id="loginView" class="login">
   <div class="card">
@@ -1226,7 +1230,7 @@ html.tmx-auth-resolving body::before{content:none!important;display:none!importa
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbxE2_an7yy_3pfaG_rShM_gBc0QTLeTN7pvn6bJ-BWPFei2Wst4N9XKiVg0dQZNHZhA/exec';
 const API = GAS_URL;
 let pmToken=null, pmReviewerName='', currentLoginRole='', allRows=[], shownRows=[], selected=null, readyRows=[], renderedCount=0;
-const FEED_BATCH=15;
+const FEED_BATCH=31;
 
 function $(id){return document.getElementById(id)}
 function showLoadingDialog(title,text){$('loadingTitle').textContent=title||'Please wait';$('loadingText').textContent=text||'Processing...';$('loadingDialog').classList.remove('hidden')}
@@ -1324,19 +1328,27 @@ document.querySelectorAll('[data-clear]').forEach(btn=>{
   });
 });
 
-async function loadQueue(){
+let v830TotalMatched=0,v830HasMore=false;
+async function loadQueue(mode='reset'){
   if(!pmToken)return;
-  showQuickBusy('Applying filters...');
+  const append=mode==='more',loadAll=mode==='all',offset=append?allRows.length:0;
+  const filters={status:$('fStatus').value,engineer:$('fEngineer').value.trim(),project:$('fProject').value.trim(),from:$('fFrom').value,to:$('fTo').value,offset,limit:31,loadAll};
+  showQuickBusy(loadAll?'Loading all matching expenses...':append?'Loading 31 more expenses...':'Applying filters...');
   try{
-    const r=await api('getPMExpenses',{pmToken,filters:{status:$('fStatus').value,from:$('fFrom').value,to:$('fTo').value}});
-    if(r.expired)return expired();
-    if(!r.ok)throw new Error(r.error);
-    allRows=r.rows||[];
+    const r=await api('getPMExpenses',{pmToken,filters});
+    if(r.expired)return expired();if(!r.ok)throw new Error(r.error);
+    allRows=append?allRows.concat(r.rows||[]):(r.rows||[]);
+    shownRows=allRows.slice();v830TotalMatched=Number(r.totalMatched||0);v830HasMore=!!r.hasMore;
     const s=r.summary||{};
     $('sPending').textContent=s.pending||0;$('sApproved').textContent=s.approved||0;$('sRejected').textContent=s.rejected||0;$('sClarify').textContent=s.clarification||0;
-    refillFilters();applyLocalFilters();
+    const fo=r.filterOptions||{};setSearchValuesCompat('fEngineer',['',...(fo.engineers||[])]);setSearchValuesCompat('fProject',['',...(fo.projects||[])]);
+    renderedCount=0;$('feed').innerHTML='';$('feedEmpty').classList.toggle('hidden',shownRows.length!==0);renderMore();
   }catch(e){$('feed').innerHTML='<div class="card err">'+esc(e.message)+'</div>'}
   finally{hideQuickBusy()}
+}
+function setSearchValuesCompat(id,vals){
+  if(typeof setSearchValues==='function')return setSearchValues(id,vals);
+  if(typeof updateSearchSelectOptions==='function')return updateSearchSelectOptions(id,vals);
 }
 function refillFilters(){
   const engineers=[...new Set(allRows.map(x=>x.engineer).filter(Boolean))].sort();
@@ -1344,20 +1356,21 @@ function refillFilters(){
   setSearchValues('fEngineer',['',...engineers]);
   setSearchValues('fProject',['',...projects]);
 }
-function applyLocalFilters(){
-  const e=$('fEngineer').value.trim().toLowerCase(),p=$('fProject').value.trim().toLowerCase();
-  shownRows=allRows.filter(x=>(!e||String(x.engineer||'').toLowerCase().includes(e))&&(!p||String(x.project||'').toLowerCase().includes(p)));
-  renderedCount=0;$('feed').innerHTML='';
-  $('feedEmpty').classList.toggle('hidden',shownRows.length!==0);
-  renderMore();
-}
+function applyLocalFilters(){loadQueue('reset')}
 function renderMore(){
-  const feed=$('feed');
-  const next=shownRows.slice(renderedCount,renderedCount+FEED_BATCH);
-  next.forEach(x=>feed.appendChild(buildFeedCard(x)));
-  renderedCount+=next.length;
-  $('loadMoreBtn').classList.toggle('hidden',renderedCount>=shownRows.length);
+  const feed=$('feed'),next=shownRows.slice(renderedCount);
+  next.forEach(x=>feed.appendChild(buildFeedCard(x)));renderedCount+=next.length;
+  const old=$('loadMoreBtn');if(old)old.classList.add('hidden');
+  v830RenderCustodyPager();
 }
+function v830RenderCustodyPager(){
+ let x=document.getElementById('v830CustodyPager');if(x)x.remove();
+ const wrap=document.createElement('div');wrap.id='v830CustodyPager';wrap.className='v830-pager';
+ wrap.innerHTML='<span class="v830-count">Showing '+allRows.length+' of '+v830TotalMatched+' expenses</span>'+
+ (v830HasMore?'<button class="secondary" onclick="loadQueue(\\'more\\')">Load More 31</button><button class="secondary" onclick="v830LoadAllCustody()">Load All</button>':'');
+ $('feed').insertAdjacentElement('afterend',wrap);
+}
+function v830LoadAllCustody(){if(v830TotalMatched>500&&!confirm('Load all '+v830TotalMatched+' matching expenses?'))return;loadQueue('all')}
 function buildFeedCard(x){
   const card=document.createElement('article');card.className='feed-card';card.dataset.id=x.id;
   const receiptId='receipt-'+safeId(x.id),commentId='comment-'+safeId(x.id),msgId='msg-'+safeId(x.id);
@@ -1378,9 +1391,11 @@ function buildFeedCard(x){
       '<button class="clarify" onclick="feedDecision(\''+jsq(x.id)+'\',\'Needs Clarification\')">Need Clarification</button>'+
       '<button class="reject" onclick="feedDecision(\''+jsq(x.id)+'\',\'Rejected\')">Reject</button>'+
     '</div><div id="'+msgId+'" class="feed-status"></div>';
-  if(x.hasReceipt)loadFeedReceipt(x.id,receiptId);
+  if(x.hasReceipt)v830ObserveReceipt(x.id,receiptId);
   return card;
 }
+const v830ReceiptObserver=('IntersectionObserver' in window)?new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const el=e.target;v830ReceiptObserver.unobserve(el);loadFeedReceipt(el.dataset.expenseId,el.id)}})},{rootMargin:'500px 0px'}):null;
+function v830ObserveReceipt(id,boxId){const el=$(boxId);if(!el)return;el.dataset.expenseId=id;if(v830ReceiptObserver)v830ReceiptObserver.observe(el);else loadFeedReceipt(id,boxId)}
 function meta(label,value){return '<div class="detail"><small>'+esc(label)+'</small><b>'+esc(value||'')+'</b></div>'}
 function safeId(s){return String(s).replace(/[^a-zA-Z0-9_-]/g,'_')}
 function jsq(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}

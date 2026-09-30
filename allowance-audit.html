@@ -65,7 +65,11 @@ html.tmx-auth-resolving body::before{content:none!important;display:none!importa
 })();
 </script>
 
-</head><body><header><div class="brand"><span>TELECOMAX</span> <small>Operations / Allowance Audit · V7.2.2</small></div><div class="header-actions"><button class="btn ghost" type="button" onclick="location.href='./'">← Operations</button><button id="logout" class="btn ghost" style="display:none">Logout</button></div></header><main>
+<style id="v830PagerStyle">
+.v830-pager{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin:18px 0 28px}
+.v830-pager .v830-count{color:#64748b;font-weight:700;margin-right:6px}
+.v830-pager button{min-width:140px}
+</style></head><body><header><div class="brand"><span>TELECOMAX</span> <small>Operations / Allowance Audit · V7.2.2</small></div><div class="header-actions"><button class="btn ghost" type="button" onclick="location.href='./'">← Operations</button><button id="logout" class="btn ghost" style="display:none">Logout</button></div></header><main>
 <section id="login" class="card login" style="display:none"><h2>PM Login</h2><p class="note">Use your management Name + 6-digit PIN.</p><div class="field"><label>Name</label><input id="name" autocomplete="username" placeholder="Enter your name"></div><br><div class="field"><label>PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="6-digit PIN"></div><br><button id="loginBtn" class="btn primary">Login</button></section>
 <section id="app" style="display:none"><div class="card"><div class="section-title"><div><h2 style="margin:0">Monthly Allowance Audit</h2></div></div><br><div class="filters">
 <div class="field"><label>Month</label><input id="month" type="month"></div>
@@ -145,21 +149,33 @@ function setupCombo(kind){
 }
 ['engineer','driver','project'].forEach(setupCombo);
 document.addEventListener('click',e=>{['engineer','driver','project'].forEach(k=>{if(!$(k+'Combo').contains(e.target))$(k+'Combo').classList.remove('open')})});
-async function load(){
- showBuffer('Applying filters...');try{
-   // Filter lists are loaded independently from allowance records.
-   // Engineer master source is always Config Column A.
-   filterSource=await post('allowanceFilterOptions');
-   data=await post('allowanceData',{filterMonth:$('month').value,filterEngineer:$('engineer').value.trim(),filterDriver:$('driver').value.trim(),filterProject:$('project').value.trim(),filterStatus:$('status').value});
-   refreshAllCombos();recalcVisibleSummary();render()
+let v830AllowanceTotal=0,v830AllowanceHasMore=false;
+async function load(mode='reset'){
+ showBuffer(mode==='all'?'Loading all matching allowances...':mode==='more'?'Loading 31 more allowances...':'Applying filters...');
+ try{
+   if(!filterSource||!Object.keys(filterSource).length)filterSource=await post('allowanceFilterOptions');
+   const offset=mode==='more'?(data.records||[]).length:0;
+   const r=await post('allowanceData',{filterMonth:$('month').value,filterEngineer:$('engineer').value.trim(),filterDriver:$('driver').value.trim(),filterProject:$('project').value.trim(),filterStatus:$('status').value,offset,limit:31,loadAll:mode==='all'});
+   if(!r.ok)throw new Error(r.error||'server-error');
+   if(mode==='more'){data=Object.assign({},r,{records:(data.records||[]).concat(r.records||[])})}else data=r;
+   v830AllowanceTotal=Number(r.totalMatched||0);v830AllowanceHasMore=!!r.hasMore;
+   refreshAllCombos();render();v830RenderAllowancePager();
  }catch(e){toast(e.message)}finally{hideBuffer()}
 }
+function v830RenderAllowancePager(){
+ let x=document.getElementById('v830AllowancePager');if(x)x.remove();
+ const wrap=document.createElement('div');wrap.id='v830AllowancePager';wrap.className='v830-pager';
+ wrap.innerHTML='<span class="v830-count">Showing '+(data.records||[]).length+' of '+v830AllowanceTotal+' records</span>'+
+ (v830AllowanceHasMore?'<button class="btn" onclick="load(\\'more\\')">Load More 31</button><button class="btn" onclick="v830LoadAllAllowance()">Load All</button>':'');
+ $('records').insertAdjacentElement('afterend',wrap);
+}
+function v830LoadAllAllowance(){if(v830AllowanceTotal>500&&!confirm('Load all '+v830AllowanceTotal+' matching allowance records?'))return;load('all')}
 function recalcVisibleSummary(){
  let rows=(data.records||[]).filter(r=>typeView==='All'||r.type===typeView), sm={calculated:0,approved:0,pending:0,rejected:0};
  rows.forEach(r=>{sm.calculated+=Number(r.amount)||0;if(r.status==='Approved')sm.approved+=Number(r.amount)||0;else if(r.status==='Pending')sm.pending+=Number(r.amount)||0;else if(r.status==='Rejected')sm.rejected+=Number(r.amount)||0});
  data.summary=sm;
 }
-function render(){let rows=(data.records||[]).filter(r=>typeView==='All'||r.type===typeView);let sm={calculated:0,approved:0,pending:0,rejected:0};rows.forEach(r=>{let a=Number(r.amount)||0;sm.calculated+=a;if(r.status==='Approved')sm.approved+=a;else if(r.status==='Pending')sm.pending+=a;else if(r.status==='Rejected')sm.rejected+=a});$('calculated').textContent=money(sm.calculated);$('approved').textContent=money(sm.approved);$('pending').textContent=money(sm.pending);$('rejected').textContent=money(sm.rejected);let body=rows.map(r=>{let key=encodeURIComponent(JSON.stringify({type:r.type,name:r.name,date:r.date,amount:r.amount})),pending=r.status==='Pending';return `<tr><td class="select-cell" data-label="Select">${pending?`<input class="check rowCheck" type="checkbox" data-key="${key}">`:''}</td><td data-label="Person"><b>${r.type}</b> · ${r.name}</td><td data-label="Date">${r.date}<div class="meta">${r.day}</div></td><td data-label="Area"><b>${r.area}</b><div class="meta">Base: ${r.baseCity||'Not set'}</div></td><td data-label="Project">${r.projects.join(', ')||'—'}</td><td data-label="Details">${r.type==='Engineer'?`Working days: <b>${r.workingDays}</b>`:`Related: ${r.related.join(', ')||'—'}`}</td><td data-label="Allowance"><b>${money(r.amount)}</b></td><td data-label="Status"><span class="status ${r.status}">${r.status}</span></td><td data-label="Action"><div class="actions">${pending?`<button class="btn reject" onclick="rejectDay('${r.type}','${esc(r.name)}','${r.date}',${r.amount})">Reject</button>`:''}</div></td></tr>`}).join('');$('records').innerHTML=rows.length?`<table class="audit-table"><thead><tr><th></th><th>Person</th><th>Date</th><th>Area</th><th>Project</th><th>Details</th><th>Allowance</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table>`:'<div class="empty">No pending allowance records match these filters.</div>';document.querySelectorAll('.rowCheck').forEach(x=>x.addEventListener('change',updateSelectedCount));updateSelectedCount()}
+function render(){let rows=(data.records||[]).filter(r=>typeView==='All'||r.type===typeView);let sm=data.summary||{calculated:0,approved:0,pending:0,rejected:0};$('calculated').textContent=money(sm.calculated);$('approved').textContent=money(sm.approved);$('pending').textContent=money(sm.pending);$('rejected').textContent=money(sm.rejected);let body=rows.map(r=>{let key=encodeURIComponent(JSON.stringify({type:r.type,name:r.name,date:r.date,amount:r.amount})),pending=r.status==='Pending';return `<tr><td class="select-cell" data-label="Select">${pending?`<input class="check rowCheck" type="checkbox" data-key="${key}">`:''}</td><td data-label="Person"><b>${r.type}</b> · ${r.name}</td><td data-label="Date">${r.date}<div class="meta">${r.day}</div></td><td data-label="Area"><b>${r.area}</b><div class="meta">Base: ${r.baseCity||'Not set'}</div></td><td data-label="Project">${r.projects.join(', ')||'—'}</td><td data-label="Details">${r.type==='Engineer'?`Working days: <b>${r.workingDays}</b>`:`Related: ${r.related.join(', ')||'—'}`}</td><td data-label="Allowance"><b>${money(r.amount)}</b></td><td data-label="Status"><span class="status ${r.status}">${r.status}</span></td><td data-label="Action"><div class="actions">${pending?`<button class="btn reject" onclick="rejectDay('${r.type}','${esc(r.name)}','${r.date}',${r.amount})">Reject</button>`:''}</div></td></tr>`}).join('');$('records').innerHTML=rows.length?`<table class="audit-table"><thead><tr><th></th><th>Person</th><th>Date</th><th>Area</th><th>Project</th><th>Details</th><th>Allowance</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table>`:'<div class="empty">No pending allowance records match these filters.</div>';document.querySelectorAll('.rowCheck').forEach(x=>x.addEventListener('change',updateSelectedCount));updateSelectedCount()}
 function selectedRecords(){return [...document.querySelectorAll('.rowCheck:checked')].map(x=>JSON.parse(decodeURIComponent(x.dataset.key)))}
 function updateSelectedCount(){$('selectedCount').textContent=`${selectedRecords().length} selected`}
 $('selectAll').onclick=()=>{document.querySelectorAll('.rowCheck').forEach(x=>x.checked=true);updateSelectedCount()};
