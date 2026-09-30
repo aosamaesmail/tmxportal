@@ -1319,7 +1319,7 @@ function v830RenderCustodyPager(){
  let x=document.getElementById('v830CustodyPager');if(x)x.remove();
  const wrap=document.createElement('div');wrap.id='v830CustodyPager';wrap.className='v830-pager';
  wrap.innerHTML='<span class="v830-count">Showing '+allRows.length+' of '+v830TotalMatched+' expenses</span>'+
- (v830HasMore?'<button class="secondary" onclick="loadQueue(\\'more\\')">Load More 31</button><button class="secondary" onclick="v830LoadAllCustody()">Load All</button>':'');
+ (v830HasMore?'<button class="secondary" onclick="loadQueue(&quot;more&quot;)">Load More 31</button><button class="secondary" onclick="v830LoadAllCustody()">Load All</button>':'');
  $('feed').insertAdjacentElement('afterend',wrap);
 }
 function v830LoadAllCustody(){if(v830TotalMatched>500&&!confirm('Load all '+v830TotalMatched+' matching expenses?'))return;loadQueue('all')}

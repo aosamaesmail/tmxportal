@@ -422,7 +422,7 @@ function v830RenderAuditPager(){
  let x=document.getElementById('v830AuditPager');if(x)x.remove();
  const wrap=document.createElement('div');wrap.id='v830AuditPager';wrap.className='v830-pager';
  wrap.innerHTML='<span class="v830-count">Showing '+v830AuditRows.length+' of '+v830AuditTotal+' trips</span>'+
- (v830AuditHasMore?'<button class="btn" onclick="loadAudit(\\'more\\')">Load More 31</button><button class="btn" onclick="v830LoadAllAudit()">Load All</button>':'');
+ (v830AuditHasMore?'<button class="btn" onclick="loadAudit(&quot;more&quot;)">Load More 31</button><button class="btn" onclick="v830LoadAllAudit()">Load All</button>':'');
  $('auditList').insertAdjacentElement('afterend',wrap);
 }
 function v830LoadAllAudit(){if(v830AuditTotal>500&&!confirm('Load all '+v830AuditTotal+' matching trips?'))return;loadAudit('all')}

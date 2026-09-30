@@ -166,7 +166,7 @@ function v830RenderAllowancePager(){
  let x=document.getElementById('v830AllowancePager');if(x)x.remove();
  const wrap=document.createElement('div');wrap.id='v830AllowancePager';wrap.className='v830-pager';
  wrap.innerHTML='<span class="v830-count">Showing '+(data.records||[]).length+' of '+v830AllowanceTotal+' records</span>'+
- (v830AllowanceHasMore?'<button class="btn" onclick="load(\\'more\\')">Load More 31</button><button class="btn" onclick="v830LoadAllAllowance()">Load All</button>':'');
+ (v830AllowanceHasMore?'<button class="btn" onclick="load(&quot;more&quot;)">Load More 31</button><button class="btn" onclick="v830LoadAllAllowance()">Load All</button>':'');
  $('records').insertAdjacentElement('afterend',wrap);
 }
 function v830LoadAllAllowance(){if(v830AllowanceTotal>500&&!confirm('Load all '+v830AllowanceTotal+' matching allowance records?'))return;load('all')}
