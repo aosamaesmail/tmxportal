@@ -101,6 +101,19 @@ html.portal-sso-pending body::before{display:none!important;content:none!importa
 <style id="balancesSilentSsoV8212">
 #v7Sso,.v7-sso,#portalSsoStatus,.portal-sso-status{display:none!important}
 </style>
+
+<style id="tmxUniversalAuthResolveV8221">
+html.tmx-auth-resolving body{visibility:hidden!important}
+html.tmx-auth-resolving body::before{content:none!important;display:none!important}
+</style>
+<script id="tmxUniversalAuthResolveStartV8221">
+(function(){
+  if(/(?:^|[&#])sso=/.test(location.hash) || sessionStorage.getItem('tmx_km_pm_token') || sessionStorage.getItem('tmx_km_admin_token')){
+    document.documentElement.classList.add('tmx-auth-resolving');
+  }
+})();
+</script>
+
 </head><body>
 
 <div id="loginBuffer" class="login-buffer-overlay" aria-hidden="true">
@@ -287,4 +300,35 @@ function portalSSOStatus_(title,detail){ document.documentElement.classList.remo
 })();
 </script>
 <button type="button" onclick="location.href='./'" style="position:fixed;right:12px;bottom:12px;z-index:9998;border:1px solid #CBD5E1;border-radius:10px;background:#fff;color:#1E293B;padding:8px 11px;font-weight:800">← Operations</button>
+
+<script id="tmxUniversalAuthResolveEndV8221">
+(function(){
+ const root=document.documentElement;
+ if(!root.classList.contains('tmx-auth-resolving')) return;
+ function hasSession(){ return !!(sessionStorage.getItem('tmx_km_pm_token') || sessionStorage.getItem('tmx_km_admin_token')); }
+ function loginVisible(){
+   const ids=['login', 'loginBtn', 'loginBuffer', 'loginBufferText'];
+   for(const id of ids){
+     const e=document.getElementById(id);
+     if(e && getComputedStyle(e).display!=='none' && getComputedStyle(e).visibility!=='hidden') return true;
+   }
+   return false;
+ }
+ function revealIfReady(){
+   if(hasSession()){
+     // Wait one frame so the page's own auth routine can switch from login to app.
+     requestAnimationFrame(()=>requestAnimationFrame(()=>root.classList.remove('tmx-auth-resolving')));
+     return true;
+   }
+   return false;
+ }
+ if(!revealIfReady()){
+   const mo=new MutationObserver(()=>{if(revealIfReady())mo.disconnect()});
+   if(document.body) mo.observe(document.body,{subtree:true,childList:true,attributes:true});
+   // Genuine auth failure: restore existing legacy login fallback.
+   setTimeout(()=>{root.classList.remove('tmx-auth-resolving');mo.disconnect()},12000);
+ }
+})();
+</script>
+
 </body></html>
