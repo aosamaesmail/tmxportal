@@ -1309,7 +1309,7 @@ async function loadFinanceFilterMetadata(){
   try{
     const r=await api('getFinanceFilterOptions',{financeToken});
     if(r.expired)return expired();if(!r.ok)throw new Error(r.error||'Could not load filter options');
-    financeFilterCombos=r.combinations||[];refreshFinanceRelations('');
+    financeFilterCombos=(r.combinations||[]).map(x=>({...x,engineer:/^(All|AllAll|Non SelectedAll)$/i.test(String(x.engineer||''))?'':x.engineer,project:/^(All|AllAll|Non SelectedAll)$/i.test(String(x.project||''))?'':x.project}));refreshFinanceRelations('');
   }catch(e){console.error(e)}
 }
 function initFinanceFilters(){
@@ -1360,7 +1360,7 @@ function refillFilters(){
 function applyLocalFilters(){loadQueue('reset')}
 function renderMore(){
   const feed=$('feed'),next=shownRows.slice(renderedCount);
-  next.forEach(x=>feed.appendChild(buildFeedCard(x)));renderedCount+=next.length;
+  next.forEach(x=>{const card=buildFeedCard(x);feed.appendChild(card);if(card.dataset.receiptBoxId)v830ObserveReceipt(x.id,card.dataset.receiptBoxId);});renderedCount+=next.length;
   const old=$('loadMoreBtn');if(old)old.classList.add('hidden');
   v830RenderCustodyPager();
 }
@@ -1392,7 +1392,7 @@ function buildFeedCard(x){
       '<button class="clarify" onclick="feedDecision(\''+jsq(x.id)+'\',\'Needs Clarification\')">Need Clarification</button>'+
       '<button class="reject" onclick="feedDecision(\''+jsq(x.id)+'\',\'Rejected\')">Reject</button>'+
     '</div><div id="'+msgId+'" class="feed-status"></div>';
-  if(x.hasReceipt)v830ObserveReceipt(x.id,receiptId);
+  card.dataset.receiptBoxId=x.hasReceipt?receiptId:'';
   return card;
 }
 const v830ReceiptObserver=('IntersectionObserver' in window)?new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const el=e.target;v830ReceiptObserver.unobserve(el);loadFeedReceipt(el.dataset.expenseId,el.id)}})},{rootMargin:'500px 0px'}):null;

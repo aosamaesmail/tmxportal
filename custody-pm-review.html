@@ -1145,12 +1145,12 @@ html.portal-sso-pending body::before,html.tmx-auth-resolving body::before{conten
 
   <div class="card">
     <div class="filters">
-      <div><label>Engineer</label><div class="search-select"><input id="fEngineer" placeholder="All Engineers" autocomplete="off"><button class="search-clear" type="button" data-clear="fEngineer">×</button><div id="fEngineerMenu" class="search-menu hidden"></div></div></div>
-      <div><label>PM Status</label><div class="search-select"><input id="fStatus" value="Pending" autocomplete="off"><button class="search-clear" type="button" data-clear="fStatus">×</button><div id="fStatusMenu" class="search-menu hidden"></div></div></div>
-      <div><label>Project</label><div class="search-select"><input id="fProject" placeholder="All Projects" autocomplete="off"><button class="search-clear" type="button" data-clear="fProject">×</button><div id="fProjectMenu" class="search-menu hidden"></div></div></div>
-      <div><label>From</label><input id="fFrom" type="date" onchange="loadQueue()"></div>
-      <div><label>To</label><input id="fTo" type="date" onchange="loadQueue()"></div>
-      <div class="refresh"><button class="secondary" style="width:100%" onclick="loadQueue()">Refresh</button></div>
+      <div><label>Engineer</label><div class="search-select"><input id="fEngineer" placeholder="Non Selected" autocomplete="off"><button class="search-clear" type="button" data-clear="fEngineer">×</button><div id="fEngineerMenu" class="search-menu hidden"></div></div></div>
+      <div><label>PM Status</label><div class="search-select"><input id="fStatus" value="" placeholder="Non Selected" autocomplete="off"><button class="search-clear" type="button" data-clear="fStatus">×</button><div id="fStatusMenu" class="search-menu hidden"></div></div></div>
+      <div><label>Project</label><div class="search-select"><input id="fProject" placeholder="Non Selected" autocomplete="off"><button class="search-clear" type="button" data-clear="fProject">×</button><div id="fProjectMenu" class="search-menu hidden"></div></div></div>
+      <div><label>From</label><input id="fFrom" type="date"></div>
+      <div><label>To</label><input id="fTo" type="date"></div>
+      <div class="refresh"><button id="pmApplyFilters" class="primary" style="width:100%" type="button">Apply</button></div>
     </div>
   </div>
 
@@ -1255,7 +1255,7 @@ function setupSearch(id,values,onPick){
     const q=input.value.trim().toLowerCase();
     const vals=ss[id].values.filter(v=>!q||String(v).toLowerCase().includes(q));
     menu.innerHTML=vals.length
-      ? vals.map(v=>'<div class="search-option" data-v="'+esc(v)+'">'+esc(v||'All')+'</div>').join('')
+      ? vals.map(v=>'<div class="search-option" data-v="'+esc(v)+'">'+esc((v===''||v==null)?'Non Selected':v)+'</div>').join('')
       : '<div class="search-empty">No matches</div>';
     menu.querySelectorAll('.search-option').forEach(o=>{
       o.addEventListener('mousedown',ev=>{
@@ -1309,7 +1309,8 @@ async function login(){
   }catch(e){msg('loginMsg','Connection problem: '+e.message,'err')}
   finally{hideLoadingDialog();$('loginBtn').disabled=false}
 }
-function showApp(){$('loginView').classList.add('hidden');$('app').classList.remove('hidden');$('who').textContent=pmReviewerName}
+function showApp(){
+ setTimeout(()=>loadPmFilterMetadata(),0);$('loginView').classList.add('hidden');$('app').classList.remove('hidden');$('who').textContent=pmReviewerName}
 function logout(){pmToken=null;pmReviewerName='';currentLoginRole='';clearSession();$('app').classList.add('hidden');$('loginView').classList.remove('hidden');$('pmPin').value='';$('reviewer').value='';msg('loginMsg','')}
 function expired(){logout();msg('loginMsg','PM session expired. Please log in again.','err')}
 
@@ -1317,23 +1318,33 @@ function statusClass(s){if(s==='Approved')return's-approved';if(s==='Rejected')r
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
 
-setupSearch('fEngineer',[''],()=>applyLocalFilters());
-setupSearch('fProject',[''],()=>applyLocalFilters());
-setupSearch('fStatus',['','Pending','Approved','Rejected','Needs Clarification','All'],()=>loadQueue());
-
-document.querySelectorAll('[data-clear]').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const id=btn.dataset.clear;
-    const el=$(id);
-    el.value=(id==='fStatus'?'':'');
-    if(id==='fStatus')loadQueue(); else applyLocalFilters();
-    requestAnimationFrame(()=>{el.focus();el.select()});
-  });
-});
+let pmFilterCombos=[];
+function pmCtx(){return {engineer:$('fEngineer').value.trim().toLowerCase(),project:$('fProject').value.trim().toLowerCase(),status:$('fStatus').value.trim(),from:$('fFrom').value,to:$('fTo').value}}
+function pmRelated(kind){
+ const q=pmCtx();return [...new Set(pmFilterCombos.filter(r=>{
+  if(q.from&&String(r.date||'')<q.from)return false;if(q.to&&String(r.date||'')>q.to)return false;
+  if(kind!=='engineer'&&q.engineer&&String(r.engineer||'').trim().toLowerCase()!==q.engineer)return false;
+  if(kind!=='project'&&q.project&&String(r.project||'').trim().toLowerCase()!==q.project)return false;
+  if(kind!=='status'&&q.status&&String(r.status||'Pending')!==q.status)return false;return true;
+ }).map(r=>String(r[kind]||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+}
+function refreshPmRelations(changed){
+ const map={engineer:'fEngineer',project:'fProject',status:'fStatus'};
+ for(const k of Object.keys(map)){if(k===changed)continue;const e=$(map[k]),v=e.value.trim();if(v&&!pmRelated(k).some(x=>x.toLowerCase()===v.toLowerCase()))e.value=''}
+ setSearchValues('fEngineer',['',...pmRelated('engineer')]);setSearchValues('fProject',['',...pmRelated('project')]);setSearchValues('fStatus',['',...pmRelated('status')]);
+}
+async function loadPmFilterMetadata(){try{const r=await api('getPMFilterOptions',{pmToken});if(r.expired)return expired();if(!r.ok)throw new Error(r.error);pmFilterCombos=r.combinations||[];refreshPmRelations('')}catch(e){console.error(e)}}
+setupSearch('fEngineer',[''],()=>refreshPmRelations('engineer'));
+setupSearch('fProject',[''],()=>refreshPmRelations('project'));
+setupSearch('fStatus',['','Pending','Approved','Rejected','Needs Clarification'],()=>refreshPmRelations('status'));
+['fFrom','fTo'].forEach(id=>$(id).addEventListener('change',()=>refreshPmRelations('date')));
+$('pmApplyFilters').onclick=()=>loadQueue('reset');
+document.querySelectorAll('[data-clear]').forEach(btn=>btn.addEventListener('click',()=>{const id=btn.dataset.clear;$(id).value='';refreshPmRelations(id==='fEngineer'?'engineer':id==='fProject'?'project':'status');requestAnimationFrame(()=>{$(id).focus();$(id).select()})}));
 
 let v830TotalMatched=0,v830HasMore=false;
 async function loadQueue(mode='reset'){
   if(!pmToken)return;
+  if(!$('fStatus').value.trim()){allRows=[];shownRows=[];renderedCount=0;v830TotalMatched=0;v830HasMore=false;$('feed').innerHTML='';$('feedEmpty').classList.add('hidden');const pager=$('v830CustodyPager');if(pager)pager.remove();return;}
   const append=mode==='more',loadAll=mode==='all',offset=append?allRows.length:0;
   const filters={status:$('fStatus').value,engineer:$('fEngineer').value.trim(),project:$('fProject').value.trim(),from:$('fFrom').value,to:$('fTo').value,offset,limit:31,loadAll};
   showQuickBusy(loadAll?'Loading all matching expenses...':append?'Loading 31 more expenses...':'Applying filters...');
@@ -1344,7 +1355,7 @@ async function loadQueue(mode='reset'){
     shownRows=allRows.slice();v830TotalMatched=Number(r.totalMatched||0);v830HasMore=!!r.hasMore;
     const s=r.summary||{};
     $('sPending').textContent=s.pending||0;$('sApproved').textContent=s.approved||0;$('sRejected').textContent=s.rejected||0;$('sClarify').textContent=s.clarification||0;
-    const fo=r.filterOptions||{};setSearchValuesCompat('fEngineer',['',...(fo.engineers||[])]);setSearchValuesCompat('fProject',['',...(fo.projects||[])]);
+    refreshPmRelations('');
     renderedCount=0;$('feed').innerHTML='';$('feedEmpty').classList.toggle('hidden',shownRows.length!==0);renderMore();
   }catch(e){$('feed').innerHTML='<div class="card err">'+esc(e.message)+'</div>'}
   finally{hideQuickBusy()}
@@ -1362,7 +1373,7 @@ function refillFilters(){
 function applyLocalFilters(){loadQueue('reset')}
 function renderMore(){
   const feed=$('feed'),next=shownRows.slice(renderedCount);
-  next.forEach(x=>feed.appendChild(buildFeedCard(x)));renderedCount+=next.length;
+  next.forEach(x=>{const card=buildFeedCard(x);feed.appendChild(card);if(card.dataset.receiptBoxId)v830ObserveReceipt(x.id,card.dataset.receiptBoxId);});renderedCount+=next.length;
   const old=$('loadMoreBtn');if(old)old.classList.add('hidden');
   v830RenderCustodyPager();
 }
@@ -1394,7 +1405,7 @@ function buildFeedCard(x){
       '<button class="clarify" onclick="feedDecision(\''+jsq(x.id)+'\',\'Needs Clarification\')">Need Clarification</button>'+
       '<button class="reject" onclick="feedDecision(\''+jsq(x.id)+'\',\'Rejected\')">Reject</button>'+
     '</div><div id="'+msgId+'" class="feed-status"></div>';
-  if(x.hasReceipt)v830ObserveReceipt(x.id,receiptId);
+  card.dataset.receiptBoxId=x.hasReceipt?receiptId:'';
   return card;
 }
 const v830ReceiptObserver=('IntersectionObserver' in window)?new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const el=e.target;v830ReceiptObserver.unobserve(el);loadFeedReceipt(el.dataset.expenseId,el.id)}})},{rootMargin:'500px 0px'}):null;
