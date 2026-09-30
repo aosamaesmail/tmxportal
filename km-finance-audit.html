@@ -118,7 +118,42 @@ html.portal-sso-pending body::before,html.tmx-auth-resolving body::before{conten
 .tmx-mm-list{border-color:#e5e7eb!important}
 .tmx-mm-btn{background:#fff!important;color:#344054!important;border-color:#d8dee6!important}
 .tmx-mm-btn.primary{background:var(--brand,#d60072)!important;color:#fff!important;border-color:var(--brand,#d60072)!important}
-</style></head>
+</style>
+<style id="v8317MultiMonthThemeFix">
+/* V8.3.17: multi-month filter must match Telecomax dark audit theme */
+.tmx-mm-input{
+  background:var(--field,#0b1725)!important;
+  color:var(--text,#f5f6fa)!important;
+  border:1px solid var(--border,#263b55)!important;
+  color-scheme:dark!important;
+}
+.tmx-mm-input::placeholder{color:var(--muted,#8992a8)!important;opacity:1!important}
+.tmx-mm-pop{
+  background:var(--panel,#0b1725)!important;
+  color:var(--text,#f5f6fa)!important;
+  border:1px solid var(--border,#263b55)!important;
+  box-shadow:0 18px 40px rgba(0,0,0,.38)!important;
+}
+.tmx-mm-pop *{color:inherit}
+.tmx-mm-pop input,.tmx-mm-pop select{
+  background:var(--field,#0b1725)!important;
+  color:var(--text,#f5f6fa)!important;
+  border-color:var(--border,#263b55)!important;
+  color-scheme:dark!important;
+}
+.tmx-mm-pop label,.tmx-mm-pop .muted,.tmx-mm-pop small{color:var(--muted,#8992a8)!important}
+.tmx-mm-btn{
+  background:var(--field,#0b1725)!important;
+  color:var(--text,#f5f6fa)!important;
+  border-color:var(--border,#263b55)!important;
+}
+.tmx-mm-btn.primary{
+  background:var(--brand,#ec008c)!important;
+  color:#fff!important;
+  border-color:var(--brand,#ec008c)!important;
+}
+</style>
+</head>
 <body>
 
 <div id="loginBuffer" class="login-buffer-overlay" aria-hidden="true">

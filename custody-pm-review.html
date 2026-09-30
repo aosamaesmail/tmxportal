@@ -1255,7 +1255,7 @@ function setupSearch(id,values,onPick){
     const q=input.value.trim().toLowerCase();
     const vals=ss[id].values.filter(v=>!q||String(v).toLowerCase().includes(q));
     menu.innerHTML=vals.length
-      ? vals.map(v=>'<div class="search-option" data-v="'+esc(v)+'">'+esc((v===''||v==null)?'Non Selected':v)+'</div>').join('')
+      ? vals.map(v=>'<div class="search-option" data-v="'+esc(v)+'">'+esc((v===''||v==null||/^(All|AllAll|Non SelectedAll)$/i.test(String(v)))?'Non Selected':v)+'</div>').join('')
       : '<div class="search-empty">No matches</div>';
     menu.querySelectorAll('.search-option').forEach(o=>{
       o.addEventListener('mousedown',ev=>{
@@ -1331,7 +1331,7 @@ function pmRelated(kind){
 function refreshPmRelations(changed){
  const map={engineer:'fEngineer',project:'fProject',status:'fStatus'};
  for(const k of Object.keys(map)){if(k===changed)continue;const e=$(map[k]),v=e.value.trim();if(v&&!pmRelated(k).some(x=>x.toLowerCase()===v.toLowerCase()))e.value=''}
- setSearchValues('fEngineer',['',...pmRelated('engineer')]);setSearchValues('fProject',['',...pmRelated('project')]);setSearchValues('fStatus',['',...pmRelated('status')]);
+ setSearchValues('fEngineer',['',...pmRelated('engineer')]);setSearchValues('fProject',['',...pmRelated('project')]);setSearchValues('fStatus',['','Pending','Approved','Rejected','Needs Clarification']);
 }
 async function loadPmFilterMetadata(){try{const r=await api('getPMFilterOptions',{pmToken});if(r.expired)return expired();if(!r.ok)throw new Error(r.error);pmFilterCombos=r.combinations||[];refreshPmRelations('')}catch(e){console.error(e)}}
 setupSearch('fEngineer',[''],()=>refreshPmRelations('engineer'));
