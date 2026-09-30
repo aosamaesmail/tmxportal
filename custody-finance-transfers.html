@@ -1214,6 +1214,9 @@ html.portal-sso-pending #portalSsoStatus,
 html.tmx-auth-resolving #portalSsoStatus,
 html.portal-sso-pending .sso-status,
 html.tmx-auth-resolving .sso-status{display:none!important}
+</style><style id="v838SilentSession">
+#portalSsoStatus,.sso-status,.portal-transition,.frame-loading{display:none!important}
+html.portal-sso-pending body::before,html.tmx-auth-resolving body::before{content:none!important;display:none!important}
 </style></head>
 <body>
 <div id="loginView" class="login">
@@ -1288,7 +1291,7 @@ html.tmx-auth-resolving .sso-status{display:none!important}
         </div>
         <div>
           <label>Transfer Status</label>
-          <select id="transferStatusFilter">
+          <select id="transferStatusFilter"><option value="" selected>Non Selected</option>
             <option value="Pending">Pending</option>
             <option value="Needs Transfer" selected>Needs Transfer</option>
             <option value="Transferred">Transferred</option>

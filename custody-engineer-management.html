@@ -335,6 +335,9 @@ html.portal-sso-pending #portalSsoStatus,
 html.tmx-auth-resolving #portalSsoStatus,
 html.portal-sso-pending .sso-status,
 html.tmx-auth-resolving .sso-status{display:none!important}
+</style><style id="v838SilentSession">
+#portalSsoStatus,.sso-status,.portal-transition,.frame-loading{display:none!important}
+html.portal-sso-pending body::before,html.tmx-auth-resolving body::before{content:none!important;display:none!important}
 </style></head>
 <body>
 <div id="loginView" class="login-wrap">
@@ -437,7 +440,7 @@ html.tmx-auth-resolving .sso-status{display:none!important}
         <div class="card">
           <div class="history-toolbar">
             <div><label>Search</label><input id="historySearch" placeholder="Category, project, description..." oninput="renderHistory()"></div>
-            <div><label>Status</label><select id="historyStatus" onchange="renderHistory()"><option value="">All Statuses</option><option>Pending</option><option>Approved</option><option>Rejected</option><option>Needs Clarification</option><option>Needs Transfer</option><option>Transferred</option></select></div>
+            <div><label>Status</label><select id="historyStatus" onchange="renderHistory()"><option value="" selected>Non Selected</option><option value="">All Statuses</option><option>Pending</option><option>Approved</option><option>Rejected</option><option>Needs Clarification</option><option>Needs Transfer</option><option>Transferred</option></select></div>
           </div>
           <div id="historySummary" class="search-note"></div>
         </div>

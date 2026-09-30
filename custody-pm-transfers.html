@@ -1235,7 +1235,10 @@ html.tmx-auth-resolving body::before{content:none!important;display:none!importa
 })();
 </script>
 
-</head>
+<style id="v838SilentSession">
+#portalSsoStatus,.sso-status,.portal-transition,.frame-loading{display:none!important}
+html.portal-sso-pending body::before,html.tmx-auth-resolving body::before{content:none!important;display:none!important}
+</style></head>
 <body>
 <div id="loginView" class="login">
   <div class="card">
@@ -1309,7 +1312,7 @@ html.tmx-auth-resolving body::before{content:none!important;display:none!importa
         </div>
         <div>
           <label>Transfer Status</label>
-          <select id="transferStatusFilter" onchange="loadTransferView()">
+          <select id="transferStatusFilter" onchange="loadTransferView()"><option value="" selected>Non Selected</option>
             <option value="Pending">Pending</option>
             <option value="Needs Transfer" selected>Needs Transfer</option>
             <option value="Transferred">Transferred</option>

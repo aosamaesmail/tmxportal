@@ -86,14 +86,17 @@ html.tmx-auth-resolving body::before{content:none!important;display:none!importa
 .tmx-mm-btn.primary{background:var(--brand,#ec008c)!important;color:#fff!important;border-color:var(--brand,#ec008c)!important}
 .tmx-mm-list::-webkit-scrollbar{width:8px}.tmx-mm-list::-webkit-scrollbar-thumb{background:#667085;border-radius:8px}.tmx-mm-list::-webkit-scrollbar-track{background:transparent}
 </style>
-</head><body><header><div class="brand"><span>TELECOMAX</span> <small>Operations / Allowance Audit · V7.2.2</small></div><div class="header-actions"><button class="btn ghost" type="button" onclick="location.href='./'">← Operations</button><button id="logout" class="btn ghost" style="display:none">Logout</button></div></header><main>
+<style id="v838SilentSession">
+#portalSsoStatus,.sso-status,.portal-transition,.frame-loading{display:none!important}
+html.portal-sso-pending body::before,html.tmx-auth-resolving body::before{content:none!important;display:none!important}
+</style></head><body><header><div class="brand"><span>TELECOMAX</span> <small>Operations / Allowance Audit · V7.2.2</small></div><div class="header-actions"><button class="btn ghost" type="button" onclick="location.href='./'">← Operations</button><button id="logout" class="btn ghost" style="display:none">Logout</button></div></header><main>
 <section id="login" class="card login" style="display:none"><h2>PM Login</h2><p class="note">Use your management Name + 6-digit PIN.</p><div class="field"><label>Name</label><input id="name" autocomplete="username" placeholder="Enter your name"></div><br><div class="field"><label>PIN</label><input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="6-digit PIN"></div><br><button id="loginBtn" class="btn primary">Login</button></section>
 <section id="app" style="display:none"><div class="card"><div class="section-title"><div><h2 style="margin:0">Monthly Allowance Audit</h2></div></div><br><div class="filters">
 <div class="field"><label>Months</label><input id="month" type="text" data-multimonth></div>
 <div class="field combo" id="engineerCombo"><label>Engineer</label><input id="engineer" autocomplete="off" placeholder="Search or select engineer"><div id="engineerList" class="combo-list"></div></div>
 <div class="field combo" id="driverCombo"><label>Driver</label><input id="driver" autocomplete="off" placeholder="Search or select driver"><div id="driverList" class="combo-list"></div></div>
 <div class="field combo" id="projectCombo"><label>Project</label><input id="project" autocomplete="off" placeholder="Search or select project"><div id="projectList" class="combo-list"></div></div>
-<div class="field"><label>Status</label><select id="status"><option value="" selected>All Statuses</option><option>Pending</option><option>Approved</option><option>Rejected</option></select></div>
+<div class="field"><label>Status</label><select id="status"><option value="" selected>Non Selected</option><option value="" selected>All Statuses</option><option>Pending</option><option>Approved</option><option>Rejected</option></select></div>
 <button id="apply" class="btn primary">Apply</button><button id="clear" class="btn ghost">Clear</button></div></div>
 <div class="summary"><div class="metric"><small>Calculated</small><b id="calculated">0 EGP</b></div><div class="metric"><small>Approved</small><b id="approved">0 EGP</b></div><div class="metric"><small>Pending</small><b id="pending">0 EGP</b></div><div class="metric"><small>Rejected</small><b id="rejected">0 EGP</b></div></div><br>
 <div class="card"><div class="tabs"><button class="btn tab active" data-type="All">All</button><button class="btn tab" data-type="Engineer">Engineers</button><button class="btn tab" data-type="Driver">Drivers</button></div>

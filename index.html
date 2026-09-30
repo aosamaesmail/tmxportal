@@ -465,6 +465,11 @@ html.tmx-pm-transfers-launch #routeLoading{display:none!important}
 
 <style id="v835NoPortalTransition">
 #portalTransition,.portal-transition,.frame-loading{display:none!important}
+</style><style id="v838EngineerCleanup">
+body.portal-engineer #attentionSection{display:none!important}
+</style><style id="v838SilentSession">
+#portalSsoStatus,.sso-status,.portal-transition,.frame-loading{display:none!important}
+html.portal-sso-pending body::before,html.tmx-auth-resolving body::before{content:none!important;display:none!important}
 </style></head>
 <body><div class="wrap">
 <div class="top"><div class="brand">TELECOMAX <span>OPERATIONS</span></div><div class="actions"><span id="who" class="pill">Not signed in</span><button id="logout" class="ghost hidden">Log out</button></div></div>
@@ -566,8 +571,8 @@ function renderLiveKpis(){
  }else{
    h+=liveCard('KM Trips This Month',k.myTripsThisMonth??'—',new Intl.NumberFormat('en-EG',{maximumFractionDigits:1}).format(k.myKmThisMonth||0)+' KM',moduleUrls.kmEngineerHistory);
    h+=liveCard('My Expenses',c.myExpenseCount??'—',fmtEgp(c.myExpenseAmount||0)+' submitted',moduleUrls.custodyEngineerHistory);
-   h+=liveCard('Start / Finish Trip','Open','KM trip workflow',moduleUrls.kmEngineerStart);
-   h+=liveCard('New Expense','Open','Custody expense submission',moduleUrls.custodyEngineerNew);
+   h+=liveCard('Trips App','Open','KM trip workflow',moduleUrls.kmEngineerStart);
+   h+=liveCard('Custody App','Open','Custody expense submission',moduleUrls.custodyEngineerNew);
  }
  el.innerHTML=h||'<div class="muted">No live KPIs available for this role.</div>';
  renderAttention();
@@ -588,16 +593,16 @@ async function centralLogin(name,pin){
 let currentPortalToken='';
 let currentPortalUser=null;
 const moduleUrls={
- kmEngineerStart:'https://telecomaxkm.vercel.app/?view=start&portalLabel=Start%20%2F%20Finish%20Trip',
- kmEngineerHistory:'https://telecomaxkm.vercel.app/?view=history&portalLabel=KM%20History',
+ kmEngineerStart:'https://telecomaxkm.vercel.app/?view=start&portalLabel=Trips%20App',
+ kmEngineerHistory:'https://telecomaxkm.vercel.app/?view=history&portalLabel=Trips%20History',
  kmBalances:'km-balances.html',
  kmPhotoAudit:'photo-audit.html',
  kmAdd Solfa:'km-solfa.html',
  kmPay Cars Rent:'km-rent.html',
  kmAllowance:'allowance-audit.html',
  kmFinanceAudit:'km-finance-audit.html',
- custodyEngineerNew:'https://custody-orcin.vercel.app/?view=home&portalLabel=New%20Expense',
- custodyEngineerHistory:'https://custody-orcin.vercel.app/?view=history&portalLabel=Expense%20History',
+ custodyEngineerNew:'https://custody-orcin.vercel.app/?view=home&portalLabel=Custody%20App',
+ custodyEngineerHistory:'https://custody-orcin.vercel.app/?view=history&portalLabel=Custody%20History',
  custodyAdminEngineers:'custody-engineer-management.html',
  custodyAdminUsers:'custody-management-users.html',
  custodyAdminTransfers:'custody-finance-transfers.html',
@@ -684,12 +689,12 @@ function renderQuickActions(u){
  let h='';
  if(u.kind==='engineer'){
    if(u.km){
-     h+=actionCard('Start / Finish Trip','Open KM trip workflow.',moduleUrls.kmEngineerStart);
-     h+=actionCard('KM History','Trips, KM and previous records.',moduleUrls.kmEngineerHistory);
+     h+=actionCard('Trips App','Open KM trip workflow.',moduleUrls.kmEngineerStart);
+     h+=actionCard('Trips History','Trips, KM and previous records.',moduleUrls.kmEngineerHistory);
    }
    if(u.custody){
-     h+=actionCard('New Expense','Submit a Custody expense.',moduleUrls.custodyEngineerNew);
-     h+=actionCard('Expense History','Review submitted expenses.',moduleUrls.custodyEngineerHistory);
+     h+=actionCard('Custody App','Submit a Custody expense.',moduleUrls.custodyEngineerNew);
+     h+=actionCard('Custody History','Review submitted expenses.',moduleUrls.custodyEngineerHistory);
    }
  }else if(u.role==='Finance'){
    if(u.km) h+=actionCard('KM Odometer Audit','Finance KM evidence review.',moduleUrls.kmFinanceAudit);
@@ -739,6 +744,7 @@ function render(u){
  ].forEach(k=>sessionStorage.removeItem(k));
 
  currentPortalUser=u;
+ document.body.classList.toggle('portal-engineer',u.kind==='engineer');
  currentPortalToken=u.portalToken||'';
  liveDashboard={km:null,custody:null,loading:false,error:''};
  $('loginView').classList.add('hidden');$('dash').classList.remove('hidden');$('logout').classList.remove('hidden');
@@ -757,7 +763,7 @@ function render(u){
  } else $('custodyCard').classList.add('disabled');
  $('kmLinks').innerHTML=km;$('custodyLinks').innerHTML=cu;
  renderQuickActions(u);
- sessionStorage.setItem('tmx_portal_user',JSON.stringify(u));
+ sessionStorage.setItem('tmx_portal_user',JSON.stringify(u));localStorage.setItem('tmx_portal_user_persist',JSON.stringify(u));
 
  // V6.1.1: load live summaries only after the authenticated dashboard is fully rendered.
  const liveEl=$('liveKpis');
@@ -783,22 +789,22 @@ $('pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('login').click()});
 
 const workspaceDefinitions={
  kmEngineer:{title:'KM Engineer',items:[
-  ['Start / Finish Trip','Create and complete KM trips with odometer evidence.','kmEngineerStart',''],
+  ['Trips App','Create and complete KM trips with odometer evidence.','kmEngineerStart',''],
   ['Trip History','Review your KM records and balances.','kmEngineerHistory','blue']
  ]},
  kmManagement:{title:'KM Management',items:[
   ['Balances','Review received, spent and remaining engineer balances.','kmBalances',''],
   ['KM Odometer Audit','Review KM records against start/finish photos.','kmPhotoAudit','blue'],
-  ['Add Solfa','Create and review engineer advances.','kmAdd Solfa','green'],
-  ['Pay Cars Rent','Process completed Pay Cars Rent trips and deductions.','kmPay Cars Rent',''],
+  ['Add Solfa','Create and review engineer advances.','kmSolfa','green'],
+  ['Pay Cars Rent','Process completed Pay Cars Rent trips and deductions.','kmRent',''],
   ['Allowance Acceptance','Review and approve monthly allowances.','kmAllowance','blue']
  ]},
  kmFinance:{title:'KM Finance',items:[
-  ['KM KM Odometer Audit','Review trip evidence, KM and amount spent.','kmFinanceAudit','green']
+  ['KM Odometer Audit','Review trip evidence, KM and amount spent.','kmFinanceAudit','green']
  ]},
  custodyEngineer:{title:'Custody Engineer',items:[
-  ['New Expense','Submit a new expense with receipt evidence.','custodyEngineerNew',''],
-  ['Expense History','Review submitted expenses and their status.','custodyEngineerHistory','blue']
+  ['Custody App','Submit a new expense with receipt evidence.','custodyEngineerNew',''],
+  ['Custody History','Review submitted expenses and their status.','custodyEngineerHistory','blue']
  ]},
  custodyPM:{title:'Custody Project Management',items:[
   ['Custody Review','Review pending expenses and supporting receipts.','custodyPMReview',''],
@@ -841,7 +847,10 @@ $('logout').onclick=()=>{
 
  location.reload();
 };
-try{const u=JSON.parse(sessionStorage.getItem('tmx_portal_user')||'null');if(u)render(u)}catch(e){}
+try{
+ const raw=sessionStorage.getItem('tmx_portal_user')||localStorage.getItem('tmx_portal_user_persist')||'null';
+ const u=JSON.parse(raw);if(u){sessionStorage.setItem('tmx_portal_user',JSON.stringify(u));render(u)}
+}catch(e){}
 
 document.addEventListener('click',function(e){
  const a=e.target.closest('a.quick-action');
@@ -852,6 +861,8 @@ document.addEventListener('click',function(e){
  if(box) box.classList.add('hidden');
 },{capture:true});
 window.addEventListener('pageshow',()=>{
+ try{const raw=sessionStorage.getItem('tmx_portal_user')||localStorage.getItem('tmx_portal_user_persist');if(raw){const u=JSON.parse(raw);if(u)render(u)}}catch(e){}
+
  const box=document.getElementById('portalTransition');
  if(box) box.classList.add('hidden');
 });

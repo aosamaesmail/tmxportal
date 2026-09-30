@@ -1057,6 +1057,9 @@ html.tmx-auth-resolving body::before{content:none!important;display:none!importa
 .v830-pager{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin:18px 0 28px}
 .v830-pager .v830-count{color:#64748b;font-weight:700;margin-right:6px}
 .v830-pager button{min-width:140px}
+</style><style id="v838SilentSession">
+#portalSsoStatus,.sso-status,.portal-transition,.frame-loading{display:none!important}
+html.portal-sso-pending body::before,html.tmx-auth-resolving body::before{content:none!important;display:none!important}
 </style></head>
 <body>
 <div id="loginView" class="login">
@@ -1131,7 +1134,7 @@ html.tmx-auth-resolving body::before{content:none!important;display:none!importa
         </div>
         <div>
           <label>Transfer Status</label>
-          <select id="transferStatusFilter" onchange="loadTransferView()">
+          <select id="transferStatusFilter" onchange="loadTransferView()"><option value="" selected>Non Selected</option>
             <option value="Pending">Pending</option>
             <option value="Needs Transfer" selected>Needs Transfer</option>
             <option value="Transferred">Transferred</option>
