@@ -597,8 +597,8 @@ const moduleUrls={
  kmEngineerHistory:'https://telecomaxkm.vercel.app/?view=history&portalLabel=Trips%20History',
  kmBalances:'km-balances.html',
  kmPhotoAudit:'photo-audit.html',
- kmAdd Solfa:'km-solfa.html',
- kmPay Cars Rent:'km-rent.html',
+ kmSolfa:'km-solfa.html',
+ kmRent:'km-rent.html',
  kmAllowance:'allowance-audit.html',
  kmFinanceAudit:'km-finance-audit.html',
  custodyEngineerNew:'https://custody-orcin.vercel.app/?view=home&portalLabel=Custody%20App',
@@ -706,8 +706,8 @@ function renderQuickActions(u){
    if(u.km){
      h+=actionCard('Engineers Balance','Engineer KM balances.',moduleUrls.kmBalances);
      h+=actionCard('KM Odometer Audit','Review trip evidence.',moduleUrls.kmPhotoAudit);
-     h+=actionCard('Add Add Solfa','Engineer advances.',moduleUrls.kmAdd Solfa);
-     h+=actionCard('Pay Cars Pay Cars Rent','Pay Cars Rent trips and deductions.',moduleUrls.kmPay Cars Rent);
+     h+=actionCard('Add Solfa','Engineer advances.',moduleUrls.kmSolfa);
+     h+=actionCard('Pay Cars Rent','Pay Cars Rent trips and deductions.',moduleUrls.kmRent);
      h+=actionCard('Allowance Acceptance','Monthly allowance approvals.',moduleUrls.kmAllowance);
    }
    if(u.custody){
@@ -718,8 +718,8 @@ function renderQuickActions(u){
    if(u.km){
      h+=actionCard('Engineers Balance','Engineer KM balances.',moduleUrls.kmBalances);
      h+=actionCard('KM Odometer Audit','Review trip evidence.',moduleUrls.kmPhotoAudit);
-     h+=actionCard('Add Add Solfa','Engineer advances.',moduleUrls.kmAdd Solfa);
-     h+=actionCard('Pay Cars Pay Cars Rent','Pay Cars Rent trips and deductions.',moduleUrls.kmPay Cars Rent);
+     h+=actionCard('Add Solfa','Engineer advances.',moduleUrls.kmSolfa);
+     h+=actionCard('Pay Cars Rent','Pay Cars Rent trips and deductions.',moduleUrls.kmRent);
      h+=actionCard('Allowance Acceptance','Monthly allowance approvals.',moduleUrls.kmAllowance);
    }
    if(u.custody){
@@ -796,7 +796,7 @@ const workspaceDefinitions={
   ['Balances','Review received, spent and remaining engineer balances.','kmBalances',''],
   ['KM Odometer Audit','Review KM records against start/finish photos.','kmPhotoAudit','blue'],
   ['Add Solfa','Create and review engineer advances.','kmSolfa','green'],
-  ['Pay Cars Rent','Process completed Pay Cars Rent trips and deductions.','kmRent',''],
+  ['Pay Cars Rent','Process completed rent trips and deductions.','kmRent',''],
   ['Allowance Acceptance','Review and approve monthly allowances.','kmAllowance','blue']
  ]},
  kmFinance:{title:'KM Finance',items:[
