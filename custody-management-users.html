@@ -322,7 +322,12 @@ html.tmx-auth-resolving body::before{content:none!important;display:none!importa
 })();
 </script>
 
-</head>
+<style id="v834SilentSso">
+html.portal-sso-pending #portalSsoStatus,
+html.tmx-auth-resolving #portalSsoStatus,
+html.portal-sso-pending .sso-status,
+html.tmx-auth-resolving .sso-status{display:none!important}
+</style></head>
 <body>
 <div id="loginView" class="login-wrap">
   <div class="card">
