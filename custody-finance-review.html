@@ -1102,9 +1102,9 @@ html.portal-sso-pending body::before,html.tmx-auth-resolving body::before{conten
 
   <div class="card">
     <div class="filters">
-      <div><label>Engineer</label><div id="fEngineerWrap" class="search-select"><input id="fEngineer" placeholder="All Engineers" autocomplete="off"><button class="search-clear" type="button" onclick="clearSearchSelect('fEngineer')">×</button><div id="fEngineerMenu" class="search-menu hidden"></div></div></div>
+      <div><label>Engineer</label><div id="fEngineerWrap" class="search-select"><input id="fEngineer" placeholder="Non Selected" autocomplete="off"><button class="search-clear" type="button" onclick="clearSearchSelect('fEngineer')">×</button><div id="fEngineerMenu" class="search-menu hidden"></div></div></div>
       <div><label>Finance Status</label><div id="fStatusWrap" class="search-select"><input id="fStatus" value="" placeholder="Non Selected" autocomplete="off"><button class="search-clear" type="button" onclick="setSearchSelect('fStatus','')">×</button><div id="fStatusMenu" class="search-menu hidden"></div></div></div>
-      <div><label>Project</label><div id="fProjectWrap" class="search-select"><input id="fProject" placeholder="All Projects" autocomplete="off"><button class="search-clear" type="button" onclick="clearSearchSelect('fProject')">×</button><div id="fProjectMenu" class="search-menu hidden"></div></div></div>
+      <div><label>Project</label><div id="fProjectWrap" class="search-select"><input id="fProject" placeholder="Non Selected" autocomplete="off"><button class="search-clear" type="button" onclick="clearSearchSelect('fProject')">×</button><div id="fProjectMenu" class="search-menu hidden"></div></div></div>
       <div><label>From</label><input id="fFrom" type="date"></div>
       <div><label>To</label><input id="fTo" type="date"></div>
       <div class="refresh"><button id="financeApplyFilters" class="primary" style="width:100%" type="button">Apply</button></div>
@@ -1212,7 +1212,10 @@ function initSearchSelect(id,options,onSelect){
   const render=()=>{
     const q=input.value.trim().toLowerCase();
     const vals=searchSelects[id].options.filter(v=>!q||String(v).toLowerCase().includes(q));
-    menu.innerHTML=vals.length?vals.map(v=>'<div class="search-option" data-value="'+esc(v)+'">'+esc(v||'All')+'</div>').join(''):'<div class="search-empty">No matches</div>';
+    menu.innerHTML=vals.length?vals.map(v=>{
+      const label=(v===''||v==null)?'Non Selected':String(v);
+      return '<div class="search-option" data-value="'+esc(v)+'">'+esc(label)+'</div>';
+    }).join(''):'<div class="search-empty">No matches</div>';
     menu.querySelectorAll('.search-option').forEach(o=>o.onclick=()=>{
       input.value=o.dataset.value;menu.classList.add('hidden');
       if(searchSelects[id].onSelect)searchSelects[id].onSelect(input.value);
@@ -1300,7 +1303,7 @@ function refreshFinanceRelations(changed){
   }
   updateSearchSelectOptions('fEngineer',['',...financeRelated('engineer')]);
   updateSearchSelectOptions('fProject',['',...financeRelated('project')]);
-  updateSearchSelectOptions('fStatus',['',...financeRelated('status'),'All'].filter((v,i,a)=>a.indexOf(v)===i));
+  updateSearchSelectOptions('fStatus',['',...financeRelated('status')].filter((v,i,a)=>a.indexOf(v)===i));
 }
 async function loadFinanceFilterMetadata(){
   try{
@@ -1312,7 +1315,7 @@ async function loadFinanceFilterMetadata(){
 function initFinanceFilters(){
   initSearchSelect('fEngineer',[''],()=>refreshFinanceRelations('engineer'));
   initSearchSelect('fProject',[''],()=>refreshFinanceRelations('project'));
-  initSearchSelect('fStatus',['','Pending','Approved','Rejected','Needs Clarification','All'],()=>refreshFinanceRelations('status'));
+  initSearchSelect('fStatus',['','Pending','Approved','Rejected','Needs Clarification'],()=>refreshFinanceRelations('status'));
   ['fFrom','fTo'].forEach(id=>$(id).addEventListener('change',()=>refreshFinanceRelations('date')));
   $('financeApplyFilters').onclick=()=>loadQueue('reset');
   initSearchSelect('transferEngineerFilter',[''],()=>renderTransferEngineerSummary($('transferStatusFilter').value));
