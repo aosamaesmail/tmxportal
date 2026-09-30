@@ -320,6 +320,15 @@ html.tmx-auth-resolving body::before{content:none!important;display:none!importa
 .v830-pager button{min-width:140px}
 </style><style id="v832PmAuditKpi">.v832-kpis{grid-template-columns:repeat(4,1fr)}@media(max-width:800px){.v832-kpis{grid-template-columns:repeat(2,1fr)}}</style><style id="v834PhotoAuditStandalone">
 #balances,#solfa,#rent{display:none!important}
+</style><style id="v835PhotoSummaryOverride">
+/* Override legacy standalone rules that hid the tab bar and Summary panel. */
+#dash>.tabs{display:flex!important;gap:8px!important;flex-wrap:wrap!important;margin-bottom:18px!important}
+#dash>.tabs .tab{display:inline-flex!important}
+#summary.panel{display:none!important}
+#summary.panel.active{display:block!important}
+#audit.panel{display:none!important}
+#audit.panel.active{display:block!important}
+#balances,#solfa,#rent{display:none!important}
 </style></head><body>
 
 <div id="loginBuffer" class="login-buffer-overlay" aria-hidden="true">
@@ -362,7 +371,7 @@ function auth(on){
  if(on){ Promise.resolve(loadConfig()).then(()=>loadAudit()).catch(()=>loadAudit()); }
 }
 async function login(){const name=$('name').value.trim(),pin=$('pin').value.trim();if(!name||!pin)return toast('Enter your name and 6-digit PIN');showLoginBuffer('Logging in to Management Portal...');$('loginBtn').disabled=true;try{const d=await post('managementLogin',{name,pin,portalRole:'Admin'});managementToken=d.token;managementName=d.name||name;sessionStorage.setItem('tmx_km_admin_token',managementToken);sessionStorage.setItem('tmx_km_admin_name',managementName);if(d.role==='PM'){sessionStorage.setItem('tmx_km_pm_token',managementToken);sessionStorage.setItem('tmx_km_pm_name',managementName)}auth(true);toast('Logged in as '+managementName)}catch(e){managementToken='';toast(e.message||'Could not log in')}finally{$('loginBtn').disabled=false;hideLoginBuffer()}}$('loginBtn').onclick=login;$('name').onkeydown=e=>{if(e.key==='Enter')$('pin').focus()};$('pin').onkeydown=e=>{if(e.key==='Enter')login()};$('logout').onclick=()=>{managementToken='';managementName='';sessionStorage.removeItem('tmx_km_admin_token');sessionStorage.removeItem('tmx_km_admin_name');sessionStorage.removeItem('tmx_km_pm_token');sessionStorage.removeItem('tmx_km_pm_name');$('name').value='';$('pin').value='';auth(false)};
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.p));if(b.dataset.p==='audit')loadAudit();if(b.dataset.p==='rent')loadRent()});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.p));if(b.dataset.p==='audit')loadAudit();if(b.dataset.p==='summary'){/* Summary data loads with Apply, matching Finance Audit. */}});
 function wire(id,optsId,source){let inp=$(id),box=$(optsId);function draw(){let q=inp.value.toLowerCase(),arr=source();box.innerHTML=arr.filter(x=>x.toLowerCase().includes(q)).map(x=>`<div class="opt">${esc(x)}</div>`).join('');box.style.display=box.innerHTML?'block':'none';[...box.children].forEach(o=>o.onclick=()=>{inp.value=o.textContent;box.style.display='none';if(['eng','drv','proj'].includes(id))refreshRelated()})}inp.oninput=draw;inp.onfocus=draw;document.addEventListener('click',e=>{if(!inp.parentElement.contains(e.target))box.style.display='none'})}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function uniq(a){return [...new Set(a.filter(Boolean))].sort((a,b)=>a.localeCompare(b))}function relCtx(prefix=''){
  const ids=prefix?{engineer:'sEng',driver:'sDrv',project:'sProj',paidBy:'sPaidBy'}:{engineer:'eng',driver:'drv',project:'proj',paidBy:'paidBy'};

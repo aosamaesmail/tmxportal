@@ -463,7 +463,9 @@ html.tmx-pm-transfers-launch #routeLoading{display:none!important}
 </script>
 
 
-</head>
+<style id="v835NoPortalTransition">
+#portalTransition,.portal-transition,.frame-loading{display:none!important}
+</style></head>
 <body><div class="wrap">
 <div class="top"><div class="brand">TELECOMAX <span>OPERATIONS</span></div><div class="actions"><span id="who" class="pill">Not signed in</span><button id="logout" class="ghost hidden">Log out</button></div></div>
 
@@ -846,7 +848,7 @@ document.addEventListener('click',function(e){
  const box=document.getElementById('portalTransition');
  const title=document.getElementById('portalTransitionTitle');
  if(title) title.textContent='Opening '+(a.querySelector('b')?.textContent||'workspace')+'…';
- if(box) box.classList.remove('hidden');
+ if(box) box.classList.add('hidden');
 },{capture:true});
 window.addEventListener('pageshow',()=>{
  const box=document.getElementById('portalTransition');
