@@ -1083,6 +1083,19 @@ button:hover,.secondary:hover{background:#F1F5F9!important}
 <style id="custodyPMReviewSilentSsoV8215">
 #v7Sso,.v7-sso,#portalSsoStatus,.portal-sso-status{display:none!important}
 </style>
+
+<style id="tmxPmReviewAuthResolveV8220">
+html.tmx-pm-review-auth-resolving body{visibility:hidden!important}
+html.tmx-pm-review-auth-resolving body::before{content:none!important;display:none!important}
+</style>
+<script id="tmxPmReviewAuthResolveStartV8220">
+(function(){
+  if(/(?:^|[&#])sso=/.test(location.hash) || sessionStorage.getItem('custody.pm')){
+    document.documentElement.classList.add('tmx-pm-review-auth-resolving');
+  }
+})();
+</script>
+
 </head>
 <body>
 <div id="loginView" class="login">
@@ -1680,5 +1693,35 @@ setTimeout(()=>{try{showTab('reviewTab')}catch(e){}},250);
 })();
 </script>
 <button type="button" onclick="location.href='./'" style="position:fixed;right:12px;bottom:12px;z-index:9998;border:1px solid #3a4b62;border-radius:10px;background:#111d2c;color:#fff;padding:8px 11px;font-weight:800">← Operations</button>
+
+<script id="tmxPmReviewAuthResolveEndV8220">
+(function(){
+  const root=document.documentElement;
+  if(!root.classList.contains('tmx-pm-review-auth-resolving')) return;
+
+  function isAuthenticated(){
+    if(sessionStorage.getItem('custody.pm')) return true;
+    const t=(document.body && document.body.innerText)||'';
+    return /PM Expense Approval/i.test(t) && /Log out/i.test(t);
+  }
+  function reveal(){
+    if(!isAuthenticated()) return false;
+    root.classList.remove('tmx-pm-review-auth-resolving');
+    return true;
+  }
+
+  if(!reveal()){
+    const obs=new MutationObserver(function(){
+      if(reveal()) obs.disconnect();
+    });
+    if(document.body) obs.observe(document.body,{subtree:true,childList:true,attributes:true});
+    setTimeout(function(){
+      root.classList.remove('tmx-pm-review-auth-resolving');
+      obs.disconnect();
+    },12000);
+  }
+})();
+</script>
+
 </body>
 </html>
