@@ -203,6 +203,7 @@ $('logoutBtn').onclick=()=>{managementToken='';managementName='';sessionStorage.
 let v832FinanceTotal=0,v832FinanceHasMore=false,v832FinanceTotals={};
 async function loadTrips(mode='reset'){
  if(!managementToken)return;
+ if(!$('auditStatus').value){trips=[];v832FinanceTotal=0;v832FinanceHasMore=false;$('tableWrap').innerHTML='<div class="empty">Choose filters, then click Apply to load trips.</div>';return;}
  const append=mode==='more',loadAll=mode==='all',offset=append?trips.length:0;
  showBuffer(loadAll?'Loading all matching trips...':append?'Loading 31 more trips...':'Applying filters...');
  if(!append)$('tableWrap').innerHTML='<div class="empty">Loading audit records…</div>';

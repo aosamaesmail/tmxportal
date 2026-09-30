@@ -1440,7 +1440,7 @@ async function login(){
   try{
     const r=await api('pmLogin',{name:reviewer,pin});
     if(!r.ok)return msg('loginMsg',r.error,'err');
-    pmToken=r.token;pmReviewerName=r.reviewer||r.name||reviewer;currentLoginRole=r.role||'PM';saveSession();showApp();await loadQueue();
+    pmToken=r.token;pmReviewerName=r.reviewer||r.name||reviewer;currentLoginRole=r.role||'PM';saveSession();showApp();$('fStatus').value='';
   }catch(e){msg('loginMsg','Connection problem: '+e.message,'err')}
   finally{hideLoadingDialog();$('loginBtn').disabled=false}
 }
@@ -1454,13 +1454,13 @@ function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 
 setupSearch('fEngineer',[''],()=>applyLocalFilters());
 setupSearch('fProject',[''],()=>applyLocalFilters());
-setupSearch('fStatus',['Pending','Approved','Rejected','Needs Clarification','All'],()=>loadQueue());
+setupSearch('fStatus',['','Pending','Approved','Rejected','Needs Clarification','All'],()=>loadQueue());
 
 document.querySelectorAll('[data-clear]').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const id=btn.dataset.clear;
     const el=$(id);
-    el.value=(id==='fStatus'?'Pending':'');
+    el.value=(id==='fStatus'?'':'');
     if(id==='fStatus')loadQueue(); else applyLocalFilters();
     requestAnimationFrame(()=>{el.focus();el.select()});
   });
@@ -1582,6 +1582,7 @@ function showTab(tab){
   if(tab==='transferTab') loadTransferView();
 }
 async function loadTransferView(){
+ if($('transferStatusFilter')&&!$('transferStatusFilter').value){return;}
   msg('transferViewMsg','');
   $('transferExpenseCard').classList.add('hidden');
   const status=$('transferStatusFilter').value;

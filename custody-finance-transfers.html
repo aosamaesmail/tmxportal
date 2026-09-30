@@ -1423,7 +1423,7 @@ async function login(){
   try{
     const r=await api('financeLogin',{name:reviewer,pin});
     if(!r.ok)return msg('loginMsg',r.error,'err');
-    financeToken=r.token;reviewerName=r.reviewer||reviewer;saveSession();showApp();await loadQueue();
+    financeToken=r.token;reviewerName=r.reviewer||reviewer;saveSession();showApp();$('fStatus').value='';
   }catch(e){msg('loginMsg','Connection problem: '+e.message,'err')}
   finally{hideLoadingDialog();$('loginBtn').disabled=false}
 }
@@ -1438,9 +1438,9 @@ function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function initFinanceFilters(){
   initSearchSelect('fEngineer',[''],()=>applyLocalFilters());
   initSearchSelect('fProject',[''],()=>applyLocalFilters());
-  initSearchSelect('fStatus',['Pending','Approved','Rejected','Needs Clarification','All'],()=>loadQueue());
+  initSearchSelect('fStatus',['','Pending','Approved','Rejected','Needs Clarification','All'],()=>loadQueue());
   initSearchSelect('transferEngineerFilter',[''],()=>renderTransferEngineerSummary($('transferStatusFilter').value));
-  initSearchSelect('transferStatusFilter',['Pending','Needs Transfer','Transferred'],()=>loadTransferView());
+  initSearchSelect('transferStatusFilter',['','Pending','Needs Transfer','Transferred'],()=>loadTransferView());
 }
 initFinanceFilters();
 
@@ -1563,6 +1563,7 @@ function showTab(tab){
   if(tab==='transferTab') loadTransferView();
 }
 async function loadTransferView(){
+ if($('transferStatusFilter')&&!$('transferStatusFilter').value){return;}
   msg('transferViewMsg','');
   $('transferExpenseCard').classList.add('hidden');
   const status=$('transferStatusFilter').value;

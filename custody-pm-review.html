@@ -1305,7 +1305,7 @@ async function login(){
   try{
     const r=await api('pmLogin',{name:reviewer,pin});
     if(!r.ok)return msg('loginMsg',r.error,'err');
-    pmToken=r.token;pmReviewerName=r.reviewer||r.name||reviewer;currentLoginRole=r.role||'PM';saveSession();showApp();await loadQueue();
+    pmToken=r.token;pmReviewerName=r.reviewer||r.name||reviewer;currentLoginRole=r.role||'PM';saveSession();showApp();$('fStatus').value='';
   }catch(e){msg('loginMsg','Connection problem: '+e.message,'err')}
   finally{hideLoadingDialog();$('loginBtn').disabled=false}
 }
@@ -1319,13 +1319,13 @@ function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 
 setupSearch('fEngineer',[''],()=>applyLocalFilters());
 setupSearch('fProject',[''],()=>applyLocalFilters());
-setupSearch('fStatus',['Pending','Approved','Rejected','Needs Clarification','All'],()=>loadQueue());
+setupSearch('fStatus',['','Pending','Approved','Rejected','Needs Clarification','All'],()=>loadQueue());
 
 document.querySelectorAll('[data-clear]').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const id=btn.dataset.clear;
     const el=$(id);
-    el.value=(id==='fStatus'?'Pending':'');
+    el.value=(id==='fStatus'?'':'');
     if(id==='fStatus')loadQueue(); else applyLocalFilters();
     requestAnimationFrame(()=>{el.focus();el.select()});
   });
@@ -1458,6 +1458,7 @@ function showTab(tab){
   if(tab==='transferTab') loadTransferView();
 }
 async function loadTransferView(){
+ if($('transferStatusFilter')&&!$('transferStatusFilter').value){return;}
   msg('transferViewMsg','');
   $('transferExpenseCard').classList.add('hidden');
   const status=$('transferStatusFilter').value;
@@ -1689,7 +1690,7 @@ async function exportEngineerExcel(engineer){
 }
 
 $('pmPin').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
-const saved=getSession();if(saved&&saved.token){pmToken=saved.token;pmReviewerName=saved.reviewer||'PM';currentLoginRole=saved.role||'PM';showApp();showTab('reviewTab');loadQueue()}
+const saved=getSession();if(saved&&saved.token){pmToken=saved.token;pmReviewerName=saved.reviewer||'PM';currentLoginRole=saved.role||'PM';showApp();$('fStatus').value='';showTab('reviewTab')}
 </script>
 <script>
 function portalSSOStatus_(title,detail){ document.documentElement.classList.remove('portal-sso-pending');
@@ -1706,7 +1707,7 @@ setTimeout(()=>{try{showTab('reviewTab')}catch(e){}},250);
   pmToken=r.token; pmReviewerName=r.name||''; currentLoginRole=r.role||'PM'; saveSession();
   document.documentElement.classList.remove('portal-sso-pending');
   const x=document.getElementById('portalSsoStatus'); if(x)x.remove();
-  showApp(); await loadQueue(); showTab('reviewTab');
+  showApp();$('fStatus').value=''; showTab('reviewTab');
  }catch(e){portalSSOStatus_('Single Sign-On connection error',String(e&&e.message||e));console.error('Portal SSO failed',e)}
 })();
 </script>
