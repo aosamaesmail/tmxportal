@@ -844,8 +844,9 @@ $('logout').onclick=()=>{
    'custody.pm','custody.finance','custody.admin',
    'tmx_custody_pm_token','tmx_custody_finance_token','tmx_custody_admin_token'
  ].forEach(k=>sessionStorage.removeItem(k));
+ localStorage.removeItem('tmx_portal_user_persist');
+ location.replace(location.pathname+location.search);
 
- location.reload();
 };
 try{
  const raw=sessionStorage.getItem('tmx_portal_user')||localStorage.getItem('tmx_portal_user_persist')||'null';

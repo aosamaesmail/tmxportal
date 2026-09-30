@@ -138,6 +138,13 @@ html.tmx-auth-resolving body::before{content:none!important;display:none!importa
 </style><style id="v838SilentSession">
 #portalSsoStatus,.sso-status,.portal-transition,.frame-loading{display:none!important}
 html.portal-sso-pending body::before,html.tmx-auth-resolving body::before{content:none!important;display:none!important}
+</style><style id="v8312BalanceFilterTheme">
+.tmx-mm-input{background:#fff!important;color:#1f2937!important;border-color:#ccd3dd!important}
+.tmx-mm-pop{background:#fff!important;color:#1f2937!important;border-color:#d8dee6!important}
+.tmx-mm-head,.tmx-mm-item,.tmx-mm-item span{color:#1f2937!important}
+.tmx-mm-list{border-color:#e5e7eb!important}
+.tmx-mm-btn{background:#fff!important;color:#344054!important;border-color:#d8dee6!important}
+.tmx-mm-btn.primary{background:var(--brand,#d60072)!important;color:#fff!important;border-color:var(--brand,#d60072)!important}
 </style></head><body>
 
 <div id="loginBuffer" class="login-buffer-overlay" aria-hidden="true">
@@ -212,8 +219,19 @@ async function loadConfig(){try{let [x,c]=await Promise.all([post('adminFilterOp
  [['eng','engOpts','engineer',''],['drv','drvOpts','driver',''],['proj','projOpts','project',''],['paidBy','paidByOpts','paidBy',''],
   ['sEng','sEngOpts','engineer','s'],['sDrv','sDrvOpts','driver','s'],['sProj','sProjOpts','project','s'],['sPaidBy','sPaidByOpts','paidBy','s']]
   .forEach(x=>wireRel(x[0],x[1],x[2],x[3]));
- wire('balEng','balEngOpts',()=>engineers);wire('solfaEng','solfaEngOpts',()=>engineers);wire('deductionDriver','deductionDriverOpts',()=>drivers)
+ wire('balEng','balEngOpts',()=>{
+ const months=String($('balMonth').value||'').split(',').map(x=>x.trim()).filter(Boolean);
+ if(!months.length)return engineers;
+ const allowed=new Set(combos.filter(c=>months.includes(String(c.month||''))).map(c=>String(c.engineer||'').trim().toLowerCase()).filter(Boolean));
+ return engineers.filter(e=>allowed.has(String(e).trim().toLowerCase()));
+});wire('solfaEng','solfaEngOpts',()=>engineers);wire('deductionDriver','deductionDriverOpts',()=>drivers)
 }catch(e){toast('Could not load lists')}}
+$('balMonth').addEventListener('change',()=>{
+ const months=String($('balMonth').value||'').split(',').map(x=>x.trim()).filter(Boolean);
+ if(!months.length)return;
+ const allowed=new Set(combos.filter(c=>months.includes(String(c.month||''))).map(c=>String(c.engineer||'').trim().toLowerCase()).filter(Boolean));
+ if($('balEng').value.trim()&&!allowed.has($('balEng').value.trim().toLowerCase()))$('balEng').value='';
+});
 async function loadBalances(){try{let d=await post('adminSummary',{filterEngineer:$('balEng').value.trim(),filterMonth:$('balMonth').value});$('received').textContent=money(d.totals?.totalSolfa);$('spent').textContent=money(d.totals?.totalSpent);$('balance').textContent=money(d.totals?.balance);let a=d.engineers||[];$('balanceRows').innerHTML=a.length?`<table class="table"><thead><tr><th>Engineer</th><th>Received</th><th>Spent</th><th>Balance</th><th>Trips</th></tr></thead><tbody>${a.map(x=>`<tr><td>${esc(x.name)}</td><td>${money(x.totalSolfa)}</td><td>${money(x.totalSpent)}</td><td>${money(x.balance)}</td><td>${x.tripCount||0}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No balance records.</div>'}catch(e){toast('Could not load balances')}}$('balApply').onclick=loadBalances;$('balClear').onclick=()=>{$('balEng').value='';$('balMonth').value='';loadBalances()};
 async function loadAudit(){showBuffer('Applying filters...');try{$('auditList').innerHTML='<div class="empty">Loading…</div>';let d=await post('adminTrips',{filterEngineer:$('eng').value.trim(),filterDriver:$('drv').value.trim(),filterProject:$('proj').value.trim(),filterMonth:$('month').value});
     let paidBy=String($('paidBy').value||'').trim().toLowerCase(), auditStatus=String($('auditStatus').value||'Pending').trim().toLowerCase();
