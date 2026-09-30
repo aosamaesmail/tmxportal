@@ -692,35 +692,36 @@ function renderQuickActions(u){
      h+=actionCard('Expense History','Review submitted expenses.',moduleUrls.custodyEngineerHistory);
    }
  }else if(u.role==='Finance'){
-   if(u.km) h+=actionCard('KM Photo Audit','Finance KM evidence review.',moduleUrls.kmFinanceAudit);
+   if(u.km) h+=actionCard('KM Odometer Audit','Finance KM evidence review.',moduleUrls.kmFinanceAudit);
    if(u.custody){
-     h+=actionCard('Receipt Review','Finance expense verification.',moduleUrls.custodyFinanceReview);
-     h+=actionCard('Transfers','Transfer-ready and completed expenses.',moduleUrls.custodyFinanceTransfers);
+     h+=actionCard('Custody Review','Finance expense verification.',moduleUrls.custodyFinanceReview);
+     h+=actionCard('Custody Transfer','Transfer-ready and completed expenses.',moduleUrls.custodyFinanceTransfers);
    }
  }else if(u.role==='PM'){
    if(u.km){
-     h+=actionCard('KM Balances','Engineer KM balances.',moduleUrls.kmBalances);
-     h+=actionCard('Photo Audit','Review trip evidence.',moduleUrls.kmPhotoAudit);
-     h+=actionCard('Solfa','Engineer advances.',moduleUrls.kmSolfa);
-     h+=actionCard('Rent','Rent trips and deductions.',moduleUrls.kmRent);
-     h+=actionCard('Allowance Audit','Monthly allowance approvals.',moduleUrls.kmAllowance);
+     h+=actionCard('Engineers Balance','Engineer KM balances.',moduleUrls.kmBalances);
+     h+=actionCard('KM Odometer Audit','Review trip evidence.',moduleUrls.kmPhotoAudit);
+     h+=actionCard('Add Solfa','Engineer advances.',moduleUrls.kmSolfa);
+     h+=actionCard('Pay Cars Rent','Rent trips and deductions.',moduleUrls.kmRent);
+     h+=actionCard('Allowance Acceptance','Monthly allowance approvals.',moduleUrls.kmAllowance);
    }
    if(u.custody){
-     h+=actionCard('Receipt Review','PM expense approvals.',moduleUrls.custodyPMReview);
-     h+=actionCard('Transfers','Track approved expenses.',moduleUrls.custodyPMTransfers);
+     h+=actionCard('Custody Review','PM expense approvals.',moduleUrls.custodyPMReview);
+     h+=actionCard('Custody Transfer','Track approved expenses.',moduleUrls.custodyPMTransfers);
    }
  }else{
    if(u.km){
-     h+=actionCard('KM Balances','Engineer KM balances.',moduleUrls.kmBalances);
-     h+=actionCard('Photo Audit','Review trip evidence.',moduleUrls.kmPhotoAudit);
-     h+=actionCard('Solfa','Engineer advances.',moduleUrls.kmSolfa);
-     h+=actionCard('Rent','Rent trips and deductions.',moduleUrls.kmRent);
-     h+=actionCard('Allowance Audit','Monthly allowance approvals.',moduleUrls.kmAllowance);
+     h+=actionCard('Engineers Balance','Engineer KM balances.',moduleUrls.kmBalances);
+     h+=actionCard('KM Odometer Audit','Review trip evidence.',moduleUrls.kmPhotoAudit);
+     h+=actionCard('Add Solfa','Engineer advances.',moduleUrls.kmSolfa);
+     h+=actionCard('Pay Cars Rent','Rent trips and deductions.',moduleUrls.kmRent);
+     h+=actionCard('Allowance Acceptance','Monthly allowance approvals.',moduleUrls.kmAllowance);
    }
    if(u.custody){
      h+=actionCard('Engineer Management','Engineers, PINs and limits.',moduleUrls.custodyAdminEngineers);
      h+=actionCard('Management Users','PM, Finance and Admin access.',moduleUrls.custodyAdminUsers);
-     h+=actionCard('Custody Transfers','Approved expense transfers.',moduleUrls.custodyAdminTransfers);
+     h+=actionCard('Custody Review','Admin expense review.',moduleUrls.custodyPMReview);
+     h+=actionCard('Custody Transfer','Approved expense transfers.',moduleUrls.custodyAdminTransfers);
    }
  }
  el.innerHTML=h||'<div class="muted">No actions available for this role.</div>';

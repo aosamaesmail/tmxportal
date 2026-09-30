@@ -85,7 +85,21 @@ html.portal-sso-pending #portalSsoStatus,
 html.tmx-auth-resolving #portalSsoStatus,
 html.portal-sso-pending .sso-status,
 html.tmx-auth-resolving .sso-status{display:none!important}
-</style></head>
+</style>
+<style id="v836MultiMonthCss">
+.tmx-mm-wrap{position:relative}
+.tmx-mm-input{cursor:pointer!important;background:#fff!important}
+.tmx-mm-pop{display:none;position:absolute;z-index:9999;top:calc(100% + 6px);left:0;min-width:285px;max-width:360px;background:#fff;color:#243042;border:1px solid #d9dee7;border-radius:12px;box-shadow:0 14px 35px #0003;padding:10px}
+.tmx-mm-pop.open{display:block}
+.tmx-mm-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.tmx-mm-list{max-height:260px;overflow:auto;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;padding:5px 0}
+.tmx-mm-item{display:flex!important;align-items:center;gap:9px;padding:8px 6px;margin:0!important;text-transform:none!important;font-size:13px!important;color:#243042!important;cursor:pointer}
+.tmx-mm-item input{width:auto!important;height:auto!important}
+.tmx-mm-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:9px}
+.tmx-mm-btn{border:1px solid #d9dee7;background:#fff;border-radius:8px;padding:7px 10px;font-weight:700;cursor:pointer}
+.tmx-mm-btn.primary{background:#b52d7b;color:#fff;border-color:#b52d7b}
+</style>
+</head>
 <body>
 
 <div id="loginBuffer" class="login-buffer-overlay" aria-hidden="true">
@@ -99,10 +113,10 @@ html.tmx-auth-resolving .sso-status{display:none!important}
 <main class="wrap">
 <section id="loginView" class="login"><h1>Finance Login</h1><div class="muted">Use your management Name + 6-digit PIN.</div><label>Name</label><input id="name" class="input" autocomplete="username" placeholder="Enter your name"><label>PIN</label><input id="pin" class="input" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="6-digit PIN"><button id="loginBtn" class="btn primary" style="width:100%;margin-top:16px">Login to Finance</button></section>
 <section id="dash" class="dashboard"><div style="display:flex;gap:8px;margin-bottom:14px"><button id="photoTab" class="btn primary">Photo Audit</button><button id="summaryTab" class="btn">Summary</button></div><div id="photoView"><div class="heading"><div><h1>Photo Audit</h1><div class="muted">Desktop workspace for reviewing trip odometers, large photos and GPS.</div></div></div>
-<div class="filters"><div class="field"><label>Engineer</label><div class="search"><input id="engineer" class="input" autocomplete="off" placeholder="Search or select engineer"><div id="engineerOpts" class="opts"></div></div></div><div class="field"><label>Driver</label><div class="search"><input id="driver" class="input" autocomplete="off" placeholder="Search or select driver"><div id="driverOpts" class="opts"></div></div></div><div class="field"><label>Project</label><div class="search"><input id="project" class="input" autocomplete="off" placeholder="Search or select project"><div id="projectOpts" class="opts"></div></div></div><div class="field"><label>Month</label><input id="month" class="input" type="month"></div><div class="field"><label>Paid By</label><div class="search"><input id="paidBy" class="input" autocomplete="off" placeholder="Search or select payer"><div id="paidByOpts" class="opts"></div></div></div><div class="field"><label>Status</label><select id="auditStatus" class="input"><option>Pending</option><option>Approved</option><option>Rejected</option></select></div><div class="filter-buttons"><button id="apply" class="btn primary">Apply Filters</button><button id="clear" class="btn">Clear</button></div></div>
+<div class="filters"><div class="field"><label>Engineer</label><div class="search"><input id="engineer" class="input" autocomplete="off" placeholder="Search or select engineer"><div id="engineerOpts" class="opts"></div></div></div><div class="field"><label>Driver</label><div class="search"><input id="driver" class="input" autocomplete="off" placeholder="Search or select driver"><div id="driverOpts" class="opts"></div></div></div><div class="field"><label>Project</label><div class="search"><input id="project" class="input" autocomplete="off" placeholder="Search or select project"><div id="projectOpts" class="opts"></div></div></div><div class="field"><label>Months</label><input id="month" class="input" type="text" data-multimonth></div><div class="field"><label>Paid By</label><div class="search"><input id="paidBy" class="input" autocomplete="off" placeholder="Search or select payer"><div id="paidByOpts" class="opts"></div></div></div><div class="field"><label>Status</label><select id="auditStatus" class="input"><option>Pending</option><option>Approved</option><option>Rejected</option></select></div><div class="filter-buttons"><button id="apply" class="btn primary">Apply Filters</button><button id="clear" class="btn">Clear</button></div></div>
 <div class="stats"><div class="stat"><div class="k">Trips found</div><div id="tripCount" class="v">0</div></div><div class="stat"><div class="k">Trip KM</div><div id="tripKm" class="v">0</div></div><div class="stat"><div class="k">Total KM</div><div id="totalKm" class="v">0</div></div><div class="stat accent"><div class="k">Amount Spent</div><div id="amount" class="v">0.00 EGP</div></div></div>
 <div class="audit-head"><h2>Audit Records <span id="matched" class="count"></span></h2><div class="right"><button id="photosBtn" class="btn">Hide Photos</button><button id="refreshBtn" class="btn">Refresh</button></div></div>
-<div id="tableWrap" class="table-wrap"><div class="empty">Apply filters or refresh to load trips.</div></div><div class="bulkbar"><span id="pendingChanges" class="muted">No unsaved changes</span><button id="selectAllAudit" class="btn">Select All</button><button id="saveAudit" class="btn">Save Changes</button><button id="approveAudit" class="btn primary">Approve Selected</button></div></div><div id="summaryView" style="display:none"><div class="heading"><h1>Approved Summary</h1></div><div class="filters"><div class="field"><label>Engineer</label><div class="search"><input id="sEngineer" class="input" autocomplete="off" placeholder="Search or select engineer"><div id="sEngineerOpts" class="opts"></div></div></div><div class="field"><label>Driver</label><div class="search"><input id="sDriver" class="input" autocomplete="off" placeholder="Search or select driver"><div id="sDriverOpts" class="opts"></div></div></div><div class="field"><label>Project</label><div class="search"><input id="sProject" class="input" autocomplete="off" placeholder="Search or select project"><div id="sProjectOpts" class="opts"></div></div></div><div class="field"><label>Month</label><input id="sMonth" class="input" type="month"></div><div class="field"><label>Paid By</label><div class="search"><input id="sPaidBy" class="input" autocomplete="off" placeholder="Search or select payer"><div id="sPaidByOpts" class="opts"></div></div></div><div class="filter-buttons"><button id="sApply" class="btn primary">Apply</button><button id="sExport" class="btn">Export Excel</button></div></div><div id="summaryRows" style="margin-top:16px"></div></div></section>
+<div id="tableWrap" class="table-wrap"><div class="empty">Apply filters or refresh to load trips.</div></div><div class="bulkbar"><span id="pendingChanges" class="muted">No unsaved changes</span><button id="selectAllAudit" class="btn">Select All</button><button id="saveAudit" class="btn">Save Changes</button><button id="approveAudit" class="btn primary">Approve Selected</button></div></div><div id="summaryView" style="display:none"><div class="heading"><h1>Approved Summary</h1></div><div class="filters"><div class="field"><label>Engineer</label><div class="search"><input id="sEngineer" class="input" autocomplete="off" placeholder="Search or select engineer"><div id="sEngineerOpts" class="opts"></div></div></div><div class="field"><label>Driver</label><div class="search"><input id="sDriver" class="input" autocomplete="off" placeholder="Search or select driver"><div id="sDriverOpts" class="opts"></div></div></div><div class="field"><label>Project</label><div class="search"><input id="sProject" class="input" autocomplete="off" placeholder="Search or select project"><div id="sProjectOpts" class="opts"></div></div></div><div class="field"><label>Months</label><input id="sMonth" class="input" type="text" data-multimonth></div><div class="field"><label>Paid By</label><div class="search"><input id="sPaidBy" class="input" autocomplete="off" placeholder="Search or select payer"><div id="sPaidByOpts" class="opts"></div></div></div><div class="filter-buttons"><button id="sApply" class="btn primary">Apply</button><button id="sExport" class="btn">Export Excel</button></div></div><div id="summaryRows" style="margin-top:16px"></div></div></section>
 </main></div>
 <div id="lightbox" class="lightbox"><button id="closeLightbox" class="btn">Close</button><img id="lightboxImg" alt="Odometer photo"></div><div id="toast" class="toast"></div>
 <script>
@@ -424,4 +438,40 @@ function portalSSOStatus_(title,detail){ document.documentElement.classList.remo
 })();
 </script>
 
+
+<script id="v836MultiMonthJs">
+(function(){
+ function labelMonth(v){const [y,m]=v.split('-').map(Number);return new Date(y,m-1,1).toLocaleString('en',{month:'short',year:'numeric'});}
+ function months(){
+   const out=[],d=new Date(); d.setDate(1); d.setMonth(d.getMonth()+3);
+   for(let i=0;i<40;i++){out.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));d.setMonth(d.getMonth()-1)}
+   return out;
+ }
+ function init(inp){
+   if(inp.dataset.mmReady)return; inp.dataset.mmReady='1'; inp.type='text'; inp.readOnly=true;
+   inp.classList.add('tmx-mm-input'); inp.placeholder='Select one or more months';
+   const wrap=document.createElement('div');wrap.className='tmx-mm-wrap';
+   inp.parentNode.insertBefore(wrap,inp);wrap.appendChild(inp);
+   const pop=document.createElement('div');pop.className='tmx-mm-pop';wrap.appendChild(pop);
+   function selected(){return new Set(String(inp.value||'').split(',').map(x=>x.trim()).filter(Boolean))}
+   function draw(){
+     const sel=selected(), vals=months();
+     pop.innerHTML='<div class="tmx-mm-head"><b>Select months</b><button type="button" class="tmx-mm-btn mm-clear">Clear</button></div>'+
+       '<div class="tmx-mm-list">'+vals.map(v=>'<label class="tmx-mm-item"><input type="checkbox" value="'+v+'" '+(sel.has(v)?'checked':'')+'><span>'+labelMonth(v)+'</span></label>').join('')+'</div>'+
+       '<div class="tmx-mm-actions"><button type="button" class="tmx-mm-btn mm-cancel">Cancel</button><button type="button" class="tmx-mm-btn primary mm-done">Done</button></div>';
+     pop.querySelector('.mm-clear').onclick=()=>{pop.querySelectorAll('input').forEach(x=>x.checked=false)};
+     pop.querySelector('.mm-cancel').onclick=()=>pop.classList.remove('open');
+     pop.querySelector('.mm-done').onclick=()=>{
+       inp.value=[...pop.querySelectorAll('input:checked')].map(x=>x.value).sort().reverse().join(',');
+       pop.classList.remove('open');inp.dispatchEvent(new Event('change',{bubbles:true}));
+     };
+   }
+   inp.addEventListener('click',e=>{e.stopPropagation();draw();pop.classList.toggle('open')});
+   pop.addEventListener('click',e=>e.stopPropagation());
+   document.addEventListener('click',()=>pop.classList.remove('open'));
+ }
+ function boot(){document.querySelectorAll('input[data-multimonth]').forEach(init)}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
 </body></html>
