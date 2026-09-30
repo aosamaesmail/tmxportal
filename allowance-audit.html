@@ -243,9 +243,12 @@ function makeZip(files){
  const csize=central.reduce((a,b)=>a+b.length,0),end=new Uint8Array([...u32(0x06054b50),...u16(0),...u16(0),...u16(files.length),...u16(files.length),...u32(csize),...u32(offset),...u16(0)]);
  return new Blob([...parts,...central,end],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
 }
-$('exportExcel').onclick=()=>{
+$('exportExcel').onclick=async()=>{
  try{
-  const rows=(data.records||[]).filter(r=>(typeView==='All'||r.type===typeView)&&r.status==='Approved');
+  showBuffer('Preparing full allowance Excel export...');
+  const exportData=await post('allowanceData',{filterMonth:$('month').value,filterEngineer:$('engineer').value.trim(),filterDriver:$('driver').value.trim(),filterProject:$('project').value.trim(),filterStatus:'Approved',offset:0,limit:31,loadAll:true});
+  if(!exportData.ok)throw new Error(exportData.error||'server-error');
+  const rows=(exportData.records||[]).filter(r=>typeView==='All'||r.type===typeView);
   if(!rows.length){toast('No approved allowances to export for the current filters.');return}
   const groups={};
   rows.forEach(r=>(r.projects&&r.projects.length?r.projects:['—']).forEach(pr=>{
@@ -277,7 +280,7 @@ $('exportExcel').onclick=()=>{
   reader.onload=()=>{const a=document.createElement('a');a.href=reader.result;a.download=`Allowance-Audit-${$('month').value||'All'}-${typeView}.xlsx`;a.style.display='none';document.body.appendChild(a);a.click();a.remove();toast('Excel workbook created with 4 allowance tabs.')};
   reader.onerror=()=>toast('Could not create Excel workbook.');
   reader.readAsDataURL(blob);
- }catch(err){console.error(err);toast('Excel export failed: '+(err.message||err))}
+ }catch(err){console.error(err);toast('Excel export failed: '+(err.message||err))}finally{hideBuffer()}
 };
 $('apply').onclick=load;$('clear').onclick=()=>{$('engineer').value='';$('driver').value='';$('project').value='';$('status').value='';refreshAllCombos();load()};document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');typeView=b.dataset.type;render()});
 const portalSsoIncoming=/(?:^|[&#])sso=/.test(location.hash);
