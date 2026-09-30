@@ -288,7 +288,7 @@ if(location.hash.indexOf('sso=')>=0){
 </script>
 <style>
 html.portal-sso-pending body{visibility:hidden!important}
-html.portal-sso-pending body::before{content:'Signing you in…';visibility:visible!important;position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#020817;color:#fff;font:700 20px Arial,sans-serif}
+html.portal-sso-pending body::before{content:none!important;display:none!important}
 </style>
 <style id="telecomaxEngineerManagementV78">
 :root{--bg:#020713;--panel:#050A17;--field:#090E1A;--border:#17233B;--border2:#25314A;--text:#F5F6FA;--muted:#8992A8;--blue:#1597D4;--magenta:#D60072}
@@ -309,7 +309,7 @@ button.primary{background:linear-gradient(135deg,#E00079,#C90069)!important;colo
 .admin-table td{color:var(--text)!important;border-color:#1C293D!important}
 .admin-table tbody tr:nth-child(even){background:#07101E!important}
 .admin-badge{background:rgba(214,0,114,.14)!important;color:#FF9ED5!important;border:1px solid rgba(214,0,114,.28)!important}
-html.portal-sso-pending body{visibility:visible!important}html.portal-sso-pending body::before{display:none!important;content:none!important}
+html.portal-sso-pending body{visibility:visible!important}html.portal-sso-pending body::before{content:none!important;display:none!important}
 @media(max-width:700px){
  #adminPage{padding:10px!important}.card{padding:16px!important;border-radius:18px!important}
  h1{font-size:24px!important}h2{font-size:22px!important}

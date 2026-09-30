@@ -42,7 +42,7 @@ if(location.hash.indexOf('sso=')>=0){
 </script>
 <style>
 html.portal-sso-pending body{visibility:hidden!important}
-html.portal-sso-pending body::before{content:'Signing you in…';visibility:visible!important;position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#020817;color:#fff;font:700 20px Arial,sans-serif}
+html.portal-sso-pending body::before{content:none!important;display:none!important}
 </style>
 <style id="telecomaxFinanceAuditV81">
 :root{--ws:#F4F6F8;--card:#FFFFFF;--ink:#1E293B;--muted:#64748B;--line:#D8DEE6;--soft:#E9EEF3;--magenta:#D60072;--blue:#1597D4}
@@ -58,7 +58,7 @@ button.primary,.btn.primary{background:var(--magenta)!important;color:#fff!impor
 table{background:#fff!important;color:var(--ink)!important}th{background:var(--soft)!important;color:var(--ink)!important;border-color:var(--line)!important}td{color:var(--ink)!important;border-color:var(--line)!important}tbody tr:nth-child(even){background:#F8FAFC!important}
 /* Audit photos remain large on desktop for inspection */
 .audit-photos img,.photo-pair img,.photo-grid img{max-height:none!important;object-fit:contain!important}
-html.portal-sso-pending body{visibility:visible!important}html.portal-sso-pending body::before{display:none!important;content:none!important}
+html.portal-sso-pending body{visibility:visible!important}html.portal-sso-pending body::before{content:none!important;display:none!important}
 @media(max-width:700px){body{font-size:15px!important}.card,.panel{border-radius:16px!important}h1{font-size:24px!important}h2{font-size:21px!important}label{font-size:14px!important;font-weight:800!important}input,select{font-size:16px!important;min-height:50px!important}button,.btn{font-size:15px!important;font-weight:800!important;min-height:46px!important}}
 </style><style id="financeBootGateV812">
 /* Login is never rendered while saved-session validation or Portal SSO is resolving. */
@@ -233,7 +233,7 @@ function render(totalMatched){
 
 
 $('apply').onclick=loadTrips;
-$('refreshBtn').onclick=loadTrips;
+$('refreshBtn').onclick=loadTrips;$('photosBtn').onclick=()=>{photosVisible=!photosVisible;localStorage.setItem('finance_portal_photos',photosVisible?'1':'0');applyPhotos();};
 $('clear').onclick=()=>{
   $('engineer').value='';$('driver').value='';$('project').value='';$('month').value='';
   $('paidBy').value='';$('auditStatus').value='Pending';loadTrips();
@@ -301,18 +301,15 @@ $('approveAudit').onclick=async()=>{
 function applyPhotos(){
   document.querySelectorAll('.audit-photo').forEach(img=>{
     img.onclick=()=>{
-      const full=img.dataset.full||img.src;
-      if(!full)return;
-      const lb=$('lightbox'), lbImg=$('lightboxImg')||$('lbImg');
-      if(lbImg) lbImg.src=full;
-      if(lb) lb.classList.add('open');
-      else window.open(full,'_blank');
+      const full=img.dataset.full||img.src;if(!full)return;
+      const lb=$('lightbox'),lbImg=$('lightboxImg')||$('lbImg');
+      if(lbImg)lbImg.src=full;if(lb)lb.classList.add('open');else window.open(full,'_blank');
     };
   });
-  const btn=$('togglePhotos');
-  const hidden=btn && /show photos/i.test(btn.textContent||'');
-  document.querySelectorAll('.photo-panel').forEach(x=>x.style.display=hidden?'none':'');
+  document.querySelectorAll('.photo-panel').forEach(x=>x.style.display=photosVisible?'':'none');
+  const btn=$('photosBtn');if(btn)btn.textContent=photosVisible?'Hide Photos':'View Photos';
 }
+
 
 function summary(label,value){return `<div class="summary-item"><div class="summary-label">${label}</div><div class="summary-value">${value}</div></div>`}
 function metric(label,value,cls=''){return `<div class="metric ${cls}"><div class="k">${label}</div><div class="v">${value}</div></div>`}
