@@ -424,6 +424,30 @@ html.portal-sso-pending body::before,html.tmx-auth-resolving body::before{conten
 .tmx-mm-pop hr{border-color:#31465f!important}
 </style>
 
+
+<style id="v8323MonthPickerPMReadability">
+/* PM/Admin Photo Audit + Summary: high-contrast month picker */
+.tmx-mm-pop .tmx-mm-head,
+.tmx-mm-pop .tmx-mm-head b,
+.tmx-mm-pop .tmx-mm-item,
+.tmx-mm-pop .tmx-mm-item span{
+  color:#ffffff!important;
+  opacity:1!important;
+  -webkit-text-fill-color:#ffffff!important;
+}
+.tmx-mm-pop .tmx-mm-item input[type="checkbox"]{
+  appearance:none!important;-webkit-appearance:none!important;
+  width:14px!important;height:14px!important;min-width:14px!important;
+  border:1px solid #ffffff!important;border-radius:2px!important;
+  background:#ffffff!important;display:inline-grid!important;place-content:center!important;
+}
+.tmx-mm-pop .tmx-mm-item input[type="checkbox"]:checked{
+  background:#ec008c!important;border-color:#ec008c!important;
+}
+.tmx-mm-pop .tmx-mm-item input[type="checkbox"]:checked::after{
+  content:"✓";color:#ffffff!important;font-size:11px!important;font-weight:900!important;line-height:1!important;
+}
+</style>
 </head><body>
 
 <div id="loginBuffer" class="login-buffer-overlay" aria-hidden="true">
@@ -1041,6 +1065,23 @@ window.addEventListener('pageshow',applyAuditPhotoVisibility);
  }
  function boot(){document.querySelectorAll('input[data-multimonth]').forEach(init)}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+
+<script id="v8323UnifiedPortalLogout">
+(function(){
+ const PORTAL_LOGIN='https://tmxportal.vercel.app/?logout=1';
+ function isLogoutTarget(el){
+   const b=el&&el.closest?el.closest('button,a'):null;if(!b)return false;
+   const id=String(b.id||'').toLowerCase(),txt=String(b.textContent||'').trim().toLowerCase();
+   return id==='logout'||id==='logoutbtn'||id==='navadmlogout'||txt==='log out'||txt==='logout'||txt==='admin log out';
+ }
+ document.addEventListener('click',function(e){
+   if(!isLogoutTarget(e.target))return;
+   e.preventDefault();e.stopImmediatePropagation();
+   try{sessionStorage.clear();}catch(_e){}
+   location.replace(PORTAL_LOGIN);
+ },true);
 })();
 </script>
 </body></html>

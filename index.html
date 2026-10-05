@@ -470,7 +470,20 @@ body.portal-engineer #attentionSection{display:none!important}
 </style><style id="v838SilentSession">
 #portalSsoStatus,.sso-status,.portal-transition,.frame-loading{display:none!important}
 html.portal-sso-pending body::before,html.tmx-auth-resolving body::before{content:none!important;display:none!important}
-</style></head>
+</style>
+<script id="v8323PortalLogoutLanding">
+(function(){
+  const q=new URLSearchParams(location.search);
+  if(q.get('logout')!=='1')return;
+  try{
+    sessionStorage.clear();
+    localStorage.removeItem('tmx_portal_user_persist');
+    localStorage.removeItem('tmx_portal_user');
+  }catch(e){}
+  history.replaceState(null,'',location.pathname);
+})();
+</script>
+</head>
 <body><div class="wrap">
 <div class="top"><div class="brand">TELECOMAX <span>OPERATIONS</span></div><div class="actions"><span id="who" class="pill">Not signed in</span><button id="logout" class="ghost hidden">Log out</button></div></div>
 
